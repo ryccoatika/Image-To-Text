@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="home_container_vertical_margin">32dp</dimen>
+    <dimen name="home_container_horizontal_margin">16dp</dimen>
+    <dimen name="rounded_radius_on_preview">20dp</dimen>
+    <dimen name="list_item_corner_radius">5dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+</resources>
