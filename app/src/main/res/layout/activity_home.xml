@@ -9,66 +9,78 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="@dimen/home_container_vertical_margin"
-            android:layout_marginStart="@dimen/home_container_horizontal_margin"
+            android:layout_marginTop="32dp"
+            android:layout_marginStart="16dp"
             android:text="@string/text_your_documents"
             android:textSize="32sp"
             android:textColor="@color/colorBlack"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
-    <ProgressBar
-            android:id="@+id/pb_home"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:elevation="1dp"
-            android:indeterminateTint="@color/colorBlack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:indeterminate="true"/>
-
     <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_edit_search"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_your_documents"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="@dimen/home_container_horizontal_margin"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:hint="@string/text_search"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:startIconDrawable="@drawable/ic_search_black_24dp"
+            app:startIconDrawable="@drawable/ic_search_black"
             android:layout_width="0dp"
             android:layout_height="wrap_content">
         <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/home_edit_search"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:singleLine="true"/>
+                android:layout_height="wrap_content"
+                android:singleLine="true"/>
     </com.google.android.material.textfield.TextInputLayout>
-
     <androidx.recyclerview.widget.RecyclerView
             app:layout_constraintTop_toBottomOf="@+id/til_edit_search"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/home_btn_add_image"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/list_item"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:listitem="@layout/scanned_text_item"
             android:id="@+id/rv_home"
-            android:layout_marginStart="@dimen/home_container_horizontal_margin"
-            android:layout_marginEnd="@dimen/home_container_horizontal_margin"
+            android:layout_marginHorizontal="16dp"
             android:layout_marginTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="0dp"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/home_btn_add_image"
+            android:id="@+id/fab_add_image"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginEnd="@dimen/home_container_horizontal_margin"
-            android:layout_marginBottom="@dimen/home_container_horizontal_margin"
-            app:srcCompat="@drawable/ic_add_white_24dp"
-            app:tint="@color/colorWhite"
-            app:backgroundTint="@color/colorBlack"
+            android:layout_margin="16dp"
+            app:srcCompat="@drawable/ic_add_white"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            tools:ignore="ContentDescription" />
+    <include
+            layout="@layout/view_empty"
+            android:id="@+id/view_empty"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/til_edit_search"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+    <include
+            layout="@layout/view_error"
+            android:id="@+id/view_error"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/til_edit_search"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+    <include layout="@layout/view_loading"
+            android:id="@+id/view_loading"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/til_edit_search"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

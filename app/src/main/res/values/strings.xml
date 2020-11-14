@@ -18,5 +18,6 @@
     <string name="intro_caption_1">Click the floating button on the bottom right to scan new image</string>
     <string name="intro_caption_2">Long press on the item to copy the text</string>
     <string name="intro_caption_3">Slide left on the item to delete</string>
+    <string name="text_went_wrong">Something went wrong, please try again</string>
 
 </resources>

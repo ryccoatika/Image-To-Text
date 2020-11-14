@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.ryccoatika.imagetotext.R
@@ -52,7 +53,7 @@ abstract class ItemSwipeShowMenu(private val context: Context) :
         c.drawRoundRect(rect, 25f, 25f, paint)
 
         // add delete button
-        val deleteIcon = context.getDrawable(R.drawable.ic_delete_black_24dp)
+        val deleteIcon = ContextCompat.getDrawable(context, R.drawable.ic_delete_black)
         deleteIcon?.let { icon ->
             val deleteIconTop = itemView.top + (itemHeight - icon.intrinsicHeight) / 2
             val deleteIconMargin = (itemHeight - icon.intrinsicHeight) / 2

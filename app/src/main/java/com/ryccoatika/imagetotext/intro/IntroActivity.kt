@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.ImageView
 import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.ryccoatika.imagetotext.R
 import com.ryccoatika.imagetotext.home.HomeActivity
 import kotlinx.android.synthetic.main.activity_intro.*
@@ -25,9 +26,9 @@ class IntroActivity : AppCompatActivity(), View.OnClickListener {
         updateUI(FIRST_INTRO)
 
         val sectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
-        intro_view_pager.adapter = sectionsPagerAdapter
+        view_pager.adapter = sectionsPagerAdapter
 
-        intro_view_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        view_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}
 
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
@@ -42,26 +43,26 @@ class IntroActivity : AppCompatActivity(), View.OnClickListener {
 
         })
 
-        intro_btn_skip.setOnClickListener(this)
-        intro_btn_next.setOnClickListener(this)
-        intro_btn_finish.setOnClickListener(this)
+        btn_skip.setOnClickListener(this)
+        btn_next.setOnClickListener(this)
+        btn_finish.setOnClickListener(this)
     }
 
     private fun updateUI(mode: Int) {
         when (mode) {
             FIRST_INTRO -> {
-                selectedDot(listOf(intro_dot_1), true)
-                selectedDot(listOf(intro_dot_2, intro_dot_3), false)
+                selectedDot(listOf(dot_1), true)
+                selectedDot(listOf(dot_2, dot_3), false)
                 lastIntro(false)
             }
             SECOND_INTRO -> {
-                selectedDot(listOf(intro_dot_2), true)
-                selectedDot(listOf(intro_dot_1, intro_dot_3), false)
+                selectedDot(listOf(dot_2), true)
+                selectedDot(listOf(dot_1, dot_3), false)
                 lastIntro(false)
             }
             THIRD_INTRO -> {
-                selectedDot(listOf(intro_dot_3), true)
-                selectedDot(listOf(intro_dot_1, intro_dot_2), false)
+                selectedDot(listOf(dot_3), true)
+                selectedDot(listOf(dot_1, dot_2), false)
                 lastIntro(true)
             }
         }
@@ -69,31 +70,31 @@ class IntroActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun lastIntro(state: Boolean) {
         if (state) {
-            intro_btn_finish.visibility = View.VISIBLE
-            intro_btn_next.visibility = View.GONE
+            btn_finish.visibility = View.VISIBLE
+            btn_next.visibility = View.GONE
         } else {
-            intro_btn_finish.visibility = View.GONE
-            intro_btn_next.visibility = View.VISIBLE
+            btn_finish.visibility = View.GONE
+            btn_next.visibility = View.VISIBLE
         }
     }
 
     private fun selectedDot(views: List<ImageView>, state: Boolean) {
         val drawable = if (state) R.drawable.intro_dot_indicator_selected else R.drawable.intro_dot_indicator_unselected
         for (v in views) {
-            v.background = getDrawable(drawable)
+            v.background = ContextCompat.getDrawable(applicationContext, drawable)
         }
     }
 
     override fun onClick(v: View?) {
         when(v?.id) {
-            R.id.intro_btn_skip -> {
+            R.id.btn_skip -> {
                 startActivity(Intent(this, HomeActivity::class.java))
                 this.finish()
             }
-            R.id.intro_btn_next -> {
-                intro_view_pager.currentItem++
+            R.id.btn_next -> {
+                view_pager.currentItem++
             }
-            R.id.intro_btn_finish -> {
+            R.id.btn_finish -> {
                 startActivity(Intent(this, HomeActivity::class.java))
                 this.finish()
             }

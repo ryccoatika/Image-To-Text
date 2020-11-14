@@ -1,18 +1,13 @@
 package com.ryccoatika.imagetotext.home
 
-import com.ryccoatika.imagetotext.db.TextScannedEntity
+import com.ryccoatika.imagetotext.core.domain.model.TextScanned
 
 interface HomeView {
-    fun onShowLoading()
-    fun onHideLoading()
-
-    fun onGetTextScannedResponse(results: List<TextScannedEntity>)
-    fun onSearchTextScannedResponse(results: List<TextScannedEntity>)
-    fun onInsertCompleted(result: TextScannedEntity)
-    fun onDeleteCompleted()
-
-    fun onGetTextScannedFailure(error: Throwable)
-    fun onSearchTextScannedFailure(error: Throwable)
-    fun onInsertFailure(error: Throwable)
-    fun onDeleteFailure(error: Throwable)
+    fun onLoadListTextScannedSuccess(listTextScanned: List<TextScanned>)
+    fun onLoadListTextScannedError(message: String)
+    fun onLoadListTextScannedLoading()
+    fun onLoadListTextScannedEmpty()
+    fun onError()
+    fun onInsertSuccess(textScanned: TextScanned)
+    fun onDeleteSuccess()
 }

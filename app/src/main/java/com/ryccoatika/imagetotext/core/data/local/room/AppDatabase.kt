@@ -11,19 +11,19 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun textScannedDao(): TextScannedDao
     companion object {
-        const val DB_VERSION = 1
-        private const val DB_NAME = "ImageToTextDB"
+        const val DB_VERSION = 2
+        private const val DB_NAME = "imagetotext.db"
         private var INSTANCE: AppDatabase? = null
 
         fun getInstance(context: Context) : AppDatabase =
             INSTANCE ?: synchronized(AppDatabase::class) {
-                val newInstance = Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME).build()
+                val newInstance = Room.databaseBuilder(
+                    context,
+                    AppDatabase::class.java, DB_NAME)
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = newInstance
                 newInstance
             }
-
-        fun destroyDatabase() {
-            INSTANCE = null
-        }
     }
 }

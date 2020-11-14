@@ -14,7 +14,8 @@
             android:layout_margin="32dp"
             android:src="@color/colorBlack"
             android:layout_width="0dp"
-            android:layout_height="0dp"/>
+            android:layout_height="0dp"
+            tools:ignore="ContentDescription" />
     <com.google.android.material.textview.MaterialTextView
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

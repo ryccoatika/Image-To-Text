@@ -21,4 +21,5 @@
 #-renamesourcefileattribute SourceFile
 
 # https://github.com/ArthurHub/Android-Image-Cropper
+#noinspection ShrinkerUnresolvedReference
 -keep class androidx.appcompat.widget.** { *; }

@@ -2,172 +2,145 @@ package com.ryccoatika.imagetotext.home
 
 import android.Manifest
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.crashlytics.android.Crashlytics
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.jakewharton.rxbinding3.widget.textChangeEvents
-import com.ryccoatika.imagetotext.*
-import com.ryccoatika.imagetotext.db.TextScannedEntity
-import com.ryccoatika.imagetotext.scannedtext.ScannedTextActivity
+import com.ryccoatika.imagetotext.R
+import com.ryccoatika.imagetotext.core.domain.model.TextScanned
+import com.ryccoatika.imagetotext.core.ui.HomeAdapter
+import com.ryccoatika.imagetotext.textscanneddetail.TextScannedDetailActivity
 import com.theartofdev.edmodo.cropper.CropImage
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.view_error.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.util.concurrent.TimeUnit
 
-class HomeActivity: AppCompatActivity(), HomeView, View.OnClickListener {
+class HomeActivity: AppCompatActivity(), HomeView {
 
     private var mCropImageUri: Uri? = null
-    private val listAdapter = HomeListAdapter()
-    private val presenter: HomePresenter by lazy {
-        HomePresenter(
-            this,
-            this
-        )
-    }
+    private val homeViewModel: HomeViewModel by viewModel { parametersOf(this as HomeView) }
+    private val homeAdapter = HomeAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        rv_home.adapter = listAdapter
+        if ( intent.action == Intent.ACTION_SEND ) {
+            val uri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+            uri?.let { startCropActivity(it) }
+        }
 
-        val itemTouchHelper = ItemTouchHelper(object: ItemSwipeShowMenu(this) {
+        with(rv_home) {
+            layoutManager = LinearLayoutManager(context)
+            setHasFixedSize(true)
+            adapter = homeAdapter
+        }
+
+        homeAdapter.setOnItemClickListener { textScanned ->
+            moveToDetailActivity(textScanned)
+        }
+
+        homeAdapter.setOnItemLongClickListener { textScanned ->
+            val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+            clipboard.setPrimaryClip(ClipData.newPlainText("Scanned Text", textScanned.text))
+            showToast(getString(R.string.text_copied))
+            true
+        }
+
+        // implement swipe to delete on recycleview item
+        val itemTouchHelper = ItemTouchHelper(object: ItemSwipeShowMenu(applicationContext) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                presenter.deleteTextScanned(listAdapter.textScannedList[viewHolder.adapterPosition])
+                homeViewModel.deleteTextScanned(homeAdapter.getTextScanned(viewHolder.adapterPosition))
             }
         })
         itemTouchHelper.attachToRecyclerView(rv_home)
 
-        home_edit_search.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                val text = s.toString()
-                if (text.isEmpty()) {
-                    presenter.loadTextScanned()
-                }
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-        })
-
-        val searchObserver = object : Observer<String> {
-            override fun onComplete() {
-            }
-            override fun onSubscribe(d: Disposable) {
-            }
-            override fun onNext(t: String) {
-                presenter.searchTextScanned(t)
-            }
-            override fun onError(e: Throwable) {
-            }
-        }
-
         home_edit_search.textChangeEvents()
             .map { it.text.toString() }
-            .filter { it.length > 3 }
+            .skip(1)
             .debounce(500, TimeUnit.MILLISECONDS)
-            .subscribe(searchObserver)
+            .subscribe(object : Observer<String> {
+                override fun onSubscribe(d: Disposable) {}
+                override fun onNext(t: String) {
+                    if (t.isEmpty())
+                        homeViewModel.getAllTextScanned()
+                    else
+                        homeViewModel.searchTextScanned(t)
+                }
+                override fun onError(e: Throwable) {}
+                override fun onComplete() {}
+            })
 
-        home_btn_add_image.setOnClickListener(this)
+        fab_add_image.setOnClickListener {
+            if (CropImage.isExplicitCameraPermissionRequired(applicationContext)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(
+                        arrayOf(Manifest.permission.CAMERA),
+                        CropImage.CAMERA_CAPTURE_PERMISSIONS_REQUEST_CODE)
+                }
+            } else {
+                CropImage.startPickImageActivity(this)
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        presenter.loadTextScanned()
+        homeViewModel.getAllTextScanned()
     }
 
     private fun imageToText(uri: Uri) {
         val detector = FirebaseVision.getInstance().onDeviceTextRecognizer
-        val image = FirebaseVisionImage.fromFilePath(this, uri)
+        val image = FirebaseVisionImage.fromFilePath(applicationContext, uri)
 
         detector.processImage(image)
             .addOnCompleteListener { firebaseVisionText ->
-                firebaseVisionText.result?.let {
-                    if (it.text.isEmpty()) {
-                        Toast.makeText(this, getString(R.string.text_not_detected), Toast.LENGTH_SHORT).show()
+                firebaseVisionText.result?.let { textResult ->
+                    if (textResult.text.isEmpty()) {
+                        showToast(getString(R.string.text_not_detected))
                     } else {
-                        presenter.insertTextScanned(it.text)
+                        val textScanned = TextScanned(
+                            dateTime = System.currentTimeMillis(),
+                            textResult.text
+                        )
+                        homeViewModel.insertTextScanned(textScanned)
                     }
                 }
             }
             .addOnFailureListener { error ->
-                Crashlytics.log("detector.processImage.addOnFailureListener")
-                Crashlytics.logException(error)
+                error.printStackTrace()
             }
     }
 
-    override fun onShowLoading() {
-        pb_home.visibility = View.VISIBLE
-    }
-
-    override fun onHideLoading() {
-        pb_home.visibility = View.GONE
-    }
-
-    override fun onGetTextScannedResponse(results: List<TextScannedEntity>) {
-        listAdapter.textScannedList = results
-    }
-
-    override fun onSearchTextScannedResponse(results: List<TextScannedEntity>) {
-        listAdapter.textScannedList = results
-    }
-
-    override fun onInsertCompleted(result: TextScannedEntity) {
-        presenter.loadTextScanned()
-        val intentScannedText = Intent(this, ScannedTextActivity::class.java)
-        intentScannedText.putExtra(ScannedTextActivity.EXTRA_TEXT_SCANNED, result)
-        startActivity(intentScannedText)
-    }
-
-    override fun onDeleteCompleted() {
-        presenter.loadTextScanned()
-    }
-
-    override fun onGetTextScannedFailure(error: Throwable) {
-        Crashlytics.log("onGetTextScannedFailure")
-        Crashlytics.logException(error)
-    }
-
-    override fun onSearchTextScannedFailure(error: Throwable) {
-        Crashlytics.log("onSearchTextScannedFailure")
-        Crashlytics.logException(error)
-    }
-
-    override fun onInsertFailure(error: Throwable) {
-        Crashlytics.log("onInsertFailure")
-        Crashlytics.logException(error)
-    }
-
-    override fun onDeleteFailure(error: Throwable) {
-        Crashlytics.log("onDeleteFailure")
-        Crashlytics.logException(error)
-    }
-
-    override fun onClick(v: View?) {
-        when(v?.id) {
-            R.id.home_btn_add_image -> {
-                // start pick image activity
-                if (CropImage.isExplicitCameraPermissionRequired(this)) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        requestPermissions(
-                            arrayOf(Manifest.permission.CAMERA),
-                            CropImage.CAMERA_CAPTURE_PERMISSIONS_REQUEST_CODE)
-                    }
-                } else {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            // when request permission is PICK IMAGE
+            CropImage.PICK_IMAGE_PERMISSIONS_REQUEST_CODE -> {
+                if (mCropImageUri != null && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startCropActivity(mCropImageUri as Uri)
+                }
+            }
+            // when image is from camera capture
+            CropImage.CAMERA_CAPTURE_PERMISSIONS_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     CropImage.startPickImageActivity(this)
                 }
             }
@@ -177,11 +150,12 @@ class HomeActivity: AppCompatActivity(), HomeView, View.OnClickListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
+            // when image
             CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE -> {
                 if (resultCode == Activity.RESULT_OK) { // when result of the activity is OK
-                    val imageUri = CropImage.getPickImageResultUri(this, data)
+                    val imageUri = CropImage.getPickImageResultUri(applicationContext, data)
 
-                    if (CropImage.isReadExternalStoragePermissionsRequired(this, imageUri)) {
+                    if (CropImage.isReadExternalStoragePermissionsRequired(applicationContext, imageUri)) {
                         mCropImageUri = imageUri
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             requestPermissions(
@@ -203,29 +177,56 @@ class HomeActivity: AppCompatActivity(), HomeView, View.OnClickListener {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            // when request permission is PICK IMAGE
-            CropImage.PICK_IMAGE_PERMISSIONS_REQUEST_CODE -> {
-                if (mCropImageUri != null && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startCropActivity(mCropImageUri as Uri)
-                }
-            }
-            CropImage.CAMERA_CAPTURE_PERMISSIONS_REQUEST_CODE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    CropImage.startPickImageActivity(this)
-                }
-            }
-        }
-    }
-
     private fun startCropActivity(uri: Uri) {
         CropImage.activity(uri).start(this)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        presenter.destroy()
+    override fun onLoadListTextScannedSuccess(listTextScanned: List<TextScanned>) {
+        view_loading.visibility = View.GONE
+        view_empty.visibility = View.GONE
+        homeAdapter.setListTextScanned(listTextScanned)
+        Log.d("190401", "onSuccess")
+    }
+
+    override fun onLoadListTextScannedError(message: String) {
+        view_loading.visibility = View.GONE
+        view_error.visibility = View.VISIBLE
+        view_empty.visibility = View.GONE
+        tv_error.text = message
+    }
+
+    override fun onLoadListTextScannedLoading() {
+        view_loading.visibility = View.VISIBLE
+        view_error.visibility = View.GONE
+        view_empty.visibility = View.GONE
+    }
+
+    override fun onLoadListTextScannedEmpty() {
+        homeAdapter.setListTextScanned(listOf())
+        view_loading.visibility = View.GONE
+        view_error.visibility = View.GONE
+        view_empty.visibility = View.VISIBLE
+    }
+
+    override fun onError() {
+        showToast(getString(R.string.text_went_wrong))
+    }
+
+    override fun onInsertSuccess(textScanned: TextScanned) {
+        moveToDetailActivity(textScanned)
+    }
+
+    override fun onDeleteSuccess() {
+        homeViewModel.getAllTextScanned()
+    }
+
+    private fun moveToDetailActivity(textScanned: TextScanned) {
+        val intent = Intent(this, TextScannedDetailActivity::class.java)
+        intent.putExtra(TextScannedDetailActivity.EXTRA_TEXT_SCANNED, textScanned)
+        startActivity(intent)
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
 }
