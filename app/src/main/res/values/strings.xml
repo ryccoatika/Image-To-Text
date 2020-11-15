@@ -14,6 +14,8 @@
     <string name="text_not_detected">Text not detected!</string>
     <string name="text_finish">Finish</string>
     <string name="text_skip">Skip</string>
+    <string name="text_share_button">Share button</string>
+    <string name="text_open_with">Open with:</string>
 
     <string name="intro_caption_1">Click the floating button on the bottom right to scan new image</string>
     <string name="intro_caption_2">Long press on the item to copy the text</string>

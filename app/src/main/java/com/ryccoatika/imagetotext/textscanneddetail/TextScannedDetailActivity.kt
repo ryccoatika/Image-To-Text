@@ -3,6 +3,7 @@ package com.ryccoatika.imagetotext.textscanneddetail
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -43,6 +44,7 @@ class TextScannedDetailActivity : AppCompatActivity(), TextScannedDetailView, Vi
         btn_edit.setOnClickListener(this)
         btn_delete.setOnClickListener(this)
         btn_save.setOnClickListener(this)
+        btn_share.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -72,6 +74,15 @@ class TextScannedDetailActivity : AppCompatActivity(), TextScannedDetailView, Vi
                 textScanned.text = edit_content.text.toString()
                 textScannedViewModel.updateTextScanned(textScanned)
             }
+
+            R.id.btn_share -> {
+                val content = edit_content.text.toString()
+                val intent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, content)
+                }
+                startActivity(Intent.createChooser(intent, getString(R.string.text_open_with)))
+            }
         }
     }
 
@@ -94,10 +105,12 @@ class TextScannedDetailActivity : AppCompatActivity(), TextScannedDetailView, Vi
             UI_MODE_EDIT -> {
                 edit_content.isEnabled = true
                 btn_save.visibility = View.VISIBLE
+                btn_share.visibility = View.GONE
             }
             UI_MODE_VIEW -> {
                 edit_content.isEnabled = false
                 btn_save.visibility = View.GONE
+                btn_share.visibility = View.VISIBLE
             }
         }
     }

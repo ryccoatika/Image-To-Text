@@ -15,6 +15,8 @@
     <string name="text_not_detected">Tulisan tidak terdeteksi!</string>
     <string name="text_finish">Selesai</string>
     <string name="text_skip">Lewati</string>
+    <string name="text_share_button">Tombol bagikan</string>
+    <string name="text_open_with">Buka dengan:</string>
 
     <string name="intro_caption_1">Tekan tombol yang ada di kanan bawah untuk memindai gambar baru</string>
     <string name="intro_caption_2">Tekan dan tahan pada item untuk menyalin tulisan</string>
