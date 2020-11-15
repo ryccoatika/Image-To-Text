@@ -94,10 +94,12 @@ class TextScannedDetailActivity : AppCompatActivity(), TextScannedDetailView, Vi
             UI_MODE_EDIT -> {
                 edit_content.isEnabled = true
                 btn_save.visibility = View.VISIBLE
+                btn_share.visibility = View.GONE
             }
             UI_MODE_VIEW -> {
                 edit_content.isEnabled = false
                 btn_save.visibility = View.GONE
+                btn_share.visibility = View.VISIBLE
             }
         }
     }
