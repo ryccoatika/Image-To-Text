@@ -16,12 +16,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.ml.vision.FirebaseVision
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.jakewharton.rxbinding3.widget.textChangeEvents
 import com.ryccoatika.imagetotext.R
 import com.ryccoatika.imagetotext.core.domain.model.TextScanned
 import com.ryccoatika.imagetotext.core.ui.HomeAdapter
+import com.ryccoatika.imagetotext.core.utils.ImageToText
 import com.ryccoatika.imagetotext.textscanneddetail.TextScannedDetailActivity
 import com.theartofdev.edmodo.cropper.CropImage
 import io.reactivex.Observer
@@ -106,29 +105,6 @@ class HomeActivity: AppCompatActivity(), HomeView {
         homeViewModel.getAllTextScanned()
     }
 
-    private fun imageToText(uri: Uri) {
-        val detector = FirebaseVision.getInstance().onDeviceTextRecognizer
-        val image = FirebaseVisionImage.fromFilePath(applicationContext, uri)
-
-        detector.processImage(image)
-            .addOnCompleteListener { firebaseVisionText ->
-                firebaseVisionText.result?.let { textResult ->
-                    if (textResult.text.isEmpty()) {
-                        showToast(getString(R.string.text_not_detected))
-                    } else {
-                        val textScanned = TextScanned(
-                            dateTime = System.currentTimeMillis(),
-                            textResult.text
-                        )
-                        homeViewModel.insertTextScanned(textScanned)
-                    }
-                }
-            }
-            .addOnFailureListener { error ->
-                error.printStackTrace()
-            }
-    }
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
@@ -171,7 +147,25 @@ class HomeActivity: AppCompatActivity(), HomeView {
             CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
                     val uri = CropImage.getActivityResult(data).uri
-                    imageToText(uri)
+                    val imageToText = ImageToText.Builder(this)
+                        .addOnCompleteListener { result ->
+                            if (result != null) {
+                                if (result.isEmpty()) {
+                                    showToast(getString(R.string.text_not_detected))
+                                } else {
+                                    val textScanned = TextScanned(
+                                        dateTime = System.currentTimeMillis(),
+                                        result
+                                    )
+                                    homeViewModel.insertTextScanned(textScanned)
+                                }
+                            }
+                        }
+                        .addOnFailureListener { error ->
+                            error.printStackTrace()
+                        }
+                        .build()
+                    imageToText.recognize(uri)
                 }
             }
         }
