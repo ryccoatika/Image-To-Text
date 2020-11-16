@@ -58,7 +58,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:18.0.0'
     implementation 'com.google.firebase:firebase-analytics:18.0.0'
     implementation 'com.google.android.gms:play-services-vision:20.1.2'
-    implementation 'com.google.firebase:firebase-ml-vision:24.1.0'
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:16.1.1'
 
     // https://github.com/ArthurHub/Android-Image-Cropper
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
