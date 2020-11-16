@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.ryccoatika.imagetotext.R
 import com.ryccoatika.imagetotext.core.domain.model.TextScanned
+import com.ryccoatika.imagetotext.core.utils.ReviewHelper
 import kotlinx.android.synthetic.main.activity_text_scanned_detail.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -45,6 +46,8 @@ class TextScannedDetailActivity : AppCompatActivity(), TextScannedDetailView, Vi
         btn_delete.setOnClickListener(this)
         btn_save.setOnClickListener(this)
         btn_share.setOnClickListener(this)
+
+        ReviewHelper.launchInAppReview(this)
     }
 
     override fun onClick(v: View?) {
