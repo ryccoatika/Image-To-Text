@@ -9,6 +9,7 @@ import com.ryccoatika.imagetotext.core.utils.UserPreferences
 import com.ryccoatika.imagetotext.home.HomeActivity
 import com.ryccoatika.imagetotext.intro.IntroActivity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -22,13 +23,13 @@ class SplashScreenActivity : AppCompatActivity() {
 
 
         Handler(mainLooper).postDelayed({
-            userPref.isFirstTime.asLiveData().observe(this) { isFirstTime ->
+            userPref.isFirstTime.take(1).asLiveData().observe(this) { isFirstTime ->
                 if (isFirstTime) {
                     startActivity(Intent(this, IntroActivity::class.java))
                     runBlocking {
                         launch(Dispatchers.IO) {
-                            userPref.saveFirstTime(true)
-                        }
+                            userPref.saveFirstTime(false)
+                        }.start()
                     }
                 } else
                     startActivity(Intent(this, HomeActivity::class.java))

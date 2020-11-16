@@ -25,6 +25,6 @@ class UserPreferences(private val context: Context) {
     }
 
     val isFirstTime: Flow<Boolean> = dataStore.data.map { preferences ->
-        preferences[FIRST_TIME_KEY] ?: false
+        preferences[FIRST_TIME_KEY] ?: true
     }
 }
