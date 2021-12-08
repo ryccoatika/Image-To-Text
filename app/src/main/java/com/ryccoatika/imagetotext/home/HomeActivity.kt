@@ -1,13 +1,9 @@
 package com.ryccoatika.imagetotext.home
 
-import android.Manifest
-import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -16,13 +12,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.options
 import com.jakewharton.rxbinding3.widget.textChangeEvents
 import com.ryccoatika.imagetotext.R
 import com.ryccoatika.imagetotext.core.domain.model.TextScanned
 import com.ryccoatika.imagetotext.core.ui.HomeAdapter
 import com.ryccoatika.imagetotext.core.utils.ImageToText
 import com.ryccoatika.imagetotext.textscanneddetail.TextScannedDetailActivity
-import com.theartofdev.edmodo.cropper.CropImage
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_home.*
@@ -31,17 +28,42 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.util.concurrent.TimeUnit
 
-class HomeActivity: AppCompatActivity(), HomeView {
+class HomeActivity : AppCompatActivity(), HomeView {
 
-    private var mCropImageUri: Uri? = null
     private val homeViewModel: HomeViewModel by viewModel { parametersOf(this as HomeView) }
     private val homeAdapter = HomeAdapter()
+
+    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            val uriContent = result.uriContent
+
+            val imageToText = ImageToText.Builder(this)
+                .addOnCompleteListener { textResult ->
+                    if (textResult != null) {
+                        if (textResult.isEmpty()) {
+                            showToast(getString(R.string.text_not_detected))
+                        } else {
+                            val textScanned = TextScanned(
+                                dateTime = System.currentTimeMillis(),
+                                textResult
+                            )
+                            homeViewModel.insertTextScanned(textScanned)
+                        }
+                    }
+                }
+                .addOnFailureListener { error ->
+                    error.printStackTrace()
+                }
+                .build()
+            uriContent?.let { imageToText.recognize(it) }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        if ( intent.action == Intent.ACTION_SEND ) {
+        if (intent.action == Intent.ACTION_SEND) {
             val uri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
             uri?.let { startCropActivity(it) }
         }
@@ -64,7 +86,7 @@ class HomeActivity: AppCompatActivity(), HomeView {
         }
 
         // implement swipe to delete on recycleview item
-        val itemTouchHelper = ItemTouchHelper(object: ItemSwipeShowMenu(applicationContext) {
+        val itemTouchHelper = ItemTouchHelper(object : ItemSwipeShowMenu(applicationContext) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 homeViewModel.deleteTextScanned(homeAdapter.getTextScanned(viewHolder.adapterPosition))
             }
@@ -83,20 +105,16 @@ class HomeActivity: AppCompatActivity(), HomeView {
                     else
                         homeViewModel.searchTextScanned(t)
                 }
+
                 override fun onError(e: Throwable) {}
                 override fun onComplete() {}
             })
 
         fab_add_image.setOnClickListener {
-            if (CropImage.isExplicitCameraPermissionRequired(applicationContext)) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    requestPermissions(
-                        arrayOf(Manifest.permission.CAMERA),
-                        CropImage.CAMERA_CAPTURE_PERMISSIONS_REQUEST_CODE)
-                }
-            } else {
-                CropImage.startPickImageActivity(this)
-            }
+            cropImage.launch(options {
+                setImageSource(includeCamera = true, includeGallery = true)
+
+            })
         }
     }
 
@@ -105,74 +123,9 @@ class HomeActivity: AppCompatActivity(), HomeView {
         homeViewModel.getAllTextScanned()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            // when request permission is PICK IMAGE
-            CropImage.PICK_IMAGE_PERMISSIONS_REQUEST_CODE -> {
-                if (mCropImageUri != null && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startCropActivity(mCropImageUri as Uri)
-                }
-            }
-            // when image is from camera capture
-            CropImage.CAMERA_CAPTURE_PERMISSIONS_REQUEST_CODE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    CropImage.startPickImageActivity(this)
-                }
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            // when image
-            CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE -> {
-                if (resultCode == Activity.RESULT_OK) { // when result of the activity is OK
-                    val imageUri = CropImage.getPickImageResultUri(applicationContext, data)
-
-                    if (CropImage.isReadExternalStoragePermissionsRequired(applicationContext, imageUri)) {
-                        mCropImageUri = imageUri
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            requestPermissions(
-                                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                                CropImage.PICK_IMAGE_PERMISSIONS_REQUEST_CODE)
-                        }
-                    } else {
-                        startCropActivity(imageUri)
-                    }
-                }
-            }
-            // when image cropped
-            CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    val uri = CropImage.getActivityResult(data).uri
-                    val imageToText = ImageToText.Builder(this)
-                        .addOnCompleteListener { result ->
-                            if (result != null) {
-                                if (result.isEmpty()) {
-                                    showToast(getString(R.string.text_not_detected))
-                                } else {
-                                    val textScanned = TextScanned(
-                                        dateTime = System.currentTimeMillis(),
-                                        result
-                                    )
-                                    homeViewModel.insertTextScanned(textScanned)
-                                }
-                            }
-                        }
-                        .addOnFailureListener { error ->
-                            error.printStackTrace()
-                        }
-                        .build()
-                    imageToText.recognize(uri)
-                }
-            }
-        }
-    }
 
     private fun startCropActivity(uri: Uri) {
-        CropImage.activity(uri).start(this)
+        cropImage.launch(options(uri))
     }
 
     override fun onLoadListTextScannedSuccess(listTextScanned: List<TextScanned>) {

@@ -9,6 +9,7 @@
             android:required="true"/>
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <dist:module dist:instant="true"/>
 
@@ -29,7 +30,8 @@
                 android:theme="@style/AppTheme.NoActionBar"
                 tools:ignore="LockedOrientationActivity">
         </activity>
-        <activity android:name=".SplashScreenActivity">
+        <activity android:name=".SplashScreenActivity"
+                android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -39,7 +41,8 @@
         <activity
                 android:name=".home.HomeActivity"
                 android:screenOrientation="portrait"
-                tools:ignore="LockedOrientationActivity">
+                tools:ignore="LockedOrientationActivity"
+                android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -48,7 +51,7 @@
         </activity>
         <!-- https://github.com/ArthurHub/Android-Image-Cropper -->
         <activity
-                android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+                android:name="com.canhub.cropper.CropImageActivity"
                 android:theme="@style/Theme.AppCompat"/>
         <activity
                 android:name=".textscanneddetail.TextScannedDetailActivity"

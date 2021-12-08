@@ -5,6 +5,7 @@ import android.net.Uri
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import java.lang.Exception
 
 class ImageToText private constructor(builder: Builder){
@@ -12,7 +13,7 @@ class ImageToText private constructor(builder: Builder){
     private val onCompleteListener: ((String?) -> Unit)? = builder.onCompleteListener
     private val onFailureListener: ((Exception) -> Unit)? = builder.onFailureListener
     private val textRecognizer: TextRecognizer by lazy {
-        TextRecognition.getClient()
+        TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
     }
 
     class Builder(val context: Context) {
