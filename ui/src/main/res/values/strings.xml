@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="button_finish">Finish</string>
+    <string name="button_skip">Skip</string>
+
+    <string name="intro_caption_1">Click the floating button on the bottom right to scan new image</string>
+    <string name="intro_caption_2">Long press on the item to copy the text</string>
+    <string name="intro_caption_3">Slide left on the item to delete</string>
+</resources>

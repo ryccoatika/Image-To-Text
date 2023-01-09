@@ -1,5 +1,6 @@
-package com.ryccoatika.imagetotext.ui.common
+package com.ryccoatika.imagetotext.ui.common.theme
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -16,7 +17,7 @@ data class Spacing(
 
 val LocalSpacing = staticCompositionLocalOf { Spacing() }
 
-val spacing: Spacing
+val MaterialTheme.spacing: Spacing
     @Composable
     @ReadOnlyComposable
     get() = LocalSpacing.current

@@ -1,4 +1,4 @@
-package com.ryccoatika.imagetotext.ui.common
+package com.ryccoatika.imagetotext.ui.common.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*

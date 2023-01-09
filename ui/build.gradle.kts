@@ -30,4 +30,6 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:1.3.2")
 
     implementation("androidx.compose.material3:material3:1.0.1")
+
+    implementation("com.google.accompanist:accompanist-pager:0.28.0")
 }
