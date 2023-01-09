@@ -3,9 +3,9 @@ package com.ryccoatika.imagetotext.ui.intro
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -19,11 +19,12 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.ryccoatika.imagetotext.ui.R
+import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 import com.ryccoatika.imagetotext.ui.common.theme.spacing
 import com.ryccoatika.imagetotext.ui.common.ui.DotIndicator
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Intro() {
     val coroutineScope = rememberCoroutineScope()
@@ -69,12 +70,12 @@ fun Intro() {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.primary)
+                    .background(MaterialTheme.colors.primary)
             ) {
                 TextButton(onClick = { }) {
                     Text(
                         stringResource(R.string.button_skip).uppercase(),
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = MaterialTheme.colors.onPrimary
                     )
                 }
                 DotIndicator(
@@ -86,7 +87,7 @@ fun Intro() {
                     TextButton(onClick = { }) {
                         Text(
                             stringResource(R.string.button_finish).uppercase(),
-                            color = MaterialTheme.colorScheme.onPrimary
+                            color = MaterialTheme.colors.onPrimary
                         )
                     }
                 } else {
@@ -100,7 +101,7 @@ fun Intro() {
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowRight,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary,
+                            tint = MaterialTheme.colors.onPrimary,
                         )
                     }
                 }
@@ -112,5 +113,7 @@ fun Intro() {
 @Preview
 @Composable
 private fun IntroPreview() {
-    Intro()
+    AppTheme {
+        Intro()
+    }
 }

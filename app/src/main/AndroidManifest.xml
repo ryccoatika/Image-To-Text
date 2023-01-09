@@ -24,12 +24,6 @@
             android:versionCode="2"
             android:versionName="1.0.1"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity
-                android:name=".intro.IntroActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/AppTheme.NoActionBar"
-                tools:ignore="LockedOrientationActivity">
-        </activity>
         <activity android:name=".SplashScreenActivity"
                 android:exported="true">
             <intent-filter>
