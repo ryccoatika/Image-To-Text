@@ -11,6 +11,14 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
+    signingConfigs {
+        debug {
+            storeFile rootProject.file('release/debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }
     compileSdkVersion 33
     buildToolsVersion '30.0.3'
     defaultConfig {
