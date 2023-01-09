@@ -1,2 +1,6 @@
-include(":app")
 rootProject.name="Image To Text"
+
+include(
+    ":ui",
+    ":app"
+)
