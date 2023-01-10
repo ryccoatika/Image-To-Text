@@ -17,6 +17,10 @@ import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 import com.ryccoatika.imagetotext.ui.common.theme.spacing
 import com.ryccoatika.imagetotext.ui.common.ui.AppTextInput
 
+object TextScannedDetailArgs {
+    val ID = "text_scanned_id"
+}
+
 @Composable
 fun TextScannedDetail() {
     Scaffold(

@@ -1,52 +1,64 @@
-package com.ryccoatika.imagetotext.ui.textscanneddetail
+package com.ryccoatika.imagetotext.ui.home
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ryccoatika.imagetotext.domain.model.TextScanned
+import com.ryccoatika.imagetotext.domain.usecase.ObserveTextScanned
 import com.ryccoatika.imagetotext.domain.usecase.RemoveTextScanned
 import com.ryccoatika.imagetotext.domain.usecase.SaveTextScanned
 import com.ryccoatika.imagetotext.domain.utils.ObservableLoadingCounter
 import com.ryccoatika.imagetotext.domain.utils.UiMessageManager
 import com.ryccoatika.imagetotext.domain.utils.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
+@OptIn(FlowPreview::class)
 @HiltViewModel
-class TextScannedDetailViewModel @Inject constructor(
-    private val removeTextScanned: RemoveTextScanned,
+class HomeViewModel @Inject constructor(
+    observeTextScanned: ObserveTextScanned,
     private val saveTextScanned: SaveTextScanned,
-    savedStateHandle: SavedStateHandle
+    private val removeTextScanned: RemoveTextScanned
 ) : ViewModel() {
-
-    private val id: Long = savedStateHandle[TextScannedDetailArgs.ID]!!
 
     private val loadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
-    private val mode = MutableStateFlow(TextScannedDetailViewState.Mode.VIEW)
+    private val query = MutableStateFlow<String?>(null)
 
-    val state: StateFlow<TextScannedDetailViewState> = combine(
-        mode,
-        flowOf(),
+    val state: StateFlow<HomeViewState> = combine(
+        query,
+        observeTextScanned.isProcessing,
         loadingState.observable,
         uiMessageManager.message,
-        ::TextScannedDetailViewState
+        observeTextScanned.flow,
+        ::HomeViewState
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = TextScannedDetailViewState.Empty
+        initialValue = HomeViewState.Empty
     )
 
-    fun remove(textScanned: TextScanned) {
+    init {
         viewModelScope.launch {
-            removeTextScanned(RemoveTextScanned.Params(textScanned)).collectStatus(
-                loadingState,
-                uiMessageManager
-            )
+            this@HomeViewModel.query
+                .filterNotNull()
+                .filterNot { it.isEmpty() }
+                .debounce(500)
+                .distinctUntilChanged()
+                .collect { query ->
+                    observeTextScanned(ObserveTextScanned.Params(query))
+                }
+        }
+
+        observeTextScanned(ObserveTextScanned.Params(query.value))
+    }
+
+    fun search(query: String) {
+        viewModelScope.launch {
+            this@HomeViewModel.query.emit(query)
         }
     }
 
@@ -59,13 +71,12 @@ class TextScannedDetailViewModel @Inject constructor(
         }
     }
 
-    fun toggleMode() {
+    fun remove(textScanned: TextScanned) {
         viewModelScope.launch {
-            if (mode.value == TextScannedDetailViewState.Mode.VIEW) {
-                mode.emit(TextScannedDetailViewState.Mode.EDIT)
-            } else {
-                mode.emit(TextScannedDetailViewState.Mode.VIEW)
-            }
+            removeTextScanned(RemoveTextScanned.Params(textScanned)).collectStatus(
+                loadingState,
+                uiMessageManager
+            )
         }
     }
 

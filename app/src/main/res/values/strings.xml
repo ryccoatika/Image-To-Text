@@ -1,20 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Image To Text</string>
-    <string name="text_copied">Copied!</string>
-    <string name="title_app">Text Scanner</string>
-    <string name="text_your_documents">Your Documents</string>
-    <string name="text_search">Search</string>
-    <string name="text_preview">Preview</string>
-    <string name="text_copy_button">Copy button</string>
-    <string name="text_delete_button">Delete Button</string>
-    <string name="text_edit_button">Edit button</string>
-    <string name="text_save">Save</string>
-    <string name="text_back_button">Back button</string>
-    <string name="text_saved">Saved!</string>
-    <string name="text_not_detected">Text not detected!</string>
-    <string name="text_share_button">Share button</string>
-    <string name="text_open_with">Open with:</string>
-
-    <string name="text_went_wrong">Something went wrong, please try again</string>
-
 </resources>

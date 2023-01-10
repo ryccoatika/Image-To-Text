@@ -12,5 +12,5 @@ import dagger.hilt.components.SingletonComponent
 abstract class RepositoryBindsModule {
 
     @Binds
-    abstract fun provideTextScannedRepository(repository: TextScannedRepositoryImpl): com.ryccoatika.imagetotext.domain.repository.TextScannedRepository
+    abstract fun provideTextScannedRepository(repository: TextScannedRepositoryImpl): TextScannedRepository
 }

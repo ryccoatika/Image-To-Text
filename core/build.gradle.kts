@@ -19,6 +19,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":domain"))
+    implementation("androidx.room:room-ktx:2.4.3")
     implementation("androidx.room:room-runtime:2.4.3")
     kapt("androidx.room:room-compiler:2.4.3")
 
@@ -28,4 +30,7 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.44.2")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    implementation("com.google.android.play:core-ktx:1.8.1")
+    implementation("com.google.android.gms:play-services-mlkit-text-recognition:18.0.2")
 }
