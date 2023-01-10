@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="title_preview">Preview</string>
     <string name="title_your_documents">Your Documents</string>
 
     <string name="button_finish">Finish</string>

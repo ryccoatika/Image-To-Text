@@ -1,12 +1,14 @@
 package com.ryccoatika.imagetotext.ui.common.ui
 
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.ryccoatika.imagetotext.ui.R
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 
@@ -26,6 +28,9 @@ fun AppSearchTextInput(
             )
         },
         placeholder = stringResource(id = R.string.hint_search),
+        borderShape = MaterialTheme.shapes.large,
+        borderWidth = 1.dp,
+        borderColor = MaterialTheme.colors.onBackground,
         modifier = modifier
     )
 }
@@ -36,7 +41,7 @@ private fun AppSearchTextInputPreview() {
     AppTheme {
         AppSearchTextInput(
             value = "",
-            onValueChange = {}
+            onValueChange = {},
         )
     }
 }
