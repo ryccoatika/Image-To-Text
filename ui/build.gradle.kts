@@ -32,4 +32,6 @@ dependencies {
     implementation("androidx.compose.material:material:1.3.1")
 
     implementation("com.google.accompanist:accompanist-pager:0.28.0")
+
+    implementation("com.himanshoe:pluck:1.0.0-RC2")
 }
