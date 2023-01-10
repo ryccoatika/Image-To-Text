@@ -1,7 +1,8 @@
-package com.ryccoatika.imagetotext.core.domain.model
+package com.ryccoatika.imagetotext.core.model
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
+
 
 @Parcelize
 data class TextScanned(

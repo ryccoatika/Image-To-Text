@@ -102,7 +102,6 @@ dependencies {
     implementation("com.airbnb.android:lottie:4.2.1")
 
     // Jetpack Datastore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
 
     implementation("com.google.android.play:core-ktx:1.8.1")

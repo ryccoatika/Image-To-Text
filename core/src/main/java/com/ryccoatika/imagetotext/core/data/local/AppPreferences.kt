@@ -1,4 +1,4 @@
-package com.ryccoatika.imagetotext.core.utils
+package com.ryccoatika.imagetotext.core.data.local
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -8,15 +8,20 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class UserPreferences(private val context: Context) {
+@Singleton
+class AppPreferences @Inject constructor(
+    private val context: Context
+    ) {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_pref")
 
     companion object {
         private val FIRST_TIME_KEY = booleanPreferencesKey("first_time")
     }
 
-    suspend fun saveFirstTime(state: Boolean) {
+    suspend fun setFirstTime(state: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[FIRST_TIME_KEY] = state
         }

@@ -1,7 +1,7 @@
 package com.ryccoatika.imagetotext.core.utils
 
 import com.ryccoatika.imagetotext.core.data.local.entity.TextScannedEntity
-import com.ryccoatika.imagetotext.core.domain.model.TextScanned
+import com.ryccoatika.imagetotext.core.model.TextScanned
 
 fun TextScanned.toTextScannedEntity(): TextScannedEntity =
     TextScannedEntity(
