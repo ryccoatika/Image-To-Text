@@ -5,3 +5,4 @@ include(
     ":app"
 )
 include(":core")
+include(":domain")

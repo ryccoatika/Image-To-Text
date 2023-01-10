@@ -1,4 +1,4 @@
-package com.ryccoatika.imagetotext.core.model
+package com.ryccoatika.imagetotext.domain.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

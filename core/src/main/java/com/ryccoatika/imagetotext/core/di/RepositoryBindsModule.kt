@@ -1,7 +1,7 @@
 package com.ryccoatika.imagetotext.core.di
 
 import com.ryccoatika.imagetotext.core.data.TextScannedRepositoryImpl
-import com.ryccoatika.imagetotext.core.repository.TextScannedRepository
+import com.ryccoatika.imagetotext.domain.repository.TextScannedRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -12,5 +12,5 @@ import dagger.hilt.components.SingletonComponent
 abstract class RepositoryBindsModule {
 
     @Binds
-    abstract fun provideTextScannedRepository(repository: TextScannedRepositoryImpl): TextScannedRepository
+    abstract fun provideTextScannedRepository(repository: TextScannedRepositoryImpl): com.ryccoatika.imagetotext.domain.repository.TextScannedRepository
 }

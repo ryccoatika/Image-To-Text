@@ -1,14 +1,13 @@
-package com.ryccoatika.imagetotext.core.usecase
+package com.ryccoatika.imagetotext.domain.usecase
 
-import com.ryccoatika.imagetotext.core.repository.TextScannedRepository
-import com.ryccoatika.imagetotext.core.utils.AppCoroutineDispatchers
-import com.ryccoatika.imagetotext.core.utils.Interactor
+import com.ryccoatika.imagetotext.domain.utils.AppCoroutineDispatchers
+import com.ryccoatika.imagetotext.domain.utils.Interactor
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SetUserFirstTime @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
-    private val textScannedRepository: TextScannedRepository
+    private val textScannedRepository: com.ryccoatika.imagetotext.domain.repository.TextScannedRepository
 ) : Interactor<SetUserFirstTime.Params>() {
     override suspend fun doWork(params: Params) = withContext(dispatchers.io) {
         textScannedRepository.setUserFirstTime(params.isFirstTime)

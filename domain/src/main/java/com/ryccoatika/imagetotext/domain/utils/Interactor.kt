@@ -1,5 +1,9 @@
-package com.ryccoatika.imagetotext.core.utils
+package com.ryccoatika.imagetotext.domain.utils
 
+import com.ryccoatika.imagetotext.domain.model.InvokeError
+import com.ryccoatika.imagetotext.domain.model.InvokeStarted
+import com.ryccoatika.imagetotext.domain.model.InvokeStatus
+import com.ryccoatika.imagetotext.domain.model.InvokeSuccess
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.BufferOverflow

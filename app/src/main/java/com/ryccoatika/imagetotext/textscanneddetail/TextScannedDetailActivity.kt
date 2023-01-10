@@ -17,7 +17,7 @@ import org.koin.core.parameter.parametersOf
 
 class TextScannedDetailActivity : AppCompatActivity(), TextScannedDetailView, View.OnClickListener {
 
-    private val textScannedViewModel: TextScannedDetailViewModel by viewModel { parametersOf(this) }
+    private val textScannedViewModel: com.ryccoatika.imagetotext.ui.textscanneddetail.TextScannedDetailViewModel by viewModel { parametersOf(this) }
     private var uiMode = UI_MODE_VIEW
     private lateinit var textScanned: TextScanned
 

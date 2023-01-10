@@ -2,8 +2,8 @@ package com.ryccoatika.imagetotext.core.data
 
 import com.ryccoatika.imagetotext.core.data.local.AppPreferences
 import com.ryccoatika.imagetotext.core.data.local.LocalDataSource
-import com.ryccoatika.imagetotext.core.model.TextScanned
-import com.ryccoatika.imagetotext.core.repository.TextScannedRepository
+import com.ryccoatika.imagetotext.domain.model.TextScanned
+import com.ryccoatika.imagetotext.domain.repository.TextScannedRepository
 import com.ryccoatika.imagetotext.core.utils.toTextScannedDomain
 import com.ryccoatika.imagetotext.core.utils.toTextScannedEntity
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +16,7 @@ import javax.inject.Singleton
 class TextScannedRepositoryImpl @Inject constructor(
     private val localDataSource: LocalDataSource,
     private val appPreferences: AppPreferences
-) : TextScannedRepository {
+) : com.ryccoatika.imagetotext.domain.repository.TextScannedRepository {
     override suspend fun getIsUserFirstTime(): Boolean =
         appPreferences.isFirstTime.first()
 
@@ -25,13 +25,13 @@ class TextScannedRepositoryImpl @Inject constructor(
         appPreferences.setFirstTime(isFirstTime)
     }
 
-    override suspend fun saveTextScanned(textScanned: TextScanned) =
+    override suspend fun saveTextScanned(textScanned: com.ryccoatika.imagetotext.domain.model.TextScanned) =
         localDataSource.saveTextScanned(textScanned.toTextScannedEntity())
 
-    override suspend fun removeTextScanned(textScanned: TextScanned) =
+    override suspend fun removeTextScanned(textScanned: com.ryccoatika.imagetotext.domain.model.TextScanned) =
         localDataSource.removeTextScanned(textScanned.toTextScannedEntity())
 
-    override fun getAllTextScanned(query: String?): Flow<List<TextScanned>> {
+    override fun getAllTextScanned(query: String?): Flow<List<com.ryccoatika.imagetotext.domain.model.TextScanned>> {
         return localDataSource.getAllTextScanned(query)
             .map { value -> value.map { it.toTextScannedDomain() } }
     }

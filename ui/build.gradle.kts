@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     kotlin("android")
+    kotlin("kapt")
 }
 
 android {
@@ -26,11 +27,17 @@ android {
 }
 
 dependencies {
+    implementation(project(":domain"))
     debugImplementation("androidx.compose.ui:ui-tooling:1.3.2")
     implementation("androidx.compose.ui:ui-tooling-preview:1.3.2")
 
     implementation("androidx.compose.material:material:1.3.1")
     implementation("androidx.compose.material:material-icons-extended:1.3.1")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+
+    implementation("com.google.dagger:hilt-android:2.44.2")
+    kapt("com.google.dagger:hilt-android-compiler:2.44.2")
 
     implementation("com.google.accompanist:accompanist-pager:0.28.0")
 

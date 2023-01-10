@@ -1,4 +1,4 @@
-package com.ryccoatika.imagetotext.core.utils
+package com.ryccoatika.imagetotext.domain.model
 
 sealed class InvokeStatus
 object InvokeStarted : InvokeStatus()

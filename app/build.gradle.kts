@@ -79,23 +79,6 @@ dependencies {
     // https://github.com/CanHub/Android-Image-Croppe
     implementation("com.github.CanHub:Android-Image-Cropper:4.0.0")
 
-    // room
-    implementation("androidx.room:room-runtime:2.4.3")
-    implementation("androidx.room:room-rxjava2:2.4.3")
-    kapt("androidx.room:room-compiler:2.4.3")
-
-    // reactivex
-    implementation("io.reactivex.rxjava2:rxjava:2.2.20")
-    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
-    implementation("com.jakewharton.rxbinding3:rxbinding:3.1.0")
-
-    // kotlin coroutine
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
-
-    // koin
-    implementation("io.insert-koin:koin-android:3.1.4")
-
-    // Leak Canary
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.10")
 
     // Lottie
@@ -106,5 +89,4 @@ dependencies {
 
     implementation("com.google.android.play:core-ktx:1.8.1")
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
 }

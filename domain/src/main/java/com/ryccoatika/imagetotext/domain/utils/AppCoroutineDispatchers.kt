@@ -1,4 +1,4 @@
-package com.ryccoatika.imagetotext.core.utils
+package com.ryccoatika.imagetotext.domain.utils
 
 import kotlinx.coroutines.CoroutineDispatcher
 
