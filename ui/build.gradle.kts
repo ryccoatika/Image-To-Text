@@ -22,24 +22,24 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.3.2"
+        kotlinCompilerExtensionVersion = libs.versions.composecompiler.get()
     }
 }
 
 dependencies {
     implementation(project(":domain"))
-    debugImplementation("androidx.compose.ui:ui-tooling:1.3.2")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.3.2")
+    debugImplementation(libs.compose.ui.tooling)
+    implementation(libs.compose.ui.tooling.preview)
 
-    implementation("androidx.compose.material:material:1.3.1")
-    implementation("androidx.compose.material:material-icons-extended:1.3.1")
+    implementation(libs.compose.material)
+    implementation(libs.compose.material.icons)
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation(libs.lifecycle.viewmodel)
 
-    implementation("com.google.dagger:hilt-android:2.44.2")
-    kapt("com.google.dagger:hilt-android-compiler:2.44.2")
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
 
-    implementation("com.google.accompanist:accompanist-pager:0.28.0")
+    implementation(libs.accompanist.pager)
 
-    implementation("com.himanshoe:pluck:1.0.0-RC2")
+    implementation(libs.pluck)
 }

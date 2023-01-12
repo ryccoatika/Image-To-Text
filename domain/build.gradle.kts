@@ -19,7 +19,7 @@ android {
 }
 
 dependencies {
-    implementation("com.google.dagger:dagger:2.44.2")
-    kapt("com.google.dagger:hilt-android-compiler:2.44.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation(libs.hilt.dagger)
+    kapt(libs.hilt.android.compiler)
+    implementation(libs.coroutines.core)
 }

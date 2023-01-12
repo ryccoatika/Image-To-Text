@@ -3,8 +3,9 @@ package com.ryccoatika.imagetotext.core.data.local
 import com.ryccoatika.imagetotext.core.data.local.entity.TextScannedEntity
 import com.ryccoatika.imagetotext.core.data.local.room.TextScannedDao
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class LocalDataSource(
+class LocalDataSource @Inject constructor(
     private val textScannedDao: TextScannedDao
 ) {
     suspend fun saveTextScanned(textScanned: TextScannedEntity) =

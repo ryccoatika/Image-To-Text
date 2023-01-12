@@ -20,17 +20,17 @@ android {
 
 dependencies {
     implementation(project(":domain"))
-    implementation("androidx.room:room-ktx:2.4.3")
-    implementation("androidx.room:room-runtime:2.4.3")
-    kapt("androidx.room:room-compiler:2.4.3")
+    implementation(libs.room)
+    implementation(libs.room.runtime)
+    kapt(libs.room.compiler)
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation(libs.coroutines.core)
 
-    implementation("com.google.dagger:hilt-android:2.44.2")
-    kapt("com.google.dagger:hilt-android-compiler:2.44.2")
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
 
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation(libs.datastore.preferences)
 
-    implementation("com.google.android.play:core-ktx:1.8.1")
-    implementation("com.google.android.gms:play-services-mlkit-text-recognition:18.0.2")
+    implementation(libs.google.play.core)
+    implementation(libs.google.mlkit.textrecognition)
 }
