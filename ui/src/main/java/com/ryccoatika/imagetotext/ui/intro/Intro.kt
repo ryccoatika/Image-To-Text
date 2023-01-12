@@ -26,7 +26,9 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Intro() {
+fun Intro(
+    openHomeScreen: () -> Unit
+) {
     val coroutineScope = rememberCoroutineScope()
 
     val introDrawables = listOf(R.drawable.intro_1, R.drawable.intro_2, R.drawable.intro_3)
@@ -72,7 +74,7 @@ fun Intro() {
                     .fillMaxWidth()
                     .background(MaterialTheme.colors.primary)
             ) {
-                TextButton(onClick = { }) {
+                TextButton(onClick = openHomeScreen) {
                     Text(
                         stringResource(R.string.button_skip).uppercase(),
                         color = MaterialTheme.colors.onPrimary
@@ -84,7 +86,7 @@ fun Intro() {
                     modifier = Modifier.weight(1f)
                 )
                 if (pagerState.currentPage == pagerState.pageCount - 1) {
-                    TextButton(onClick = { }) {
+                    TextButton(onClick = openHomeScreen) {
                         Text(
                             stringResource(R.string.button_finish).uppercase(),
                             color = MaterialTheme.colors.onPrimary
@@ -114,6 +116,8 @@ fun Intro() {
 @Composable
 private fun IntroPreview() {
     AppTheme {
-        Intro()
+        Intro(
+            openHomeScreen = {}
+        )
     }
 }

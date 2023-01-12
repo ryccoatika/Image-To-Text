@@ -10,6 +10,9 @@ room = "2.4.3"
 
 [libraries]
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
+accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
+accompanist-navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanist" }
+
 activity-compose = { module = "androidx.activity:activity-compose", version = "1.6.1" }
 
 compose-material = { module = "androidx.compose.material:material", version.ref = "composeMaterial" }

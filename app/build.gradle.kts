@@ -69,6 +69,9 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":ui"))
 
+    implementation(libs.accompanist.navigation.animation)
+    implementation(libs.accompanist.navigation.material)
+
     implementation(libs.activity.compose)
 
     debugImplementation(libs.compose.ui.tooling)
