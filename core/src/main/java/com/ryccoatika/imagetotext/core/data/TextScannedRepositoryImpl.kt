@@ -16,7 +16,7 @@ import javax.inject.Singleton
 class TextScannedRepositoryImpl @Inject constructor(
     private val localDataSource: LocalDataSource,
     private val appPreferences: AppPreferences
-) : com.ryccoatika.imagetotext.domain.repository.TextScannedRepository {
+) : TextScannedRepository {
     override suspend fun getIsUserFirstTime(): Boolean =
         appPreferences.isFirstTime.first()
 
@@ -25,13 +25,13 @@ class TextScannedRepositoryImpl @Inject constructor(
         appPreferences.setFirstTime(isFirstTime)
     }
 
-    override suspend fun saveTextScanned(textScanned: com.ryccoatika.imagetotext.domain.model.TextScanned) =
+    override suspend fun saveTextScanned(textScanned: TextScanned) =
         localDataSource.saveTextScanned(textScanned.toTextScannedEntity())
 
-    override suspend fun removeTextScanned(textScanned: com.ryccoatika.imagetotext.domain.model.TextScanned) =
+    override suspend fun removeTextScanned(textScanned: TextScanned) =
         localDataSource.removeTextScanned(textScanned.toTextScannedEntity())
 
-    override fun getAllTextScanned(query: String?): Flow<List<com.ryccoatika.imagetotext.domain.model.TextScanned>> {
+    override fun getAllTextScanned(query: String?): Flow<List<TextScanned>> {
         return localDataSource.getAllTextScanned(query)
             .map { value -> value.map { it.toTextScannedDomain() } }
     }

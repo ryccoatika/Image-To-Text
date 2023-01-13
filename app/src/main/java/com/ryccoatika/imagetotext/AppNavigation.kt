@@ -11,6 +11,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.ryccoatika.imagetotext.ui.home.Home
 import com.ryccoatika.imagetotext.ui.intro.Intro
+import com.ryccoatika.imagetotext.ui.splash.Splash
 
 internal sealed class Screen(val route: String) {
     object Splash : Screen("splash")
@@ -22,6 +23,7 @@ private sealed class LeafScreen(
 ) {
     fun createRoute(root: Screen) = "${root.route}/$route"
 
+    object SplashScreen : LeafScreen("splash")
     object IntroScreen : LeafScreen("intro")
     object HomeScreen : LeafScreen("home")
 }
@@ -37,18 +39,19 @@ internal fun AppNavigation(
         startDestination = Screen.Splash.route,
         modifier = modifier
     ) {
-        addIntroTopLevel(navController)
+        addSplashTopLevel(navController)
         addHomeTopLevel()
     }
 }
 
-private fun NavGraphBuilder.addIntroTopLevel(
+private fun NavGraphBuilder.addSplashTopLevel(
     navController: NavController
 ) {
     navigation(
         route = Screen.Splash.route,
-        startDestination = LeafScreen.IntroScreen.createRoute(Screen.Splash)
+        startDestination = LeafScreen.SplashScreen.createRoute(Screen.Splash)
     ) {
+        addSplashScreen(Screen.Splash, navController)
         addIntroScreen(Screen.Splash, navController)
     }
 }
@@ -59,6 +62,37 @@ private fun NavGraphBuilder.addHomeTopLevel() {
         startDestination = LeafScreen.HomeScreen.createRoute(Screen.Home)
     ) {
         addHomeScreen(Screen.Home)
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+private fun NavGraphBuilder.addSplashScreen(
+    root: Screen,
+    navController: NavController
+) {
+    composable(
+        route = LeafScreen.SplashScreen.createRoute(root),
+    ) {
+        Splash(
+            openHomeScreen = {
+                navController.navigate(Screen.Home.route) {
+                    launchSingleTop = true
+
+                    popUpTo(navController.graph.id) {
+                        inclusive = true
+                    }
+                }
+            },
+            openIntroScreen = {
+                navController.navigate(LeafScreen.IntroScreen.createRoute(root)) {
+                    launchSingleTop = true
+
+                    popUpTo(navController.graph.id) {
+                        inclusive = true
+                    }
+                }
+            }
+        )
     }
 }
 

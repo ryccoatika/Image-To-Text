@@ -34,6 +34,8 @@ google-play-core = { module = "com.google.android.play:core-ktx", version = "1.8
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 hilt-dagger = { module = "com.google.dagger:dagger", version.ref = "hilt" }
+hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version = "1.0.0" }
+
 
 leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version = "2.10" }
 

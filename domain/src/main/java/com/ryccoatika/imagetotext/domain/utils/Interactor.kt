@@ -27,6 +27,8 @@ abstract class Interactor<in P> {
         }
     }.catch { t -> emit(InvokeError(t)) }
 
+    suspend fun executeSync(params: P) = doWork(params)
+
     protected abstract suspend fun doWork(params: P)
 
     companion object {
@@ -38,8 +40,6 @@ abstract class ResultInteractor<P : Any, R> {
     operator fun invoke(params: P): Flow<R> = flow {
         emit(doWork(params))
     }
-
-    suspend fun executeSync(params: P) = doWork(params)
 
     protected abstract suspend fun doWork(params: P): R
 }
