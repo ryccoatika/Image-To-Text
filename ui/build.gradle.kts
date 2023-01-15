@@ -28,6 +28,9 @@ android {
 
 dependencies {
     implementation(project(":domain"))
+
+    implementation(libs.accompanist.permission)
+
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.tooling.preview)
 
@@ -41,6 +44,4 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
 
     implementation(libs.accompanist.pager)
-
-    implementation(libs.pluck)
 }

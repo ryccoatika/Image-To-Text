@@ -2,12 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:dist="http://schemas.android.com/apk/distribution">
 
-    <uses-feature
-            android:name="android.hardware.camera"
-            android:required="true" />
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <dist:module dist:instant="true" />
 
@@ -32,6 +28,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+                android:name=".utils.ComposeFileProviderImpl"
+                android:authorities="@string/file_provider_authorities"
+                android:grantUriPermissions="true"
+                android:exported="false">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths"/>
+        </provider>
         <meta-data
                 android:name="com.google.mlkit.vision.DEPENDENCIES"
                 android:value="ocr" />

@@ -1,34 +1,53 @@
 package com.ryccoatika.imagetotext.ui.home
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import android.content.Context
+import android.net.Uri
+import android.util.Log
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ryccoatika.imagetotext.ui.R
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 import com.ryccoatika.imagetotext.ui.common.theme.spacing
 import com.ryccoatika.imagetotext.ui.common.ui.AppSearchTextInput
+import com.ryccoatika.imagetotext.ui.common.ui.FabImagePicker
 import com.ryccoatika.imagetotext.ui.common.ui.ScannedTextCard
 
 @Composable
 fun Home() {
+    Home(
+        viewModel = hiltViewModel()
+    )
+}
+
+@Composable
+private fun Home(
+    viewModel: HomeViewModel,
+) {
+    Home(generateImageUri = viewModel::getImageUri)
+}
+
+@Composable
+private fun Home(
+    generateImageUri: (Context) -> Uri
+) {
+
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { },
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null,
-                )
-            }
+            FabImagePicker(
+                pickedFromGallery = { uri ->
+                    Log.i("190401", "Home: $uri")
+                },
+                pickedFromCamera = { uri ->
+                    Log.i("190401", "Home: $uri")
+                },
+                generateImageUri = generateImageUri
+            )
         },
     ) { paddingValues ->
         Column(

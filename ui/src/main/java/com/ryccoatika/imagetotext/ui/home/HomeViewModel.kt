@@ -1,11 +1,14 @@
 package com.ryccoatika.imagetotext.ui.home
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ryccoatika.imagetotext.domain.model.TextScanned
 import com.ryccoatika.imagetotext.domain.usecase.ObserveTextScanned
 import com.ryccoatika.imagetotext.domain.usecase.RemoveTextScanned
 import com.ryccoatika.imagetotext.domain.usecase.SaveTextScanned
+import com.ryccoatika.imagetotext.domain.utils.ComposeFileProvider
 import com.ryccoatika.imagetotext.domain.utils.ObservableLoadingCounter
 import com.ryccoatika.imagetotext.domain.utils.UiMessageManager
 import com.ryccoatika.imagetotext.domain.utils.collectStatus
@@ -20,7 +23,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     observeTextScanned: ObserveTextScanned,
     private val saveTextScanned: SaveTextScanned,
-    private val removeTextScanned: RemoveTextScanned
+    private val removeTextScanned: RemoveTextScanned,
+    private val composeFileProvider: ComposeFileProvider
 ) : ViewModel() {
 
     private val loadingState = ObservableLoadingCounter()
@@ -79,6 +83,8 @@ class HomeViewModel @Inject constructor(
             )
         }
     }
+
+    fun getImageUri(context: Context): Uri = composeFileProvider.getImageUri(context)
 
     fun clearMessage(id: Long) {
         viewModelScope.launch {

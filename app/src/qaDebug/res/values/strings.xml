@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Image To Text - Debug</string>
+    <string name="file_provider_authorities">com.ryccoatika.imagetotext.debug.fileprovider</string>
+</resources>

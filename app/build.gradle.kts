@@ -41,12 +41,28 @@ android {
             )
         }
         getByName("debug") {
-            applicationIdSuffix = ".dev"
+            applicationIdSuffix = ".debug"
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+    }
+
+    flavorDimensions += "mode"
+    productFlavors {
+        create("qa") {
+            signingConfig = signingConfigs.getByName("debug")
+
+            dimension = "mode"
+            versionNameSuffix = "-qa"
+        }
+
+        create("standard") {
+            signingConfig = signingConfigs.getByName("debug")
+
+            dimension = "mode"
         }
     }
 
@@ -61,6 +77,17 @@ android {
 
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.composecompiler.get()
+    }
+}
+
+// Disable variant standard debug
+androidComponents {
+    beforeVariants { variantBuilder ->
+        val isQa = variantBuilder.productFlavors.any { it.first.contains("qa") || it.second.contains("qa") }
+        val isDebug = variantBuilder.buildType == "debug"
+        if (!isQa && isDebug) {
+            variantBuilder.enable = false
+        }
     }
 }
 

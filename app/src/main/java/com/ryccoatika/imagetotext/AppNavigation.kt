@@ -120,7 +120,7 @@ private fun NavGraphBuilder.addIntroScreen(
 
 @OptIn(ExperimentalAnimationApi::class)
 private fun NavGraphBuilder.addHomeScreen(
-    root: Screen
+    root: Screen,
 ) {
     composable(
         route = LeafScreen.HomeScreen.createRoute(root),
