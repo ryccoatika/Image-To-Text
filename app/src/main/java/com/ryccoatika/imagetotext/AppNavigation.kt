@@ -1,14 +1,13 @@
 package com.ryccoatika.imagetotext
 
+import android.net.Uri
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.navigation
+import androidx.navigation.*
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
+import com.ryccoatika.imagetotext.ui.convertresult.ImageConvertResult
 import com.ryccoatika.imagetotext.ui.home.Home
 import com.ryccoatika.imagetotext.ui.intro.Intro
 import com.ryccoatika.imagetotext.ui.splash.Splash
@@ -26,6 +25,12 @@ private sealed class LeafScreen(
     object SplashScreen : LeafScreen("splash")
     object IntroScreen : LeafScreen("intro")
     object HomeScreen : LeafScreen("home")
+    object ImageConvertResultScreen : LeafScreen("imageconvertresult/{uri}") {
+        fun createRoute(
+            root: Screen,
+            uri: Uri
+        ): String = "${root.route}/imageconvertresult/${Uri.encode(uri.toString())}"
+    }
 }
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -40,7 +45,7 @@ internal fun AppNavigation(
         modifier = modifier
     ) {
         addSplashTopLevel(navController)
-        addHomeTopLevel()
+        addHomeTopLevel(navController)
     }
 }
 
@@ -56,12 +61,15 @@ private fun NavGraphBuilder.addSplashTopLevel(
     }
 }
 
-private fun NavGraphBuilder.addHomeTopLevel() {
+private fun NavGraphBuilder.addHomeTopLevel(
+    navController: NavController
+) {
     navigation(
         route = Screen.Home.route,
         startDestination = LeafScreen.HomeScreen.createRoute(Screen.Home)
     ) {
-        addHomeScreen(Screen.Home)
+        addHomeScreen(Screen.Home, navController)
+        addImageConvertResultScreen(Screen.Home)
     }
 }
 
@@ -121,10 +129,31 @@ private fun NavGraphBuilder.addIntroScreen(
 @OptIn(ExperimentalAnimationApi::class)
 private fun NavGraphBuilder.addHomeScreen(
     root: Screen,
+    navController: NavController
 ) {
     composable(
         route = LeafScreen.HomeScreen.createRoute(root),
     ) {
-        Home()
+        Home(
+            openImageResultScreen = { uri ->
+                navController.navigate(LeafScreen.ImageConvertResultScreen.createRoute(root, uri))
+            }
+        )
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+private fun NavGraphBuilder.addImageConvertResultScreen(
+    root: Screen,
+) {
+    composable(
+        route = LeafScreen.ImageConvertResultScreen.createRoute(root),
+        arguments = listOf(
+            navArgument("uri") {
+                type = NavType.StringType
+            }
+        )
+    ) {
+        ImageConvertResult()
     }
 }

@@ -25,27 +25,32 @@ import com.ryccoatika.imagetotext.ui.common.theme.spacing
 @OptIn(ExperimentalAnimationApi::class, ExperimentalPermissionsApi::class)
 @Composable
 fun FabImagePicker(
-    pickedFromGallery: (Uri?) -> Unit,
-    pickedFromCamera: (Uri?) -> Unit,
+    pickedFromGallery: (Uri) -> Unit,
+    pickedFromCamera: (Uri) -> Unit,
     generateImageUri: (Context) -> Uri
 ) {
     val context = LocalContext.current
     var fabAddActive by remember { mutableStateOf(false) }
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            pickedFromGallery(uri)
+            if (uri != null) {
+                pickedFromGallery(uri)
+            }
         }
 
     var imageUriFromCamera by remember { mutableStateOf<Uri?>(null) }
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { result ->
         if (result) {
-            pickedFromCamera(imageUriFromCamera)
-        } else {
-            pickedFromCamera(null)
+            imageUriFromCamera?.let { pickedFromCamera(it) }
         }
     }
 
-    val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
+    val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA) { granted ->
+        if (granted) {
+            imageUriFromCamera = generateImageUri(context)
+            cameraLauncher.launch(imageUriFromCamera)
+        }
+    }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium)

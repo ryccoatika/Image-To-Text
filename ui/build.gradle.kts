@@ -44,4 +44,8 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
 
     implementation(libs.accompanist.pager)
+
+    implementation(libs.coil)
+
+    implementation(libs.google.mlkit.textrecognition)
 }

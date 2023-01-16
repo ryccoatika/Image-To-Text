@@ -22,4 +22,6 @@ dependencies {
     implementation(libs.hilt.dagger)
     kapt(libs.hilt.android.compiler)
     implementation(libs.coroutines.core)
+
+    implementation(libs.google.mlkit.textrecognition)
 }

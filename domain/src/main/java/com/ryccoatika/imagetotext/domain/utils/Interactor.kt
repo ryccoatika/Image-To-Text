@@ -41,6 +41,8 @@ abstract class ResultInteractor<P : Any, R> {
         emit(doWork(params))
     }
 
+    suspend fun executeSync(params: P) = doWork(params)
+
     protected abstract suspend fun doWork(params: P): R
 }
 

@@ -21,22 +21,27 @@ import com.ryccoatika.imagetotext.ui.common.ui.ScannedTextCard
 import com.ryccoatika.imagetotext.ui.common.utils.rememberStateWithLifecycle
 
 @Composable
-fun Home() {
+fun Home(
+    openImageResultScreen: (Uri) -> Unit
+) {
     Home(
-        viewModel = hiltViewModel()
+        viewModel = hiltViewModel(),
+        openImageResultScreen = openImageResultScreen
     )
 }
 
 @Composable
 private fun Home(
     viewModel: HomeViewModel,
+    openImageResultScreen: (Uri) -> Unit
 ) {
     val viewState by rememberStateWithLifecycle(viewModel.state)
 
     Home(
         state = viewState,
         generateImageUri = viewModel::getImageUri,
-        onSearchChanged = viewModel::setQuery
+        onSearchChanged = viewModel::setQuery,
+        openImageResultScreen = openImageResultScreen
     )
 }
 
@@ -44,16 +49,19 @@ private fun Home(
 private fun Home(
     state: HomeViewState,
     generateImageUri: (Context) -> Uri,
-    onSearchChanged: (String) -> Unit
+    onSearchChanged: (String) -> Unit,
+    openImageResultScreen: (Uri) -> Unit
 ) {
 
     Scaffold(
         floatingActionButton = {
             FabImagePicker(
                 pickedFromGallery = { uri ->
+                    openImageResultScreen(uri)
                     Log.i("190401", "Home: $uri")
                 },
                 pickedFromCamera = { uri ->
+                    openImageResultScreen(uri)
                     Log.i("190401", "Home: $uri")
                 },
                 generateImageUri = generateImageUri
@@ -106,8 +114,8 @@ private fun HomePreview() {
         Home(
             state = HomeViewState.Empty,
             generateImageUri = { Uri.EMPTY },
-            onSearchChanged = {}
+            onSearchChanged = {},
+            openImageResultScreen = {}
         )
-
     }
 }

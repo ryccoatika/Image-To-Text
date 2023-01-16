@@ -11,4 +11,10 @@
     <string name="intro_caption_1">Click the floating button on the bottom right to scan new image</string>
     <string name="intro_caption_2">Long press on the item to copy the text</string>
     <string name="intro_caption_3">Slide left on the item to delete</string>
+
+    <string name="lang_latin">Latin</string>
+    <string name="lang_chinese">中文</string>
+    <string name="lang_devanagari">हिन्दी</string>
+    <string name="lang_japanese">日本語</string>
+    <string name="lang_korean">한국어</string>
 </resources>
