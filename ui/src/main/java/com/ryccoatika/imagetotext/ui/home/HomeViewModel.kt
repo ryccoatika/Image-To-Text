@@ -60,7 +60,7 @@ class HomeViewModel @Inject constructor(
         observeTextScanned(ObserveTextScanned.Params(query.value))
     }
 
-    fun search(query: String) {
+    fun setQuery(query: String) {
         viewModelScope.launch {
             this@HomeViewModel.query.emit(query)
         }

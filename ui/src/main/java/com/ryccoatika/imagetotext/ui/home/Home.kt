@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -17,6 +18,7 @@ import com.ryccoatika.imagetotext.ui.common.theme.spacing
 import com.ryccoatika.imagetotext.ui.common.ui.AppSearchTextInput
 import com.ryccoatika.imagetotext.ui.common.ui.FabImagePicker
 import com.ryccoatika.imagetotext.ui.common.ui.ScannedTextCard
+import com.ryccoatika.imagetotext.ui.common.utils.rememberStateWithLifecycle
 
 @Composable
 fun Home() {
@@ -29,12 +31,20 @@ fun Home() {
 private fun Home(
     viewModel: HomeViewModel,
 ) {
-    Home(generateImageUri = viewModel::getImageUri)
+    val viewState by rememberStateWithLifecycle(viewModel.state)
+
+    Home(
+        state = viewState,
+        generateImageUri = viewModel::getImageUri,
+        onSearchChanged = viewModel::setQuery
+    )
 }
 
 @Composable
 private fun Home(
-    generateImageUri: (Context) -> Uri
+    state: HomeViewState,
+    generateImageUri: (Context) -> Uri,
+    onSearchChanged: (String) -> Unit
 ) {
 
     Scaffold(
@@ -61,8 +71,8 @@ private fun Home(
                 modifier = Modifier.padding(top = MaterialTheme.spacing.extraLarge)
             )
             AppSearchTextInput(
-                value = "",
-                onValueChange = {},
+                value = state.query ?: "",
+                onValueChange = onSearchChanged,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = MaterialTheme.spacing.medium)
@@ -72,9 +82,14 @@ private fun Home(
                     .weight(1f)
                     .padding(top = MaterialTheme.spacing.medium)
             ) {
-                items(count = 10) {
+                items(
+                    items = state.textScannedCollection,
+                    key = {
+                        it.dateTime
+                    }
+                ) { textScanned ->
                     ScannedTextCard(
-                        text = "",
+                        text = textScanned.text,
                         onDismissed = {},
                         modifier = Modifier.padding(bottom = MaterialTheme.spacing.small)
                     )
@@ -88,6 +103,11 @@ private fun Home(
 @Composable
 private fun HomePreview() {
     AppTheme {
-        Home()
+        Home(
+            state = HomeViewState.Empty,
+            generateImageUri = { Uri.EMPTY },
+            onSearchChanged = {}
+        )
+
     }
 }
