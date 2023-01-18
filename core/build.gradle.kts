@@ -33,4 +33,8 @@ dependencies {
 
     implementation(libs.google.play.core)
     implementation(libs.google.mlkit.textrecognition)
+    implementation(libs.google.mlkit.textrecognition.chinese)
+    implementation(libs.google.mlkit.textrecognition.devanagari)
+    implementation(libs.google.mlkit.textrecognition.japanese)
+    implementation(libs.google.mlkit.textrecognition.korean)
 }

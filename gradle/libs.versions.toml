@@ -7,6 +7,7 @@ coroutines = "1.6.4"
 datastore = "1.0.0"
 hilt = "2.44.2"
 room = "2.4.3"
+textrecognition = "16.0.0-beta6"
 
 [libraries]
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
@@ -30,7 +31,11 @@ datastore-preferences = { module = "androidx.datastore:datastore-preferences", v
 
 google-firebase-core = { module = "com.google.firebase:firebase-core", version = "21.1.1" }
 google-firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx", version = "21.2.0" }
-google-mlkit-textrecognition = { module = "com.google.android.gms:play-services-mlkit-text-recognition", version = "18.0.2" }
+google-mlkit-textrecognition = { module = "com.google.mlkit:text-recognition", version.ref = "textrecognition" }
+google-mlkit-textrecognition-chinese = { module = "com.google.mlkit:text-recognition-chinese", version.ref = "textrecognition" }
+google-mlkit-textrecognition-devanagari = { module = "com.google.mlkit:text-recognition-devanagari", version.ref = "textrecognition" }
+google-mlkit-textrecognition-japanese = { module = "com.google.mlkit:text-recognition-japanese", version.ref = "textrecognition" }
+google-mlkit-textrecognition-korean = { module = "com.google.mlkit:text-recognition-korean", version.ref = "textrecognition" }
 google-play-core = { module = "com.google.android.play:core-ktx", version = "1.8.1" }
 
 

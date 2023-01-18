@@ -69,7 +69,7 @@ private fun NavGraphBuilder.addHomeTopLevel(
         startDestination = LeafScreen.HomeScreen.createRoute(Screen.Home)
     ) {
         addHomeScreen(Screen.Home, navController)
-        addImageConvertResultScreen(Screen.Home)
+        addImageConvertResultScreen(Screen.Home, navController)
     }
 }
 
@@ -145,6 +145,7 @@ private fun NavGraphBuilder.addHomeScreen(
 @OptIn(ExperimentalAnimationApi::class)
 private fun NavGraphBuilder.addImageConvertResultScreen(
     root: Screen,
+    navController: NavController
 ) {
     composable(
         route = LeafScreen.ImageConvertResultScreen.createRoute(root),
@@ -154,6 +155,8 @@ private fun NavGraphBuilder.addImageConvertResultScreen(
             }
         )
     ) {
-        ImageConvertResult()
+        ImageConvertResult(
+            navigateBack = navController::navigateUp
+        )
     }
 }

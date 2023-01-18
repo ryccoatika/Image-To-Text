@@ -31,28 +31,35 @@ import com.ryccoatika.imagetotext.ui.common.utils.rememberStateWithLifecycle
 import kotlin.math.roundToInt
 
 @Composable
-fun ImageConvertResult() {
+fun ImageConvertResult(
+    navigateBack: () -> Unit
+) {
     ImageConvertResult(
-        viewModel = hiltViewModel()
+        viewModel = hiltViewModel(),
+        navigateBack = navigateBack
     )
 }
 
 
 @Composable
 private fun ImageConvertResult(
-    viewModel: ImageConvertResultViewModel
+    viewModel: ImageConvertResultViewModel,
+    navigateBack: () -> Unit
 ) {
     val viewState by rememberStateWithLifecycle(viewModel.state)
 
     ImageConvertResult(
-        state = viewState, languageModelChanged = viewModel::setRecognitionLangModel
+        state = viewState,
+        languageModelChanged = viewModel::setRecognitionLangModel,
+        navigateBack = navigateBack
     )
 }
 
 @Composable
 private fun ImageConvertResult(
     state: ImageConvertResultViewState,
-    languageModelChanged: (RecognationLanguageModel) -> Unit
+    languageModelChanged: (RecognationLanguageModel) -> Unit,
+    navigateBack: () -> Unit
 ) {
     var imageSizeRatio by remember { mutableStateOf(1f) }
     var placeHolderOffset by remember { mutableStateOf(Offset.Zero) }
@@ -68,7 +75,8 @@ private fun ImageConvertResult(
         ) {
             ImageConvertResultTopBar(
                 state = state,
-                languageModelChanged = languageModelChanged
+                languageModelChanged = languageModelChanged,
+                onBackClick = navigateBack
             )
             Box(
                 modifier = Modifier
@@ -141,7 +149,8 @@ private fun ImageConvertResult(
 @Composable
 private fun ImageConvertResultTopBar(
     state: ImageConvertResultViewState,
-    languageModelChanged: (RecognationLanguageModel) -> Unit
+    languageModelChanged: (RecognationLanguageModel) -> Unit,
+    onBackClick: () -> Unit
 ) {
     var showDropdown by remember { mutableStateOf(false) }
 
@@ -153,7 +162,7 @@ private fun ImageConvertResultTopBar(
             .fillMaxWidth()
     ) {
         IconButton(
-            onClick = { },
+            onClick = onBackClick,
         ) {
             Icon(
                 imageVector = Icons.Default.KeyboardArrowLeft,
@@ -204,6 +213,10 @@ private fun RecognationLanguageModel.getText(): String {
 @Composable
 private fun ImageConvertResultPreview() {
     AppTheme {
-        ImageConvertResult(state = ImageConvertResultViewState.Empty, languageModelChanged = {})
+        ImageConvertResult(
+            state = ImageConvertResultViewState.Empty,
+            languageModelChanged = {},
+            navigateBack = {}
+        )
     }
 }
