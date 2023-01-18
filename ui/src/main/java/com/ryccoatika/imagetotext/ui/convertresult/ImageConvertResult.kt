@@ -1,7 +1,6 @@
 package com.ryccoatika.imagetotext.ui.convertresult
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -12,22 +11,22 @@ import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
+import com.google.mlkit.vision.text.Text
 import com.ryccoatika.imagetotext.domain.model.RecognationLanguageModel
 import com.ryccoatika.imagetotext.ui.R
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 import com.ryccoatika.imagetotext.ui.common.theme.spacing
+import com.ryccoatika.imagetotext.ui.common.ui.TextHighlightBlock
+import com.ryccoatika.imagetotext.ui.common.ui.TextHighlightBlockSelected
 import com.ryccoatika.imagetotext.ui.common.utils.rememberStateWithLifecycle
 import kotlin.math.roundToInt
 
@@ -55,9 +54,9 @@ private fun ImageConvertResult(
     state: ImageConvertResultViewState,
     languageModelChanged: (RecognationLanguageModel) -> Unit
 ) {
-    val density = LocalDensity.current
     var imageSizeRatio by remember { mutableStateOf(1f) }
     var placeHolderOffset by remember { mutableStateOf(Offset.Zero) }
+    val selectedElements = remember { mutableStateListOf<Text.Element>() }
 
     Scaffold(
         backgroundColor = MaterialTheme.colors.primary
@@ -72,7 +71,15 @@ private fun ImageConvertResult(
                 languageModelChanged = languageModelChanged
             )
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = {
+                            selectedElements.clear()
+                        }
+                    )
             ) {
                 val imagePainter = rememberAsyncImagePainter(state.imageUri)
                 Image(
@@ -106,33 +113,26 @@ private fun ImageConvertResult(
                             }
                         }
                 )
-                state.text?.textBlocks?.forEach { textBlock ->
-                    textBlock.lines.forEach { line ->
-                        line.boundingBox?.let { rect ->
-                            Box(
-                                modifier = Modifier
-                                    .offset(
-                                        x = density.run { placeHolderOffset.x.toDp() },
-                                        y = density.run { placeHolderOffset.y.toDp() }
-                                    )
-                                    .offset(
-                                        x = density.run { (rect.left * imageSizeRatio).toDp() },
-                                        y = density.run { (rect.top * imageSizeRatio).toDp() }
-                                    )
-                                    .size(
-                                        width = density.run {
-                                            ((rect.right - rect.left) * imageSizeRatio).toDp()
-                                        },
-                                        height = density.run {
-                                            ((rect.bottom - rect.top) * imageSizeRatio).toDp()
-                                        }
-                                    )
-                                    .clip(MaterialTheme.shapes.large)
-                                    .background(Color.Black.copy(0.2f))
-                            )
-                        }
+                state.texts.forEach { element ->
+                    TextHighlightBlock(
+                        element = element,
+                        placeHolderOffset = placeHolderOffset,
+                        imageSizeRatio = imageSizeRatio
+                    ) {
+                        selectedElements.clear()
+                        selectedElements.add(element)
                     }
                 }
+                TextHighlightBlockSelected(
+                    selectedElements = selectedElements,
+                    elements = state.texts,
+                    placeHolderOffset = placeHolderOffset,
+                    imageSizeRatio = imageSizeRatio,
+                    selectedElementsChanged = { value ->
+                        selectedElements.clear()
+                        selectedElements.addAll(value)
+                    }
+                )
             }
         }
     }

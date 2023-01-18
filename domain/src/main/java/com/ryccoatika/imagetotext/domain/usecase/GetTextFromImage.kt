@@ -10,8 +10,8 @@ import javax.inject.Inject
 
 class GetTextFromImage @Inject constructor(
     private val textRecognitionRepository: TextRecognitionRepository
-) : ResultInteractor<GetTextFromImage.Params, Text>() {
-    override suspend fun doWork(params: Params): Text {
+) : ResultInteractor<GetTextFromImage.Params, List<Text.Element>>() {
+    override suspend fun doWork(params: Params): List<Text.Element> {
         return textRecognitionRepository.convertImageToText(params.inputImage, params.languageModel)
     }
 

@@ -7,7 +7,7 @@ import com.ryccoatika.imagetotext.domain.model.RecognationLanguageModel
 data class ImageConvertResultViewState(
     val imageUri: Uri = Uri.EMPTY,
     val language: RecognationLanguageModel = RecognationLanguageModel.LATIN,
-    val text: Text? = null
+    val texts: List<Text.Element> = emptyList()
 ) {
     companion object {
         val Empty = ImageConvertResultViewState()

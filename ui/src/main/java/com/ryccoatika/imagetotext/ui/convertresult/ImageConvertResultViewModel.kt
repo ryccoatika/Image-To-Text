@@ -25,7 +25,7 @@ class ImageConvertResultViewModel @Inject constructor(
 
     private val uri = Uri.parse(savedStateHandle["uri"])
     private val recognitionLanguageModel = MutableStateFlow(RecognationLanguageModel.LATIN)
-    private val text = MutableStateFlow<Text?>(null)
+    private val text = MutableStateFlow<List<Text.Element>>(emptyList())
 
     val state: StateFlow<ImageConvertResultViewState> = combine(
         flowOf(uri),
