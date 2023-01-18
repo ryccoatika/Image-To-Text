@@ -89,32 +89,32 @@ private fun ImageConvertResult(
                         }
                     )
             ) {
-                val imagePainter = rememberAsyncImagePainter(state.imageUri)
+                val imagePainter = rememberAsyncImagePainter(state.uri)
                 Image(
                     painter = imagePainter,
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
                         .onGloballyPositioned { coordinates ->
-                            if (coordinates.size != IntSize.Zero && imagePainter.intrinsicSize != Size.Unspecified) {
+                            if (coordinates.size != IntSize.Zero && imagePainter.intrinsicSize != Size.Unspecified && state.inputImage != null) {
                                 // calculate size ratio
                                 val widthRatio =
-                                    coordinates.size.width / imagePainter.intrinsicSize.width
+                                    coordinates.size.width / state.inputImage.width.toFloat()
                                 val heightRatio =
-                                    coordinates.size.height / imagePainter.intrinsicSize.height
+                                    coordinates.size.height / state.inputImage.height.toFloat()
                                 imageSizeRatio = minOf(widthRatio, heightRatio)
 
                                 // calculate offset
                                 var yOffset = 0f
                                 var xOffset = 0f
-                                if ((imageSizeRatio * imagePainter.intrinsicSize.width).roundToInt() == coordinates.size.width) {
+                                if ((imageSizeRatio * state.inputImage.width).roundToInt() == coordinates.size.width) {
                                     val scaledImageHeight =
-                                        imageSizeRatio * imagePainter.intrinsicSize.height
+                                        imageSizeRatio * state.inputImage.height
                                     yOffset = coordinates.size.height / 2 - scaledImageHeight / 2
                                 }
-                                if ((imageSizeRatio * imagePainter.intrinsicSize.height).roundToInt() == coordinates.size.height) {
+                                if ((imageSizeRatio * state.inputImage.height).roundToInt() == coordinates.size.height) {
                                     val scaledImageWidth =
-                                        imageSizeRatio * imagePainter.intrinsicSize.width
+                                        imageSizeRatio * state.inputImage.width
                                     xOffset = coordinates.size.width / 2 - scaledImageWidth / 2
                                 }
                                 placeHolderOffset = Offset(xOffset, yOffset)
@@ -182,12 +182,17 @@ private fun ImageConvertResultTopBar(
                 )
                 Icon(Icons.Default.ArrowDropDown, contentDescription = null)
             }
-            DropdownMenu(expanded = showDropdown,
-                onDismissRequest = { showDropdown = false }) {
+            DropdownMenu(
+                expanded = showDropdown,
+                onDismissRequest = { showDropdown = false }
+            ) {
                 RecognationLanguageModel.values().forEach { recogLangModel ->
-                    DropdownMenuItem(onClick = {
-                        languageModelChanged(recogLangModel)
-                    }) {
+                    DropdownMenuItem(
+                        onClick = {
+                            languageModelChanged(recogLangModel)
+                            showDropdown = false
+                        }
+                    ) {
                         Text(recogLangModel.getText())
                     }
                 }

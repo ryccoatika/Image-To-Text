@@ -24,11 +24,13 @@ class ImageConvertResultViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val uri = Uri.parse(savedStateHandle["uri"])
+    private val inputImage = InputImage.fromFilePath(context, uri)
     private val recognitionLanguageModel = MutableStateFlow(RecognationLanguageModel.LATIN)
     private val text = MutableStateFlow<List<Text.Element>>(emptyList())
 
     val state: StateFlow<ImageConvertResultViewState> = combine(
         flowOf(uri),
+        flowOf(inputImage),
         recognitionLanguageModel,
         text,
         ::ImageConvertResultViewState
@@ -41,10 +43,9 @@ class ImageConvertResultViewModel @Inject constructor(
     init {
         try {
             viewModelScope.launch {
-                val image = InputImage.fromFilePath(context, uri)
                 text.value = getTextFromImage.executeSync(
                     GetTextFromImage.Params(
-                        inputImage = image,
+                        inputImage = inputImage,
                         languageModel = recognitionLanguageModel.value
                     )
                 )
@@ -56,10 +57,9 @@ class ImageConvertResultViewModel @Inject constructor(
         viewModelScope.launch {
             recognitionLanguageModel.collect { langModel ->
                 try {
-                    val image = InputImage.fromFilePath(context, uri)
                     text.value = getTextFromImage.executeSync(
                         GetTextFromImage.Params(
-                            inputImage = image,
+                            inputImage = inputImage,
                             languageModel = langModel
                         )
                     )
