@@ -9,7 +9,9 @@ data class ImageConvertResultViewState(
     val uri: Uri = Uri.EMPTY,
     val inputImage: InputImage? = null,
     val language: RecognationLanguageModel = RecognationLanguageModel.LATIN,
-    val texts: List<Text.Element> = emptyList()
+    val textBlocks: List<Text.TextBlock> = emptyList(),
+    val elements: List<Text.Element> = emptyList(),
+    val text: String = ""
 ) {
     companion object {
         val Empty = ImageConvertResultViewState()

@@ -18,7 +18,7 @@ class TextRecognitionRepositoryImpl @Inject constructor() : TextRecognitionRepos
     override suspend fun convertImageToText(
         inputImage: InputImage,
         languageModel: RecognationLanguageModel
-    ): List<Text.Element> = suspendCoroutine { continuation ->
+    ): List<Text.TextBlock> = suspendCoroutine { continuation ->
         val recognizer = when (languageModel) {
             RecognationLanguageModel.LATIN -> TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
             RecognationLanguageModel.CHINESE -> TextRecognition.getClient(
@@ -42,15 +42,7 @@ class TextRecognitionRepositoryImpl @Inject constructor() : TextRecognitionRepos
         recognizer.process(inputImage)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val elements =
-                        task.result.textBlocks.fold(emptyList<Text.Element>()) { acc1, textBlock ->
-                            acc1 + textBlock.lines.fold(emptyList()) { acc2, line ->
-                                acc2 + line.elements.fold(emptyList()) { acc3, element ->
-                                    acc3 + element
-                                }
-                            }
-                        }
-                    continuation.resume(elements)
+                    continuation.resume(task.result.textBlocks)
                 } else {
                     task.exception?.printStackTrace()
                     continuation.resume(emptyList())

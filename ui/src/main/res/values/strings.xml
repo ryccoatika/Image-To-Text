@@ -5,6 +5,7 @@
 
     <string name="button_copy">Copy</string>
     <string name="button_finish">Finish</string>
+    <string name="button_share">Share</string>
     <string name="button_skip">Skip</string>
 
     <string name="hint_search">Search</string>

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
+import com.ryccoatika.imagetotext.domain.utils.combine
 import com.ryccoatika.imagetotext.domain.model.RecognationLanguageModel
 import com.ryccoatika.imagetotext.domain.usecase.GetTextFromImage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,12 +27,25 @@ class ImageConvertResultViewModel @Inject constructor(
     private val uri = Uri.parse(savedStateHandle["uri"])
     private val inputImage = InputImage.fromFilePath(context, uri)
     private val recognitionLanguageModel = MutableStateFlow(RecognationLanguageModel.LATIN)
-    private val text = MutableStateFlow<List<Text.Element>>(emptyList())
+    private val textBlocks = MutableStateFlow<List<Text.TextBlock>>(emptyList())
+    private val text = MutableStateFlow("")
 
     val state: StateFlow<ImageConvertResultViewState> = combine(
         flowOf(uri),
         flowOf(inputImage),
         recognitionLanguageModel,
+        textBlocks,
+        textBlocks.map {
+            it.fold(
+                emptyList()
+            ) { acc1, textBlock ->
+                acc1 + textBlock.lines.fold(
+                    emptyList()
+                ) { acc2, line -> acc2 + line.elements.fold(emptyList()) { acc, element ->
+                    acc + element
+                } }
+            }
+        },
         text,
         ::ImageConvertResultViewState
     ).stateIn(
@@ -43,12 +57,17 @@ class ImageConvertResultViewModel @Inject constructor(
     init {
         try {
             viewModelScope.launch {
-                text.value = getTextFromImage.executeSync(
+                textBlocks.value = getTextFromImage.executeSync(
                     GetTextFromImage.Params(
                         inputImage = inputImage,
                         languageModel = recognitionLanguageModel.value
                     )
                 )
+                text.value = textBlocks.value.joinToString("\n") { textBlock ->
+                    textBlock.lines.joinToString("\n") { line ->
+                        line.elements.joinToString(" ") { it.text }
+                    }
+                }
             }
         } catch (e: IOException) {
             e.printStackTrace()
@@ -57,12 +76,17 @@ class ImageConvertResultViewModel @Inject constructor(
         viewModelScope.launch {
             recognitionLanguageModel.collect { langModel ->
                 try {
-                    text.value = getTextFromImage.executeSync(
+                    textBlocks.value = getTextFromImage.executeSync(
                         GetTextFromImage.Params(
                             inputImage = inputImage,
                             languageModel = langModel
                         )
                     )
+                    text.value = textBlocks.value.joinToString("\n\n") { textBlock ->
+                        textBlock.lines.joinToString("\n") { line ->
+                            line.elements.joinToString(" ") { it.text }
+                        }
+                    }
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
@@ -74,5 +98,9 @@ class ImageConvertResultViewModel @Inject constructor(
         viewModelScope.launch {
             recognitionLanguageModel.emit(model)
         }
+    }
+
+    fun setText(text: String) {
+        this.text.value = text
     }
 }
