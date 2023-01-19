@@ -27,9 +27,15 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
         </activity>
         <provider
                 android:name=".utils.ComposeFileProviderImpl"
+                android:enabled="true"
                 android:authorities="@string/file_provider_authorities"
                 android:grantUriPermissions="true"
                 android:exported="false">

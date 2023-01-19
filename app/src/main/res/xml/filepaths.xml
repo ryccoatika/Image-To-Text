@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
     <files-path
-            name="image_to_text"
-            path="images/"/>
-    <cache-path
-            name="image_to_text"
+            name="files"
             path="images/"/>
 </paths>

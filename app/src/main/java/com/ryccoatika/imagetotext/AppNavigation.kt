@@ -17,7 +17,7 @@ internal sealed class Screen(val route: String) {
     object Home : Screen("home")
 }
 
-private sealed class LeafScreen(
+internal sealed class LeafScreen(
     private val route: String
 ) {
     fun createRoute(root: Screen) = "${root.route}/$route"
