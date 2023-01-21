@@ -19,4 +19,6 @@
     <string name="lang_devanagari">हिन्दी</string>
     <string name="lang_japanese">日本語</string>
     <string name="lang_korean">한국어</string>
+
+    <string name="text_select_language">Please select language:</string>
 </resources>

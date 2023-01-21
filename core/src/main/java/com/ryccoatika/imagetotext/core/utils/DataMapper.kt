@@ -1,16 +1,46 @@
 package com.ryccoatika.imagetotext.core.utils
 
+import android.net.Uri
+import com.google.mlkit.vision.text.Text
 import com.ryccoatika.imagetotext.core.data.local.entity.TextScannedEntity
+import com.ryccoatika.imagetotext.domain.model.TextRecognized
 import com.ryccoatika.imagetotext.domain.model.TextScanned
 
-fun com.ryccoatika.imagetotext.domain.model.TextScanned.toTextScannedEntity(): TextScannedEntity =
-    TextScannedEntity(
-        dateTime = dateTime,
-        text = text
+fun TextScanned.toTextScannedEntity(): TextScannedEntity {
+    return TextScannedEntity(
+        id = id,
+        text = text,
+        imageUri = imageUri.toString(),
+        textRecognized = textRecognized
+    )
+}
+
+fun TextScannedEntity.toTextScannedDomain(): TextScanned =
+    TextScanned(
+        id = id ?: 0,
+        text = text,
+        imageUri = Uri.parse(imageUri),
+        textRecognized = textRecognized
     )
 
-fun TextScannedEntity.toTextScannedDomain(): com.ryccoatika.imagetotext.domain.model.TextScanned =
-    com.ryccoatika.imagetotext.domain.model.TextScanned(
-        dateTime = dateTime,
-        text = text
-    )
+fun Text.toTextRecognizedDomain(): TextRecognized = TextRecognized(
+    text = text,
+    textBlocks = textBlocks.map { textBlock ->
+        TextRecognized.TextBlock(
+            text = textBlock.text,
+            lines = textBlock.lines.map { line ->
+                TextRecognized.Line(
+                    text = line.text,
+                    elements = line.elements.map { element ->
+                        TextRecognized.Element(
+                            text = element.text,
+                            angle = element.angle,
+                            boundingBox = element.boundingBox
+                        )
+                    }
+                )
+            },
+            boundingBox = textBlock.boundingBox
+        )
+    }
+)

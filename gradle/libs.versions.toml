@@ -38,6 +38,7 @@ google-mlkit-textrecognition-japanese = { module = "com.google.mlkit:text-recogn
 google-mlkit-textrecognition-korean = { module = "com.google.mlkit:text-recognition-korean", version.ref = "textrecognition" }
 google-play-core = { module = "com.google.android.play:core-ktx", version = "1.8.1" }
 
+gson = { module = "com.google.code.gson:gson", version = "2.10.1" }
 
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }

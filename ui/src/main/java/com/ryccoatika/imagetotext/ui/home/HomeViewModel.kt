@@ -1,34 +1,42 @@
 package com.ryccoatika.imagetotext.ui.home
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.mlkit.vision.common.InputImage
+import com.ryccoatika.imagetotext.domain.model.RecognationLanguageModel
 import com.ryccoatika.imagetotext.domain.model.TextScanned
+import com.ryccoatika.imagetotext.domain.usecase.GetTextFromImage
 import com.ryccoatika.imagetotext.domain.usecase.ObserveTextScanned
 import com.ryccoatika.imagetotext.domain.usecase.RemoveTextScanned
 import com.ryccoatika.imagetotext.domain.usecase.SaveTextScanned
-import com.ryccoatika.imagetotext.domain.utils.ComposeFileProvider
-import com.ryccoatika.imagetotext.domain.utils.ObservableLoadingCounter
-import com.ryccoatika.imagetotext.domain.utils.UiMessageManager
-import com.ryccoatika.imagetotext.domain.utils.collectStatus
+import com.ryccoatika.imagetotext.domain.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
+@SuppressLint("StaticFieldLeak")
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     observeTextScanned: ObserveTextScanned,
+    @ApplicationContext
+    private val context: Context,
+    private val getTextFromImage: GetTextFromImage,
     private val saveTextScanned: SaveTextScanned,
     private val removeTextScanned: RemoveTextScanned,
     private val composeFileProvider: ComposeFileProvider
 ) : ViewModel() {
 
     private val loadingState = ObservableLoadingCounter()
-    private val uiMessageManager = UiMessageManager()
+    private val event = MutableStateFlow<HomeViewState.Event?>(null)
+    private val recognitionLanguageModel = MutableStateFlow(RecognationLanguageModel.LATIN)
+    private val uri = MutableStateFlow(Uri.EMPTY)
 
     private val query = MutableStateFlow<String?>(null)
 
@@ -36,8 +44,8 @@ class HomeViewModel @Inject constructor(
         query,
         observeTextScanned.isProcessing,
         loadingState.observable,
-        uiMessageManager.message,
         observeTextScanned.flow,
+        event,
         ::HomeViewState
     ).stateIn(
         scope = viewModelScope,
@@ -49,7 +57,6 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             this@HomeViewModel.query
                 .filterNotNull()
-                .filterNot { it.isEmpty() }
                 .debounce(500)
                 .distinctUntilChanged()
                 .collect { query ->
@@ -61,34 +68,52 @@ class HomeViewModel @Inject constructor(
     }
 
     fun setQuery(query: String) {
-        viewModelScope.launch {
-            this@HomeViewModel.query.emit(query)
-        }
+            this.query.value = query
     }
 
-    fun save(textScanned: TextScanned) {
+    fun setLanguageModel(langModel: String) {
+        recognitionLanguageModel.value = RecognationLanguageModel.valueOf(langModel)
+    }
+
+    fun setUri(uri: Uri) {
+        this.uri.value = uri
+    }
+
+    fun scanImage() {
         viewModelScope.launch {
-            saveTextScanned(SaveTextScanned.Params(textScanned)).collectStatus(
-                loadingState,
-                uiMessageManager
+            val textRecognized = getTextFromImage.executeSync(
+                GetTextFromImage.Params(
+                    inputImage = InputImage.fromFilePath(context, uri.value),
+                    languageModel = recognitionLanguageModel.value
+                )
             )
+            val text = textRecognized.textBlocks.joinToString("\n\n") { textBlock ->
+                textBlock.lines.joinToString("\n") { line ->
+                    line.elements.joinToString(" ") { it.text }
+                }
+            }
+            val textScanned = saveTextScanned.executeSync(
+                SaveTextScanned.Params(
+                    imageUri = uri.value,
+                    textRecognized = textRecognized,
+                    text = text
+                )
+            )
+            event.value = HomeViewState.Event.OpenTextScannedDetail(textScanned)
         }
     }
 
     fun remove(textScanned: TextScanned) {
         viewModelScope.launch {
             removeTextScanned(RemoveTextScanned.Params(textScanned)).collectStatus(
-                loadingState,
-                uiMessageManager
+                loadingState
             )
         }
     }
 
     fun getImageUri(context: Context): Uri = composeFileProvider.getImageUri(context)
 
-    fun clearMessage(id: Long) {
-        viewModelScope.launch {
-            uiMessageManager.clearMessage(id)
-        }
+    fun clearEvent() {
+        event.value = null
     }
 }

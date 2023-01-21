@@ -14,12 +14,12 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
-import com.google.mlkit.vision.text.Text
+import com.ryccoatika.imagetotext.domain.model.TextRecognized
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TextHighlightBlock(
-    element: Text.Element,
+    element: TextRecognized.Element,
     placeHolderOffset: Offset,
     imageSizeRatio: Float,
     onLongClick: () -> Unit

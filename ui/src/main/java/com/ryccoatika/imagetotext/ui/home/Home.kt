@@ -2,16 +2,22 @@ package com.ryccoatika.imagetotext.ui.home
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateHandle
+import com.ryccoatika.imagetotext.domain.model.TextScanned
 import com.ryccoatika.imagetotext.ui.R
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 import com.ryccoatika.imagetotext.ui.common.theme.spacing
@@ -22,26 +28,62 @@ import com.ryccoatika.imagetotext.ui.common.utils.rememberStateWithLifecycle
 
 @Composable
 fun Home(
-    openImageResultScreen: (Uri) -> Unit
+    savedStateHandle: SavedStateHandle?,
+    openImageResultScreen: (Long) -> Unit,
+    openLanguageSelectorScreen: () -> Unit
 ) {
     Home(
         viewModel = hiltViewModel(),
-        openImageResultScreen = openImageResultScreen
+        savedStateHandle = savedStateHandle,
+        openImageResultScreen = openImageResultScreen,
+        openLanguageSelectorScreen = openLanguageSelectorScreen
     )
 }
 
 @Composable
 private fun Home(
     viewModel: HomeViewModel,
-    openImageResultScreen: (Uri) -> Unit
+    savedStateHandle: SavedStateHandle?,
+    openImageResultScreen: (Long) -> Unit,
+    openLanguageSelectorScreen: () -> Unit
 ) {
     val viewState by rememberStateWithLifecycle(viewModel.state)
+
+    LaunchedEffect(Unit) {
+        savedStateHandle?.get<Uri?>("uri")?.let {
+            viewModel.setUri(it)
+            openLanguageSelectorScreen()
+        }
+    }
+
+    savedStateHandle?.getStateFlow<String?>("languagemodel", null)
+        ?.collectAsState()?.value.let { langModel ->
+        savedStateHandle?.set("languagemodel", null)
+        if (langModel != null) {
+            viewModel.setLanguageModel(langModel)
+            viewModel.scanImage()
+        }
+    }
+
+    viewState.event?.let { event ->
+        LaunchedEffect(event) {
+            when (event) {
+                is HomeViewState.Event.OpenTextScannedDetail -> {
+                    openImageResultScreen(event.textScanned.id)
+                }
+            }
+            viewModel.clearEvent()
+        }
+    }
 
     Home(
         state = viewState,
         generateImageUri = viewModel::getImageUri,
         onSearchChanged = viewModel::setQuery,
-        openImageResultScreen = openImageResultScreen
+        uriSelected = viewModel::setUri,
+        onTextScannedRemove = viewModel::remove,
+        openImageResultScreen = openImageResultScreen,
+        openLanguageSelectorScreen = openLanguageSelectorScreen
     )
 }
 
@@ -50,19 +92,21 @@ private fun Home(
     state: HomeViewState,
     generateImageUri: (Context) -> Uri,
     onSearchChanged: (String) -> Unit,
-    openImageResultScreen: (Uri) -> Unit
+    uriSelected: (Uri) -> Unit,
+    onTextScannedRemove: (TextScanned) -> Unit,
+    openImageResultScreen: (Long) -> Unit,
+    openLanguageSelectorScreen: () -> Unit
 ) {
-
     Scaffold(
         floatingActionButton = {
             FabImagePicker(
                 pickedFromGallery = { uri ->
-                    openImageResultScreen(uri)
-                    Log.i("190401", "Home: $uri")
+                    uriSelected(uri)
+                    openLanguageSelectorScreen()
                 },
                 pickedFromCamera = { uri ->
-                    openImageResultScreen(uri)
-                    Log.i("190401", "Home: $uri")
+                    uriSelected(uri)
+                    openLanguageSelectorScreen()
                 },
                 generateImageUri = generateImageUri
             )
@@ -93,13 +137,19 @@ private fun Home(
                 items(
                     items = state.textScannedCollection,
                     key = {
-                        it.dateTime
+                        it.id
                     }
                 ) { textScanned ->
                     ScannedTextCard(
                         text = textScanned.text,
-                        onDismissed = {},
-                        modifier = Modifier.padding(bottom = MaterialTheme.spacing.small)
+                        onDismissed = {
+                            onTextScannedRemove(textScanned)
+                        },
+                        modifier = Modifier
+                            .padding(bottom = MaterialTheme.spacing.small)
+                            .clickable {
+                                openImageResultScreen(textScanned.id)
+                            }
                     )
                 }
             }
@@ -115,7 +165,10 @@ private fun HomePreview() {
             state = HomeViewState.Empty,
             generateImageUri = { Uri.EMPTY },
             onSearchChanged = {},
-            openImageResultScreen = {}
+            uriSelected = {},
+            onTextScannedRemove = {},
+            openImageResultScreen = {},
+            openLanguageSelectorScreen = {}
         )
     }
 }

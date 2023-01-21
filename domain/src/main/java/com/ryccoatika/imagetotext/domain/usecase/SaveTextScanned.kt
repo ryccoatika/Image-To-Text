@@ -1,19 +1,24 @@
 package com.ryccoatika.imagetotext.domain.usecase
 
-import com.ryccoatika.imagetotext.domain.utils.AppCoroutineDispatchers
-import com.ryccoatika.imagetotext.domain.utils.Interactor
-import kotlinx.coroutines.withContext
+import android.net.Uri
+import com.ryccoatika.imagetotext.domain.model.TextRecognized
+import com.ryccoatika.imagetotext.domain.model.TextScanned
+import com.ryccoatika.imagetotext.domain.utils.ResultInteractor
 import javax.inject.Inject
 
 class SaveTextScanned @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
     private val textScannedRepository: com.ryccoatika.imagetotext.domain.repository.TextScannedRepository
-) : Interactor<SaveTextScanned.Params>() {
-    override suspend fun doWork(params: Params) = withContext(dispatchers.io) {
-        textScannedRepository.saveTextScanned(params.textScanned)
-    }
+) : ResultInteractor<SaveTextScanned.Params, TextScanned>() {
+
+    override suspend fun doWork(params: Params): TextScanned = textScannedRepository.saveTextScanned(
+        imageUri = params.imageUri,
+        textRecognized = params.textRecognized,
+        text = params.text
+    )
 
     data class Params(
-        val textScanned: com.ryccoatika.imagetotext.domain.model.TextScanned
+        val imageUri: Uri,
+        val textRecognized: TextRecognized,
+        val text: String
     )
 }

@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,8 +26,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
-import com.google.mlkit.vision.text.Text
-import com.ryccoatika.imagetotext.domain.model.RecognationLanguageModel
+import com.ryccoatika.imagetotext.domain.model.TextRecognized
 import com.ryccoatika.imagetotext.ui.R
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 import com.ryccoatika.imagetotext.ui.common.theme.spacing
@@ -58,7 +56,6 @@ private fun ImageConvertResult(
 
     ImageConvertResult(
         state = viewState,
-        languageModelChanged = viewModel::setRecognitionLangModel,
         navigateBack = navigateBack,
         textChanged = viewModel::setText
     )
@@ -68,7 +65,6 @@ private fun ImageConvertResult(
 @Composable
 private fun ImageConvertResult(
     state: ImageConvertResultViewState,
-    languageModelChanged: (RecognationLanguageModel) -> Unit,
     navigateBack: () -> Unit,
     textChanged: (String) -> Unit
 ) {
@@ -76,7 +72,7 @@ private fun ImageConvertResult(
 
     var imageSizeRatio by remember { mutableStateOf(1f) }
     var placeHolderOffset by remember { mutableStateOf(Offset.Zero) }
-    val selectedElements = remember { mutableStateListOf<Text.Element>() }
+    val selectedElements = remember { mutableStateListOf<TextRecognized.Element>() }
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
@@ -91,7 +87,7 @@ private fun ImageConvertResult(
         sheetGesturesEnabled = true,
         sheetContent = {
             ImageConvertResultBottomSheet(
-                text = state.text,
+                text = state.textScanned?.text ?: "",
                 textChanged =textChanged
             )
         }
@@ -102,8 +98,6 @@ private fun ImageConvertResult(
                 .fillMaxSize()
         ) {
             ImageConvertResultTopBar(
-                state = state,
-                languageModelChanged = languageModelChanged,
                 onBackClick = navigateBack
             )
             Box(
@@ -117,38 +111,40 @@ private fun ImageConvertResult(
                         }
                     )
             ) {
-                val imagePainter = rememberAsyncImagePainter(state.uri)
-                Image(
-                    painter = imagePainter,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .onGloballyPositioned { coordinates ->
-                            if (coordinates.size != IntSize.Zero && imagePainter.intrinsicSize != Size.Unspecified && state.inputImage != null) {
-                                // calculate size ratio
-                                val widthRatio =
-                                    coordinates.size.width / state.inputImage.width.toFloat()
-                                val heightRatio =
-                                    coordinates.size.height / state.inputImage.height.toFloat()
-                                imageSizeRatio = minOf(widthRatio, heightRatio)
+                state.textScanned?.let {
+                    val imagePainter = rememberAsyncImagePainter(it.imageUri)
+                    Image(
+                        painter = imagePainter,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .onGloballyPositioned { coordinates ->
+                                if (coordinates.size != IntSize.Zero && imagePainter.intrinsicSize != Size.Unspecified && state.inputImage != null) {
+                                    // calculate size ratio
+                                    val widthRatio =
+                                        coordinates.size.width / state.inputImage.width.toFloat()
+                                    val heightRatio =
+                                        coordinates.size.height / state.inputImage.height.toFloat()
+                                    imageSizeRatio = minOf(widthRatio, heightRatio)
 
-                                // calculate offset
-                                var yOffset = 0f
-                                var xOffset = 0f
-                                if ((imageSizeRatio * state.inputImage.width).roundToInt() == coordinates.size.width) {
-                                    val scaledImageHeight =
-                                        imageSizeRatio * state.inputImage.height
-                                    yOffset = coordinates.size.height / 2 - scaledImageHeight / 2
+                                    // calculate offset
+                                    var yOffset = 0f
+                                    var xOffset = 0f
+                                    if ((imageSizeRatio * state.inputImage.width).roundToInt() == coordinates.size.width) {
+                                        val scaledImageHeight =
+                                            imageSizeRatio * state.inputImage.height
+                                        yOffset = coordinates.size.height / 2 - scaledImageHeight / 2
+                                    }
+                                    if ((imageSizeRatio * state.inputImage.height).roundToInt() == coordinates.size.height) {
+                                        val scaledImageWidth =
+                                            imageSizeRatio * state.inputImage.width
+                                        xOffset = coordinates.size.width / 2 - scaledImageWidth / 2
+                                    }
+                                    placeHolderOffset = Offset(xOffset, yOffset)
                                 }
-                                if ((imageSizeRatio * state.inputImage.height).roundToInt() == coordinates.size.height) {
-                                    val scaledImageWidth =
-                                        imageSizeRatio * state.inputImage.width
-                                    xOffset = coordinates.size.width / 2 - scaledImageWidth / 2
-                                }
-                                placeHolderOffset = Offset(xOffset, yOffset)
                             }
-                        }
-                )
+                    )
+                }
                 state.elements.forEach { element ->
                     TextHighlightBlock(
                         element = element,
@@ -224,14 +220,11 @@ private fun ImageConvertResultBottomSheet(
 
 @Composable
 private fun ImageConvertResultTopBar(
-    state: ImageConvertResultViewState,
-    languageModelChanged: (RecognationLanguageModel) -> Unit,
     onBackClick: () -> Unit
 ) {
-    var showDropdown by remember { mutableStateOf(false) }
 
     Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .padding(MaterialTheme.spacing.medium)
@@ -247,47 +240,7 @@ private fun ImageConvertResultTopBar(
                 modifier = Modifier.size(40.dp)
             )
         }
-
-        Box {
-            Row(modifier = Modifier.clickable(indication = null,
-                interactionSource = remember { MutableInteractionSource() }) {
-                showDropdown = true
-            }) {
-                Text(
-                    state.language.getText()
-                )
-                Icon(Icons.Default.ArrowDropDown, contentDescription = null)
-            }
-            DropdownMenu(
-                expanded = showDropdown,
-                onDismissRequest = { showDropdown = false }
-            ) {
-                RecognationLanguageModel.values().forEach { recogLangModel ->
-                    DropdownMenuItem(
-                        onClick = {
-                            languageModelChanged(recogLangModel)
-                            showDropdown = false
-                        }
-                    ) {
-                        Text(recogLangModel.getText())
-                    }
-                }
-            }
-        }
     }
-}
-
-@Composable
-private fun RecognationLanguageModel.getText(): String {
-    return stringResource(
-        when (this) {
-            RecognationLanguageModel.LATIN -> R.string.lang_latin
-            RecognationLanguageModel.CHINESE -> R.string.lang_chinese
-            RecognationLanguageModel.JAPANESE -> R.string.lang_japanese
-            RecognationLanguageModel.KOREAN -> R.string.lang_korean
-            RecognationLanguageModel.DEVANAGARI -> R.string.lang_devanagari
-        }
-    )
 }
 
 @Preview
@@ -296,7 +249,6 @@ private fun ImageConvertResultPreview() {
     AppTheme {
         ImageConvertResult(
             state = ImageConvertResultViewState.Empty,
-            languageModelChanged = {},
             navigateBack = {},
             textChanged = {}
         )

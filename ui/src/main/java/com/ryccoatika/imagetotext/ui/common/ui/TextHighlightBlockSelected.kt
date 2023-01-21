@@ -28,7 +28,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import com.google.mlkit.vision.text.Text
+import com.ryccoatika.imagetotext.domain.model.TextRecognized
 import com.ryccoatika.imagetotext.ui.R
 import com.ryccoatika.imagetotext.ui.common.theme.spacing
 
@@ -36,11 +36,11 @@ import com.ryccoatika.imagetotext.ui.common.theme.spacing
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun TextHighlightBlockSelected(
-    selectedElements: List<Text.Element>,
-    elements: List<Text.Element>,
+    selectedElements: List<TextRecognized.Element>,
+    elements: List<TextRecognized.Element>,
     placeHolderOffset: Offset,
     imageSizeRatio: Float,
-    selectedElementsChanged: (List<Text.Element>) -> Unit
+    selectedElementsChanged: (List<TextRecognized.Element>) -> Unit
 ) {
     if (selectedElements.isNotEmpty()) {
         val clipboardManager = LocalClipboardManager.current

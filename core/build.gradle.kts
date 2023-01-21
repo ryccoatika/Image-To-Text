@@ -37,4 +37,5 @@ dependencies {
     implementation(libs.google.mlkit.textrecognition.devanagari)
     implementation(libs.google.mlkit.textrecognition.japanese)
     implementation(libs.google.mlkit.textrecognition.korean)
+    implementation(libs.gson)
 }

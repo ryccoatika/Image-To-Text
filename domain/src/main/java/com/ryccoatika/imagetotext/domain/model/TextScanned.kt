@@ -1,6 +1,10 @@
 package com.ryccoatika.imagetotext.domain.model
 
+import android.net.Uri
+
 data class TextScanned(
-    val dateTime: Long,
-    var text: String
+    val id: Long,
+    val imageUri: Uri,
+    var text: String,
+    val textRecognized: TextRecognized
 )

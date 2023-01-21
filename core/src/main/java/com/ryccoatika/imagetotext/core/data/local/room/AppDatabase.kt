@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.ryccoatika.imagetotext.core.data.local.entity.TextScannedEntity
 
 @Database(
@@ -11,6 +12,7 @@ import com.ryccoatika.imagetotext.core.data.local.entity.TextScannedEntity
     version = AppDatabase.DB_VERSION,
     exportSchema = false,
 )
+@TypeConverters(TextRecognizedTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun textScannedDao(): TextScannedDao

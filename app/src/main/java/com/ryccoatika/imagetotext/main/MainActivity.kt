@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
             }
             uri?.let {
                 navController.navigate(
-                    LeafScreen.ImageConvertResultScreen.createRoute(
+                    LeafScreen.HomeScreen.createRoute(
                         Screen.Home,
                         it
                     )

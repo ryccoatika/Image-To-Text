@@ -1,15 +1,18 @@
 package com.ryccoatika.imagetotext
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.*
+import androidx.navigation.compose.dialog
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.ryccoatika.imagetotext.ui.convertresult.ImageConvertResult
 import com.ryccoatika.imagetotext.ui.home.Home
 import com.ryccoatika.imagetotext.ui.intro.Intro
+import com.ryccoatika.imagetotext.ui.languagemodelselect.LanguageModelSelect
 import com.ryccoatika.imagetotext.ui.splash.Splash
 
 internal sealed class Screen(val route: String) {
@@ -24,13 +27,21 @@ internal sealed class LeafScreen(
 
     object SplashScreen : LeafScreen("splash")
     object IntroScreen : LeafScreen("intro")
-    object HomeScreen : LeafScreen("home")
-    object ImageConvertResultScreen : LeafScreen("imageconvertresult/{uri}") {
+    object HomeScreen : LeafScreen("home/{uri}") {
         fun createRoute(
             root: Screen,
-            uri: Uri
-        ): String = "${root.route}/imageconvertresult/${Uri.encode(uri.toString())}"
+            uri: Uri?
+        ): String = "${root.route}/home/${uri?.let { Uri.encode(it.toString()) }}"
     }
+
+    object ImageConvertResultScreen : LeafScreen("imageconvertresult/{id}") {
+        fun createRoute(
+            root: Screen,
+            id: Long
+        ): String = "${root.route}/imageconvertresult/$id"
+    }
+
+    object LanguageModelSelectorScreen : LeafScreen("languagemodelselector")
 }
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -70,6 +81,7 @@ private fun NavGraphBuilder.addHomeTopLevel(
     ) {
         addHomeScreen(Screen.Home, navController)
         addImageConvertResultScreen(Screen.Home, navController)
+        addLanguageModelSelector(Screen.Home, navController)
     }
 }
 
@@ -135,8 +147,12 @@ private fun NavGraphBuilder.addHomeScreen(
         route = LeafScreen.HomeScreen.createRoute(root),
     ) {
         Home(
+            savedStateHandle = navController.currentBackStackEntry?.savedStateHandle,
             openImageResultScreen = { uri ->
                 navController.navigate(LeafScreen.ImageConvertResultScreen.createRoute(root, uri))
+            },
+            openLanguageSelectorScreen = {
+                navController.navigate(LeafScreen.LanguageModelSelectorScreen.createRoute(root))
             }
         )
     }
@@ -150,13 +166,33 @@ private fun NavGraphBuilder.addImageConvertResultScreen(
     composable(
         route = LeafScreen.ImageConvertResultScreen.createRoute(root),
         arguments = listOf(
-            navArgument("uri") {
-                type = NavType.StringType
+            navArgument("id") {
+                type = NavType.LongType
             }
         )
     ) {
         ImageConvertResult(
             navigateBack = navController::navigateUp
+        )
+    }
+}
+
+private fun NavGraphBuilder.addLanguageModelSelector(
+    root: Screen,
+    navController: NavController
+) {
+    dialog(
+        route = LeafScreen.LanguageModelSelectorScreen.createRoute(root),
+    ) {
+        LanguageModelSelect(
+            languageModelSelected = { langModel ->
+                navController.previousBackStackEntry?.savedStateHandle?.set(
+                    "languagemodel",
+                    langModel.name
+                )
+                navController.popBackStack()
+                Log.i("190401", "addLanguageModelSelector: ")
+            }
         )
     }
 }

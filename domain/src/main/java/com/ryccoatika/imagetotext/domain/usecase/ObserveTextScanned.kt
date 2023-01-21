@@ -8,7 +8,7 @@ import javax.inject.Inject
 class ObserveTextScanned @Inject constructor(
     private val textScannedRepository: com.ryccoatika.imagetotext.domain.repository.TextScannedRepository
 ) : SubjectInteractor<ObserveTextScanned.Params, List<TextScanned>>() {
-    override fun createObservable(params: Params): Flow<List<com.ryccoatika.imagetotext.domain.model.TextScanned>> {
+    override fun createObservable(params: Params): Flow<List<TextScanned>> {
         return textScannedRepository.getAllTextScanned(params.query)
     }
 

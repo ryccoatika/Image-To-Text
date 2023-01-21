@@ -8,8 +8,10 @@ import javax.inject.Inject
 class LocalDataSource @Inject constructor(
     private val textScannedDao: TextScannedDao
 ) {
-    suspend fun saveTextScanned(textScanned: TextScannedEntity) =
-        textScannedDao.save(textScanned)
+    suspend fun saveTextScanned(textScanned: TextScannedEntity): TextScannedEntity {
+        val textScannedId = textScannedDao.save(textScanned)
+        return getTextScanned(textScannedId)
+    }
 
     suspend fun removeTextScanned(textScanned: TextScannedEntity) =
         textScannedDao.remove(textScanned)
@@ -22,4 +24,7 @@ class LocalDataSource @Inject constructor(
         }
         return textScannedDao.getAll(q)
     }
+
+    suspend fun getTextScanned(id: Long): TextScannedEntity =
+        textScannedDao.getById(id)
 }
