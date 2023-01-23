@@ -2,22 +2,25 @@ package com.ryccoatika.imagetotext.ui.home
 
 import android.content.Context
 import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.*
+import androidx.compose.material.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.SavedStateHandle
 import com.ryccoatika.imagetotext.domain.model.TextScanned
 import com.ryccoatika.imagetotext.ui.R
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
@@ -29,63 +32,31 @@ import com.ryccoatika.imagetotext.ui.common.utils.rememberStateWithLifecycle
 
 @Composable
 fun Home(
-    savedStateHandle: SavedStateHandle?,
     openImageResultScreen: (Long) -> Unit,
-    openLanguageSelectorScreen: () -> Unit
+    openImagePreviewScreen: (Uri) -> Unit
 ) {
     Home(
         viewModel = hiltViewModel(),
-        savedStateHandle = savedStateHandle,
         openImageResultScreen = openImageResultScreen,
-        openLanguageSelectorScreen = openLanguageSelectorScreen
+        openImagePreviewScreen = openImagePreviewScreen
     )
 }
 
 @Composable
 private fun Home(
     viewModel: HomeViewModel,
-    savedStateHandle: SavedStateHandle?,
     openImageResultScreen: (Long) -> Unit,
-    openLanguageSelectorScreen: () -> Unit
+    openImagePreviewScreen: (Uri) -> Unit
 ) {
     val viewState by rememberStateWithLifecycle(viewModel.state)
-
-    LaunchedEffect(Unit) {
-        savedStateHandle?.get<Uri?>("uri")?.let {
-            viewModel.setUri(it)
-            openLanguageSelectorScreen()
-        }
-    }
-
-    savedStateHandle?.getStateFlow<String?>("languagemodel", null)
-        ?.collectAsState()?.value.let { langModel ->
-        savedStateHandle?.set("languagemodel", null)
-        if (langModel != null) {
-            viewModel.setLanguageModel(langModel)
-            viewModel.scanImage()
-        }
-    }
-
-    viewState.event?.let { event ->
-        LaunchedEffect(event) {
-            when (event) {
-                is HomeViewState.Event.OpenTextScannedDetail -> {
-                    openImageResultScreen(event.textScanned.id)
-                }
-            }
-            viewModel.clearEvent()
-        }
-    }
 
     Home(
         state = viewState,
         generateImageUri = viewModel::getImageUri,
         onSearchChanged = viewModel::setQuery,
-        uriSelected = viewModel::setUri,
         onTextScannedRemove = viewModel::remove,
-        onMessageShown = viewModel::clearMessage,
         openImageResultScreen = openImageResultScreen,
-        openLanguageSelectorScreen = openLanguageSelectorScreen
+        openLanguageSelectorScreen = openImagePreviewScreen
     )
 }
 
@@ -94,34 +65,25 @@ private fun Home(
     state: HomeViewState,
     generateImageUri: (Context) -> Uri,
     onSearchChanged: (String) -> Unit,
-    uriSelected: (Uri) -> Unit,
     onTextScannedRemove: (TextScanned) -> Unit,
-    onMessageShown: (Long) -> Unit,
     openImageResultScreen: (Long) -> Unit,
-    openLanguageSelectorScreen: () -> Unit
+    openLanguageSelectorScreen: (Uri) -> Unit
 ) {
-    val scaffoldState = rememberScaffoldState()
-
-    state.uiMessage?.let { message ->
-        LaunchedEffect(message) {
-            scaffoldState.snackbarHostState.showSnackbar(
-                message = message.message
-            )
-            onMessageShown(message.id)
-        }
-    }
-
     Scaffold(
-        scaffoldState = scaffoldState,
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(stringResource(R.string.app_name))
+                }
+            )
+        },
         floatingActionButton = {
             FabImagePicker(
                 pickedFromGallery = { uri ->
-                    uriSelected(uri)
-                    openLanguageSelectorScreen()
+                    openLanguageSelectorScreen(uri)
                 },
                 pickedFromCamera = { uri ->
-                    uriSelected(uri)
-                    openLanguageSelectorScreen()
+                    openLanguageSelectorScreen(uri)
                 },
                 generateImageUri = generateImageUri
             )
@@ -130,41 +92,64 @@ private fun Home(
         Column(
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(horizontal = MaterialTheme.spacing.large)
+                .padding(horizontal = MaterialTheme.spacing.medium)
         ) {
+            Spacer(Modifier.height(MaterialTheme.spacing.medium))
             Text(
                 stringResource(id = R.string.title_your_documents),
-                style = MaterialTheme.typography.h4,
-                modifier = Modifier.padding(top = MaterialTheme.spacing.extraLarge)
+                style = MaterialTheme.typography.h5,
+                color = MaterialTheme.colors.primary,
             )
+            Spacer(Modifier.height(MaterialTheme.spacing.small))
             AppSearchTextInput(
                 value = state.query ?: "",
                 onValueChange = onSearchChanged,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = MaterialTheme.spacing.medium)
             )
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(top = MaterialTheme.spacing.medium)
-            ) {
-                items(
-                    items = state.textScannedCollection,
-                    key = {
-                        it.id
+            if (state.textScannedCollection.isNotEmpty()) {
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(top = MaterialTheme.spacing.medium)
+                ) {
+                    items(
+                        items = state.textScannedCollection,
+                        key = {
+                            it.id
+                        }
+                    ) { textScanned ->
+                        ScannedTextCard(
+                            textScanned = textScanned,
+                            onDismissed = {
+                                onTextScannedRemove(textScanned)
+                            },
+                            modifier = Modifier
+                                .padding(bottom = MaterialTheme.spacing.small)
+                                .clickable {
+                                    openImageResultScreen(textScanned.id)
+                                }
+                        )
                     }
-                ) { textScanned ->
-                    ScannedTextCard(
-                        text = textScanned.text,
-                        onDismissed = {
-                            onTextScannedRemove(textScanned)
-                        },
+                }
+            } else {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painterResource(R.drawable.decoration_empty),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillWidth,
                         modifier = Modifier
-                            .padding(bottom = MaterialTheme.spacing.small)
-                            .clickable {
-                                openImageResultScreen(textScanned.id)
-                            }
+                            .fillMaxWidth()
+                            .padding(horizontal = MaterialTheme.spacing.medium)
+                    )
+                    Spacer(Modifier.height(32.dp))
+                    Text(
+                        stringResource(R.string.text_lets_scan),
+                        color = MaterialTheme.colors.secondary,
                     )
                 }
             }
@@ -180,9 +165,7 @@ private fun HomePreview() {
             state = HomeViewState.Empty,
             generateImageUri = { Uri.EMPTY },
             onSearchChanged = {},
-            uriSelected = {},
             onTextScannedRemove = {},
-            onMessageShown = {},
             openImageResultScreen = {},
             openLanguageSelectorScreen = {}
         )

@@ -1,18 +1,16 @@
 package com.ryccoatika.imagetotext
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.*
-import androidx.navigation.compose.dialog
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.ryccoatika.imagetotext.ui.convertresult.ImageConvertResult
 import com.ryccoatika.imagetotext.ui.home.Home
 import com.ryccoatika.imagetotext.ui.intro.Intro
-import com.ryccoatika.imagetotext.ui.languagemodelselect.LanguageModelSelect
+import com.ryccoatika.imagetotext.ui.imagepreview.ImagePreview
 
 internal sealed class Screen(val route: String) {
     object Splash : Screen("splash")
@@ -26,12 +24,7 @@ internal sealed class LeafScreen(
 
     object SplashScreen : LeafScreen("splash")
     object IntroScreen : LeafScreen("intro")
-    object HomeScreen : LeafScreen("home/{uri}") {
-        fun createRoute(
-            root: Screen,
-            uri: Uri?
-        ): String = "${root.route}/home/${uri?.let { Uri.encode(it.toString()) }}"
-    }
+    object HomeScreen : LeafScreen("home")
 
     object ImageConvertResultScreen : LeafScreen("imageconvertresult/{id}") {
         fun createRoute(
@@ -40,7 +33,12 @@ internal sealed class LeafScreen(
         ): String = "${root.route}/imageconvertresult/$id"
     }
 
-    object LanguageModelSelectorScreen : LeafScreen("languagemodelselector")
+    object ImagePreview : LeafScreen("languagemodelselector/{uri}") {
+        fun createRoute(
+            root: Screen,
+            uri: Uri?
+        ): String = "${root.route}/languagemodelselector/${uri?.let { Uri.encode(it.toString()) }}"
+    }
 }
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -79,8 +77,8 @@ private fun NavGraphBuilder.addHomeTopLevel(
         startDestination = LeafScreen.HomeScreen.createRoute(Screen.Home)
     ) {
         addHomeScreen(Screen.Home, navController)
+        addImagePreview(Screen.Home, navController)
         addImageConvertResultScreen(Screen.Home, navController)
-        addLanguageModelSelector(Screen.Home, navController)
     }
 }
 
@@ -124,13 +122,16 @@ private fun NavGraphBuilder.addHomeScreen(
         route = LeafScreen.HomeScreen.createRoute(root),
     ) {
         Home(
-            savedStateHandle = navController.currentBackStackEntry?.savedStateHandle,
-            openImageResultScreen = { uri ->
-                navController.navigate(LeafScreen.ImageConvertResultScreen.createRoute(root, uri))
+            openImageResultScreen = {
+                navController.navigate(LeafScreen.ImageConvertResultScreen.createRoute(root, it)) {
+                    launchSingleTop = true
+                }
             },
-            openLanguageSelectorScreen = {
-                navController.navigate(LeafScreen.LanguageModelSelectorScreen.createRoute(root))
-            }
+            openImagePreviewScreen = {
+                navController.navigate(LeafScreen.ImagePreview.createRoute(root, it)) {
+                    launchSingleTop = true
+                }
+            },
         )
     }
 }
@@ -154,22 +155,31 @@ private fun NavGraphBuilder.addImageConvertResultScreen(
     }
 }
 
-private fun NavGraphBuilder.addLanguageModelSelector(
+@OptIn(ExperimentalAnimationApi::class)
+private fun NavGraphBuilder.addImagePreview(
     root: Screen,
     navController: NavController
 ) {
-    dialog(
-        route = LeafScreen.LanguageModelSelectorScreen.createRoute(root),
-    ) {
-        LanguageModelSelect(
-            languageModelSelected = { langModel ->
-                navController.previousBackStackEntry?.savedStateHandle?.set(
-                    "languagemodel",
-                    langModel.name
-                )
-                navController.popBackStack()
-                Log.i("190401", "addLanguageModelSelector: ")
+    composable(
+        route = LeafScreen.ImagePreview.createRoute(root),
+        arguments = listOf(
+            navArgument("uri") {
+                type = NavType.StringType
             }
+        )
+    ) {
+        ImagePreview(
+            openImageResultScreen = {
+                navController.navigate(LeafScreen.ImageConvertResultScreen.createRoute(root, it)) {
+                    launchSingleTop = true
+
+
+                    popUpTo(LeafScreen.ImagePreview.createRoute(root)) {
+                        inclusive = true
+                    }
+                }
+            },
+            navigateUp = navController::navigateUp
         )
     }
 }

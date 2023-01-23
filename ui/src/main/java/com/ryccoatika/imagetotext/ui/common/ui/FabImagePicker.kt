@@ -17,9 +17,11 @@ import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 import com.ryccoatika.imagetotext.ui.common.theme.spacing
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalPermissionsApi::class)
@@ -39,11 +41,12 @@ fun FabImagePicker(
         }
 
     var imageUriFromCamera by remember { mutableStateOf<Uri?>(null) }
-    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { result ->
-        if (result) {
-            imageUriFromCamera?.let { pickedFromCamera(it) }
+    val cameraLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { result ->
+            if (result) {
+                imageUriFromCamera?.let { pickedFromCamera(it) }
+            }
         }
-    }
 
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA) { granted ->
         if (granted) {
@@ -58,13 +61,15 @@ fun FabImagePicker(
         AnimatedVisibility(
             visible = fabAddActive,
             enter = scaleIn() + slideInVertically { fullHeight ->
-                fullHeight*2
+                fullHeight * 2
             },
             exit = scaleOut() + slideOutVertically { fullHeight ->
-                fullHeight*2
+                fullHeight * 2
             }
         ) {
             FloatingActionButton(
+                backgroundColor = MaterialTheme.colors.primary,
+                contentColor = MaterialTheme.colors.onPrimary,
                 onClick = {
                     fabAddActive = false
                     if (cameraPermissionState.status.isGranted) {
@@ -84,13 +89,15 @@ fun FabImagePicker(
         AnimatedVisibility(
             visible = fabAddActive,
             enter = scaleIn() + slideInVertically { fullHeight ->
-                fullHeight*2
+                fullHeight * 2
             },
             exit = scaleOut() + slideOutVertically { fullHeight ->
-                fullHeight*2
+                fullHeight * 2
             }
         ) {
             FloatingActionButton(
+                backgroundColor = MaterialTheme.colors.primary,
+                contentColor = MaterialTheme.colors.onPrimary,
                 onClick = {
                     fabAddActive = false
                     galleryLauncher.launch("image/*")
@@ -103,6 +110,8 @@ fun FabImagePicker(
             }
         }
         FloatingActionButton(
+            backgroundColor = MaterialTheme.colors.primary,
+            contentColor = MaterialTheme.colors.onPrimary,
             onClick = {
                 fabAddActive = !fabAddActive
             },
@@ -112,5 +121,17 @@ fun FabImagePicker(
                 contentDescription = null,
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun FabImagePicker() {
+    AppTheme {
+        FabImagePicker(
+            pickedFromGallery = {},
+            pickedFromCamera = {},
+            generateImageUri = { Uri.EMPTY },
+        )
     }
 }

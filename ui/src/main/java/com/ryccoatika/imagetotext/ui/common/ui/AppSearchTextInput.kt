@@ -24,13 +24,14 @@ fun AppSearchTextInput(
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = null
+                contentDescription = null,
+                tint = MaterialTheme.colors.secondary
             )
         },
         placeholder = stringResource(id = R.string.hint_search),
-        borderShape = MaterialTheme.shapes.large,
+        borderShape = MaterialTheme.shapes.small,
         borderWidth = 1.dp,
-        borderColor = MaterialTheme.colors.onBackground,
+        borderColor = MaterialTheme.colors.secondary,
         modifier = modifier
     )
 }

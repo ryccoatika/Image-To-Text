@@ -104,7 +104,7 @@ class MainActivity : ComponentActivity() {
             }
             uri?.let {
                 navController.navigate(
-                    LeafScreen.HomeScreen.createRoute(
+                    LeafScreen.ImagePreview.createRoute(
                         Screen.Home,
                         it
                     )

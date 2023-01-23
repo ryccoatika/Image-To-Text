@@ -30,6 +30,7 @@ fun AppTextInput(
         (borderShape != null && borderWidth != null && borderColor != null) ||
                 (borderShape == null && borderWidth == null && borderColor == null)
     ) { "|borderWidth|, |borderShape|, and |borderColor| must be filled all" }
+    TextFieldDefaults.textFieldColors()
     TextField(
         value = value,
         onValueChange = onValueChange,
@@ -37,7 +38,10 @@ fun AppTextInput(
         leadingIcon = leadingIcon,
         placeholder = {
             if (placeholder != null) {
-                Text(text = placeholder)
+                Text(
+                    text = placeholder,
+                    color = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled)
+                )
             }
         },
         colors = TextFieldDefaults.textFieldColors(

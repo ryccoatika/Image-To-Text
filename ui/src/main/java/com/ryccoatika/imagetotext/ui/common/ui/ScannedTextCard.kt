@@ -1,5 +1,7 @@
 package com.ryccoatika.imagetotext.ui.common.ui
 
+import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -11,19 +13,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
+import com.ryccoatika.imagetotext.domain.model.TextRecognized
+import com.ryccoatika.imagetotext.domain.model.TextScanned
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 import com.ryccoatika.imagetotext.ui.common.theme.spacing
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ScannedTextCard(
-    text: String,
+    textScanned: TextScanned,
     onDismissed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val imagePainter = rememberAsyncImagePainter(textScanned.imageUri)
+
     val dismissState = rememberDismissState(confirmStateChange = {
         onDismissed()
         true
@@ -56,20 +64,30 @@ fun ScannedTextCard(
             }
         },
     ) {
-        Box(
+        Row(
             modifier = Modifier
                 .clip(MaterialTheme.shapes.medium)
                 .border(
                     width = 1.dp,
-                    color = MaterialTheme.colors.onBackground,
+                    color = MaterialTheme.colors.secondary,
                     shape = MaterialTheme.shapes.medium
                 )
                 .background(MaterialTheme.colors.background)
                 .fillMaxWidth()
                 .sizeIn(minHeight = 75.dp)
         ) {
+            Image(
+                imagePainter,
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .size(72.dp)
+                    .padding(MaterialTheme.spacing.small)
+                    .clip(MaterialTheme.shapes.small)
+            )
+            Spacer(Modifier.width(MaterialTheme.spacing.small))
             Text(
-                text = text,
+                text = textScanned.text,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 3,
                 color = MaterialTheme.colors.onBackground,
@@ -85,7 +103,15 @@ fun ScannedTextCard(
 private fun ScannedTextCardPreview() {
     AppTheme {
         ScannedTextCard(
-            text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+            textScanned = TextScanned(
+                id = 0,
+                imageUri = Uri.EMPTY,
+                text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+                textRecognized = TextRecognized(
+                    text = "",
+                    textBlocks = emptyList()
+                )
+            ),
             onDismissed = {}
         )
     }
