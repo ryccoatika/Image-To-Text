@@ -45,7 +45,6 @@ hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", ve
 hilt-dagger = { module = "com.google.dagger:dagger", version.ref = "hilt" }
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version = "1.0.0" }
 
-
 leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version = "2.10" }
 
 lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version = "2.5.1" }
@@ -55,6 +54,8 @@ pluck = { module = "com.himanshoe:pluck", version = "1.0.0" }
 room = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+
+splashscreen = { module = "androidx.core:core-splashscreen", version = "1.0.0"}
 
 [plugins]
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }

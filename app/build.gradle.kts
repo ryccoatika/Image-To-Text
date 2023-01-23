@@ -106,6 +106,8 @@ dependencies {
 
     implementation(libs.compose.material)
 
+    implementation(libs.splashscreen)
+
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 

@@ -13,7 +13,6 @@ import com.ryccoatika.imagetotext.ui.convertresult.ImageConvertResult
 import com.ryccoatika.imagetotext.ui.home.Home
 import com.ryccoatika.imagetotext.ui.intro.Intro
 import com.ryccoatika.imagetotext.ui.languagemodelselect.LanguageModelSelect
-import com.ryccoatika.imagetotext.ui.splash.Splash
 
 internal sealed class Screen(val route: String) {
     object Splash : Screen("splash")
@@ -67,7 +66,7 @@ private fun NavGraphBuilder.addSplashTopLevel(
         route = Screen.Splash.route,
         startDestination = LeafScreen.SplashScreen.createRoute(Screen.Splash)
     ) {
-        addSplashScreen(Screen.Splash, navController)
+        addSplashScreen(Screen.Splash)
         addIntroScreen(Screen.Splash, navController)
     }
 }
@@ -87,33 +86,11 @@ private fun NavGraphBuilder.addHomeTopLevel(
 
 @OptIn(ExperimentalAnimationApi::class)
 private fun NavGraphBuilder.addSplashScreen(
-    root: Screen,
-    navController: NavController
+    root: Screen
 ) {
     composable(
         route = LeafScreen.SplashScreen.createRoute(root),
-    ) {
-        Splash(
-            openHomeScreen = {
-                navController.navigate(Screen.Home.route) {
-                    launchSingleTop = true
-
-                    popUpTo(navController.graph.id) {
-                        inclusive = true
-                    }
-                }
-            },
-            openIntroScreen = {
-                navController.navigate(LeafScreen.IntroScreen.createRoute(root)) {
-                    launchSingleTop = true
-
-                    popUpTo(navController.graph.id) {
-                        inclusive = true
-                    }
-                }
-            }
-        )
-    }
+    ) {}
 }
 
 @OptIn(ExperimentalAnimationApi::class)

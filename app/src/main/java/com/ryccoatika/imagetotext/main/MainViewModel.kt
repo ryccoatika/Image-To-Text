@@ -1,4 +1,4 @@
-package com.ryccoatika.imagetotext.ui.splash
+package com.ryccoatika.imagetotext.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,22 +9,21 @@ import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashViewModel @Inject constructor(
+class MainViewModel @Inject constructor(
     getIsUserFirstTime: GetIsUserFirstTime,
     setUserFirstTime: SetUserFirstTime
 ) : ViewModel() {
-
-    val state: StateFlow<SplashViewState> = getIsUserFirstTime(Unit)
+    val state: StateFlow<MainViewState> = getIsUserFirstTime(Unit)
         .onEach { isUserFirstTime ->
             if (isUserFirstTime) {
                 setUserFirstTime.executeSync(SetUserFirstTime.Params(false))
             }
         }
         .map { isUserFirstTime ->
-            SplashViewState(isUserFirstTime)
+            MainViewState(isUserFirstTime)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = SplashViewState.Empty
+            initialValue = MainViewState.Empty
         )
 }
