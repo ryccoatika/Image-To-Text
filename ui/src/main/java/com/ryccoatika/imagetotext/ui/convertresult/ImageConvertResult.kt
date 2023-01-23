@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,10 +55,19 @@ private fun ImageConvertResult(
 ) {
     val viewState by rememberStateWithLifecycle(viewModel.state)
 
+    viewState.event?.let {event ->
+        LaunchedEffect(event) {
+            when(event) {
+                ImageConvertResultViewState.Event.RemoveSuccess -> navigateBack()
+            }
+        }
+    }
+
     ImageConvertResult(
         state = viewState,
         navigateBack = navigateBack,
-        textChanged = viewModel::setText
+        textChanged = viewModel::setText,
+        onDeleteClick = viewModel::remove
     )
 }
 
@@ -66,7 +76,8 @@ private fun ImageConvertResult(
 private fun ImageConvertResult(
     state: ImageConvertResultViewState,
     navigateBack: () -> Unit,
-    textChanged: (String) -> Unit
+    textChanged: (String) -> Unit,
+    onDeleteClick: () -> Unit,
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
 
@@ -88,7 +99,8 @@ private fun ImageConvertResult(
         sheetContent = {
             ImageConvertResultBottomSheet(
                 text = state.textScanned?.text ?: "",
-                textChanged =textChanged
+                textChanged =textChanged,
+                onDeleteClick = onDeleteClick
             )
         }
     ) { paddingValues ->
@@ -98,6 +110,7 @@ private fun ImageConvertResult(
                 .fillMaxSize()
         ) {
             ImageConvertResultTopBar(
+                text = state.textScanned?.text ?: "",
                 onBackClick = navigateBack
             )
             Box(
@@ -133,7 +146,8 @@ private fun ImageConvertResult(
                                     if ((imageSizeRatio * state.inputImage.width).roundToInt() == coordinates.size.width) {
                                         val scaledImageHeight =
                                             imageSizeRatio * state.inputImage.height
-                                        yOffset = coordinates.size.height / 2 - scaledImageHeight / 2
+                                        yOffset =
+                                            coordinates.size.height / 2 - scaledImageHeight / 2
                                     }
                                     if ((imageSizeRatio * state.inputImage.height).roundToInt() == coordinates.size.height) {
                                         val scaledImageWidth =
@@ -173,10 +187,9 @@ private fun ImageConvertResult(
 @Composable
 private fun ImageConvertResultBottomSheet(
     text: String,
-    textChanged: (String) -> Unit
+    textChanged: (String) -> Unit,
+    onDeleteClick: () -> Unit
 ) {
-    val context = LocalContext.current
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -202,29 +215,26 @@ private fun ImageConvertResultBottomSheet(
                 .padding(vertical = MaterialTheme.spacing.medium)
         )
         Button(
-            onClick = {
-                Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, text)
-                    type = "text/plain"
-                }.run {
-                    context.startActivity(Intent.createChooser(this, null))
-                }
-            },
+            onClick = onDeleteClick,
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = MaterialTheme.colors.error,
+                contentColor = MaterialTheme.colors.onError
+            ),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(stringResource(R.string.button_share))
+            Text(stringResource(R.string.button_delete))
         }
     }
 }
 
 @Composable
 private fun ImageConvertResultTopBar(
+    text: String,
     onBackClick: () -> Unit
 ) {
-
+    val context = LocalContext.current
     Row(
-        horizontalArrangement = Arrangement.Start,
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .padding(MaterialTheme.spacing.medium)
@@ -240,6 +250,23 @@ private fun ImageConvertResultTopBar(
                 modifier = Modifier.size(40.dp)
             )
         }
+        IconButton(
+            onClick = {
+                Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, text)
+                    type = "text/plain"
+                }.run {
+                    context.startActivity(Intent.createChooser(this, null))
+                }
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Share,
+                contentDescription = null,
+                tint = MaterialTheme.colors.onPrimary
+            )
+        }
     }
 }
 
@@ -250,7 +277,8 @@ private fun ImageConvertResultPreview() {
         ImageConvertResult(
             state = ImageConvertResultViewState.Empty,
             navigateBack = {},
-            textChanged = {}
+            textChanged = {},
+            onDeleteClick = {}
         )
     }
 }

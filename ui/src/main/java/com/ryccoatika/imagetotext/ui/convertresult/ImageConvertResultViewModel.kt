@@ -8,6 +8,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.ryccoatika.imagetotext.domain.model.TextRecognized
 import com.ryccoatika.imagetotext.domain.model.TextScanned
 import com.ryccoatika.imagetotext.domain.usecase.GetTextScanned
+import com.ryccoatika.imagetotext.domain.usecase.RemoveTextScanned
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
@@ -19,7 +20,8 @@ class ImageConvertResultViewModel @Inject constructor(
     @ApplicationContext
     context: Context,
     getTextScanned: GetTextScanned,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
+    private val removeTextScanned: RemoveTextScanned
 ) : ViewModel() {
 
     private val id: Long = savedStateHandle["id"]!!
@@ -44,11 +46,13 @@ class ImageConvertResultViewModel @Inject constructor(
             }
         }
     }
+    private val event = MutableStateFlow<ImageConvertResultViewState.Event?>(null)
 
     val state: StateFlow<ImageConvertResultViewState> = combine(
         textScanned,
         inputImage,
         textElements,
+        event,
         ::ImageConvertResultViewState
     ).stateIn(
         scope = viewModelScope,
@@ -69,6 +73,15 @@ class ImageConvertResultViewModel @Inject constructor(
                     text = text
                 )
             )
+        }
+    }
+
+    fun remove() {
+        viewModelScope.launch {
+            textScanned.value?.let {
+                removeTextScanned.executeSync(RemoveTextScanned.Params(it))
+                event.value = ImageConvertResultViewState.Event.RemoveSuccess
+            }
         }
     }
 }

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="error_scan_failure">Oops, something wen\'t wrong, please try again later</string>
+    <string name="error_scan_not_found">Oops, we can\'t find any text on the image</string>
+
     <string name="title_preview">Preview</string>
     <string name="title_your_documents">Your Documents</string>
 
     <string name="button_copy">Copy</string>
     <string name="button_finish">Finish</string>
-    <string name="button_share">Share</string>
+    <string name="button_delete">Delete</string>
     <string name="button_skip">Skip</string>
 
     <string name="hint_search">Search</string>

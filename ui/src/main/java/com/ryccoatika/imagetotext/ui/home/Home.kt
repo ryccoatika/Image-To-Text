@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -82,6 +83,7 @@ private fun Home(
         onSearchChanged = viewModel::setQuery,
         uriSelected = viewModel::setUri,
         onTextScannedRemove = viewModel::remove,
+        onMessageShown = viewModel::clearMessage,
         openImageResultScreen = openImageResultScreen,
         openLanguageSelectorScreen = openLanguageSelectorScreen
     )
@@ -94,10 +96,23 @@ private fun Home(
     onSearchChanged: (String) -> Unit,
     uriSelected: (Uri) -> Unit,
     onTextScannedRemove: (TextScanned) -> Unit,
+    onMessageShown: (Long) -> Unit,
     openImageResultScreen: (Long) -> Unit,
     openLanguageSelectorScreen: () -> Unit
 ) {
+    val scaffoldState = rememberScaffoldState()
+
+    state.uiMessage?.let { message ->
+        LaunchedEffect(message) {
+            scaffoldState.snackbarHostState.showSnackbar(
+                message = message.message
+            )
+            onMessageShown(message.id)
+        }
+    }
+
     Scaffold(
+        scaffoldState = scaffoldState,
         floatingActionButton = {
             FabImagePicker(
                 pickedFromGallery = { uri ->
@@ -167,6 +182,7 @@ private fun HomePreview() {
             onSearchChanged = {},
             uriSelected = {},
             onTextScannedRemove = {},
+            onMessageShown = {},
             openImageResultScreen = {},
             openLanguageSelectorScreen = {}
         )

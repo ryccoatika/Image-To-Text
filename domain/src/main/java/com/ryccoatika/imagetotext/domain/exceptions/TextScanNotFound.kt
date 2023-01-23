@@ -1,3 +1,3 @@
 package com.ryccoatika.imagetotext.domain.exceptions
 
-class TextScanNotFound : Exception()
+class TextScanNotFound : Throwable()
