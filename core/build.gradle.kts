@@ -4,6 +4,10 @@ plugins {
     kotlin("kapt")
 }
 
+kapt {
+    useBuildCache = true
+}
+
 android {
     namespace = "com.ryccoatika.imagetotext.core"
     compileSdk = 33

@@ -14,7 +14,8 @@ private val AppLightColorScheme = lightColors(
     onBackground = Color(0xFF475569),
     primary = Color(0xFF465BD8),
     onPrimary = Color.White,
-    secondary = Color(0xFF73A5F7)
+    secondary = Color(0xFF73A5F7),
+    onSecondary = Color.White
 )
 
 private val AppShape = Shapes(

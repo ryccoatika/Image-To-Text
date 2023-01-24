@@ -6,18 +6,24 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Camera
-import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.LinkedCamera
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -55,21 +61,68 @@ fun FabImagePicker(
         }
     }
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium)
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.extraLarge),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         AnimatedVisibility(
             visible = fabAddActive,
-            enter = scaleIn() + slideInVertically { fullHeight ->
-                fullHeight * 2
+            enter = scaleIn() + slideInHorizontally { fullWidth ->
+                fullWidth
             },
-            exit = scaleOut() + slideOutVertically { fullHeight ->
-                fullHeight * 2
+            exit = scaleOut() + slideOutHorizontally { fullWidth ->
+                fullWidth
             }
         ) {
             FloatingActionButton(
-                backgroundColor = MaterialTheme.colors.primary,
-                contentColor = MaterialTheme.colors.onPrimary,
+                backgroundColor = MaterialTheme.colors.secondary,
+                contentColor = MaterialTheme.colors.onSecondary,
+                modifier = Modifier.size(40.dp),
+                onClick = {
+                    fabAddActive = false
+                    galleryLauncher.launch("image/*")
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Image,
+                    contentDescription = null,
+                )
+            }
+        }
+        val rotation = remember { Animatable(0f) }
+        FloatingActionButton(
+            backgroundColor = MaterialTheme.colors.primary,
+            contentColor = MaterialTheme.colors.onPrimary,
+            onClick = {
+                fabAddActive = !fabAddActive
+            },
+        ) {
+            LaunchedEffect(fabAddActive) {
+                if (fabAddActive) {
+                    rotation.animateTo(45f)
+                } else {
+                    rotation.animateTo(0f)
+                }
+            }
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = null,
+                modifier = Modifier.rotate(rotation.value)
+            )
+        }
+        AnimatedVisibility(
+            visible = fabAddActive,
+            enter = scaleIn() + slideInHorizontally { fullWidth ->
+                -fullWidth
+            },
+            exit = scaleOut() + slideOutHorizontally { fullWidth ->
+                -fullWidth
+            }
+        ) {
+            FloatingActionButton(
+                backgroundColor = MaterialTheme.colors.secondary,
+                contentColor = MaterialTheme.colors.onSecondary,
+                modifier = Modifier.size(40.dp),
                 onClick = {
                     fabAddActive = false
                     if (cameraPermissionState.status.isGranted) {
@@ -81,45 +134,10 @@ fun FabImagePicker(
                 },
             ) {
                 Icon(
-                    imageVector = Icons.Default.Camera,
+                    imageVector = Icons.Outlined.LinkedCamera,
                     contentDescription = null,
                 )
             }
-        }
-        AnimatedVisibility(
-            visible = fabAddActive,
-            enter = scaleIn() + slideInVertically { fullHeight ->
-                fullHeight * 2
-            },
-            exit = scaleOut() + slideOutVertically { fullHeight ->
-                fullHeight * 2
-            }
-        ) {
-            FloatingActionButton(
-                backgroundColor = MaterialTheme.colors.primary,
-                contentColor = MaterialTheme.colors.onPrimary,
-                onClick = {
-                    fabAddActive = false
-                    galleryLauncher.launch("image/*")
-                },
-            ) {
-                Icon(
-                    imageVector = Icons.Default.PhotoLibrary,
-                    contentDescription = null,
-                )
-            }
-        }
-        FloatingActionButton(
-            backgroundColor = MaterialTheme.colors.primary,
-            contentColor = MaterialTheme.colors.onPrimary,
-            onClick = {
-                fabAddActive = !fabAddActive
-            },
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = null,
-            )
         }
     }
 }
