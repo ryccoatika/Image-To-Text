@@ -3,7 +3,6 @@ package com.ryccoatika.imagetotext.ui.imagepreview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -65,6 +64,7 @@ private fun ImagePreview(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun ImagePreview(
     state: ImagePreviewViewState,
@@ -129,16 +129,19 @@ private fun ImagePreview(
                 )
             }
             Spacer(Modifier.height(MaterialTheme.spacing.large))
-            Box(
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = {
+                    expanded = !expanded
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .border(1.dp, MaterialTheme.colors.secondary, MaterialTheme.shapes.small)
-                    .clickable { expanded = true }
+                    .padding(horizontal = 10.dp, vertical = 12.dp),
             ) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
-                        .padding(horizontal = 10.dp, vertical = 12.dp)
                         .fillMaxWidth()
                 ) {
                     Text(
@@ -147,7 +150,7 @@ private fun ImagePreview(
                     )
                     Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
                 }
-                DropdownMenu(
+                ExposedDropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {
@@ -156,7 +159,8 @@ private fun ImagePreview(
                             onClick = {
                                 onLanguageModelChanged(recogLangModel)
                                 expanded = false
-                            }
+                            },
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(recogLangModel.getText())
                         }

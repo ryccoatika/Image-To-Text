@@ -37,7 +37,7 @@ fun Text.toTextRecognizedDomain(): TextRecognized = TextRecognized(
                             angle = element.angle,
                             boundingBox = element.boundingBox
                         )
-                    }
+                    },
                 )
             },
             boundingBox = textBlock.boundingBox

@@ -3,15 +3,17 @@ package com.ryccoatika.imagetotext.ui.convertresult
 import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.ZeroCornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +22,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,9 +58,9 @@ private fun ImageConvertResult(
 ) {
     val viewState by rememberStateWithLifecycle(viewModel.state)
 
-    viewState.event?.let {event ->
+    viewState.event?.let { event ->
         LaunchedEffect(event) {
-            when(event) {
+            when (event) {
                 ImageConvertResultViewState.Event.RemoveSuccess -> navigateBack()
             }
         }
@@ -65,7 +68,7 @@ private fun ImageConvertResult(
 
     ImageConvertResult(
         state = viewState,
-        navigateBack = navigateBack,
+        navigateUp = navigateBack,
         textChanged = viewModel::setText,
         onDeleteClick = viewModel::remove
     )
@@ -75,10 +78,11 @@ private fun ImageConvertResult(
 @Composable
 private fun ImageConvertResult(
     state: ImageConvertResultViewState,
-    navigateBack: () -> Unit,
+    navigateUp: () -> Unit,
     textChanged: (String) -> Unit,
     onDeleteClick: () -> Unit,
 ) {
+    val context = LocalContext.current
     val scaffoldState = rememberBottomSheetScaffoldState()
 
     var imageSizeRatio by remember { mutableStateOf(1f) }
@@ -87,11 +91,44 @@ private fun ImageConvertResult(
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
-        backgroundColor = MaterialTheme.colors.primary,
+        topBar = {
+            TopAppBar(
+                navigationIcon = {
+                    IconButton(
+                        onClick = navigateUp
+                    ) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = null)
+                    }
+                },
+                title = {
+                    Text(stringResource(R.string.title_preview))
+                },
+                actions = {
+                    IconButton(
+                        onClick = onDeleteClick
+                    ) {
+                        Icon(Icons.Outlined.Delete, contentDescription = null)
+                    }
+                    IconButton(
+                        onClick = {
+                            Intent().apply {
+                                action = Intent.ACTION_SEND
+                                putExtra(Intent.EXTRA_TEXT, state.textScanned?.text ?: "")
+                                type = "text/plain"
+                            }.run {
+                                context.startActivity(Intent.createChooser(this, null))
+                            }
+                        }
+                    ) {
+                        Icon(Icons.Default.Share, contentDescription = null)
+                    }
+                }
+            )
+        },
         sheetBackgroundColor = Color.White,
-        sheetShape = MaterialTheme.shapes.small.copy(
-            bottomStart = ZeroCornerSize,
-            bottomEnd = ZeroCornerSize
+        sheetShape = RoundedCornerShape(
+            topStart = 20.dp,
+            topEnd = 20.dp
         ),
         sheetPeekHeight = 50.dp,
         sheetElevation = 4.dp,
@@ -99,87 +136,77 @@ private fun ImageConvertResult(
         sheetContent = {
             ImageConvertResultBottomSheet(
                 text = state.textScanned?.text ?: "",
-                textChanged =textChanged,
-                onDeleteClick = onDeleteClick
+                textChanged = textChanged
             )
         }
     ) { paddingValues ->
-        Column(
+        Box(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-        ) {
-            ImageConvertResultTopBar(
-                text = state.textScanned?.text ?: "",
-                onBackClick = navigateBack
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() },
-                        onClick = {
-                            selectedElements.clear()
-                        }
-                    )
-            ) {
-                state.textScanned?.let {
-                    val imagePainter = rememberAsyncImagePainter(it.imageUri)
-                    Image(
-                        painter = imagePainter,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .onGloballyPositioned { coordinates ->
-                                if (coordinates.size != IntSize.Zero && imagePainter.intrinsicSize != Size.Unspecified && state.inputImage != null) {
-                                    // calculate size ratio
-                                    val widthRatio =
-                                        coordinates.size.width / state.inputImage.width.toFloat()
-                                    val heightRatio =
-                                        coordinates.size.height / state.inputImage.height.toFloat()
-                                    imageSizeRatio = minOf(widthRatio, heightRatio)
-
-                                    // calculate offset
-                                    var yOffset = 0f
-                                    var xOffset = 0f
-                                    if ((imageSizeRatio * state.inputImage.width).roundToInt() == coordinates.size.width) {
-                                        val scaledImageHeight =
-                                            imageSizeRatio * state.inputImage.height
-                                        yOffset =
-                                            coordinates.size.height / 2 - scaledImageHeight / 2
-                                    }
-                                    if ((imageSizeRatio * state.inputImage.height).roundToInt() == coordinates.size.height) {
-                                        val scaledImageWidth =
-                                            imageSizeRatio * state.inputImage.width
-                                        xOffset = coordinates.size.width / 2 - scaledImageWidth / 2
-                                    }
-                                    placeHolderOffset = Offset(xOffset, yOffset)
-                                }
-                            }
-                    )
-                }
-                state.elements.forEach { element ->
-                    TextHighlightBlock(
-                        element = element,
-                        placeHolderOffset = placeHolderOffset,
-                        imageSizeRatio = imageSizeRatio
-                    ) {
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = {
                         selectedElements.clear()
-                        selectedElements.add(element)
-                    }
-                }
-                TextHighlightBlockSelected(
-                    selectedElements = selectedElements,
-                    elements = state.elements,
-                    placeHolderOffset = placeHolderOffset,
-                    imageSizeRatio = imageSizeRatio,
-                    selectedElementsChanged = { value ->
-                        selectedElements.clear()
-                        selectedElements.addAll(value)
                     }
                 )
+        ) {
+            state.textScanned?.let {
+                val imagePainter = rememberAsyncImagePainter(it.imageUri)
+                Image(
+                    painter = imagePainter,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .onGloballyPositioned { coordinates ->
+                            if (coordinates.size != IntSize.Zero && imagePainter.intrinsicSize != Size.Unspecified && state.inputImage != null) {
+                                // calculate size ratio
+                                val widthRatio =
+                                    coordinates.size.width / state.inputImage.width.toFloat()
+                                val heightRatio =
+                                    coordinates.size.height / state.inputImage.height.toFloat()
+                                imageSizeRatio = minOf(widthRatio, heightRatio)
+
+                                // calculate offset
+                                var yOffset = 0f
+                                var xOffset = 0f
+                                if ((imageSizeRatio * state.inputImage.width).roundToInt() == coordinates.size.width) {
+                                    val scaledImageHeight =
+                                        imageSizeRatio * state.inputImage.height
+                                    yOffset =
+                                        coordinates.size.height / 2 - scaledImageHeight / 2
+                                }
+                                if ((imageSizeRatio * state.inputImage.height).roundToInt() == coordinates.size.height) {
+                                    val scaledImageWidth =
+                                        imageSizeRatio * state.inputImage.width
+                                    xOffset = coordinates.size.width / 2 - scaledImageWidth / 2
+                                }
+                                placeHolderOffset = Offset(xOffset, yOffset)
+                            }
+                        }
+                )
             }
+            state.elements.forEach { element ->
+                TextHighlightBlock(
+                    element = element,
+                    placeHolderOffset = placeHolderOffset,
+                    imageSizeRatio = imageSizeRatio
+                ) {
+                    selectedElements.clear()
+                    selectedElements.add(element)
+                }
+            }
+            TextHighlightBlockSelected(
+                selectedElements = selectedElements,
+                elements = state.elements,
+                placeHolderOffset = placeHolderOffset,
+                imageSizeRatio = imageSizeRatio,
+                selectedElementsChanged = { value ->
+                    selectedElements.clear()
+                    selectedElements.addAll(value)
+                }
+            )
         }
     }
 }
@@ -187,86 +214,41 @@ private fun ImageConvertResult(
 @Composable
 private fun ImageConvertResultBottomSheet(
     text: String,
-    textChanged: (String) -> Unit,
-    onDeleteClick: () -> Unit
+    textChanged: (String) -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
+            .border(
+                1.dp,
+                MaterialTheme.colors.secondary,
+                RoundedCornerShape(
+                    topStart = 20.dp,
+                    topEnd = 20.dp
+                )
+            )
+            .sizeIn(maxHeight = LocalConfiguration.current.screenHeightDp.dp /2)
             .padding(MaterialTheme.spacing.medium)
     ) {
         Box(
             modifier = Modifier
-                .width(50.dp)
-                .height(5.dp)
+                .width(40.dp)
+                .height(7.dp)
                 .clip(CircleShape)
-                .background(Color.Gray)
+                .background(MaterialTheme.colors.secondary)
         )
         AppTextInput(
             value = text,
             onValueChange = textChanged,
-            borderShape = MaterialTheme.shapes.large,
+            borderShape = MaterialTheme.shapes.small,
             borderWidth = 2.dp,
-            borderColor = MaterialTheme.colors.primary,
+            borderColor = MaterialTheme.colors.secondary.copy(ContentAlpha.disabled),
             textColor = Color.Black,
             cursorColor = MaterialTheme.colors.primary,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = MaterialTheme.spacing.medium)
         )
-        Button(
-            onClick = onDeleteClick,
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = MaterialTheme.colors.error,
-                contentColor = MaterialTheme.colors.onError
-            ),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(stringResource(R.string.button_delete))
-        }
-    }
-}
-
-@Composable
-private fun ImageConvertResultTopBar(
-    text: String,
-    onBackClick: () -> Unit
-) {
-    val context = LocalContext.current
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .padding(MaterialTheme.spacing.medium)
-            .fillMaxWidth()
-    ) {
-        IconButton(
-            onClick = onBackClick,
-        ) {
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowLeft,
-                contentDescription = null,
-                tint = MaterialTheme.colors.onPrimary,
-                modifier = Modifier.size(40.dp)
-            )
-        }
-        IconButton(
-            onClick = {
-                Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, text)
-                    type = "text/plain"
-                }.run {
-                    context.startActivity(Intent.createChooser(this, null))
-                }
-            }
-        ) {
-            Icon(
-                imageVector = Icons.Default.Share,
-                contentDescription = null,
-                tint = MaterialTheme.colors.onPrimary
-            )
-        }
     }
 }
 
@@ -276,7 +258,7 @@ private fun ImageConvertResultPreview() {
     AppTheme {
         ImageConvertResult(
             state = ImageConvertResultViewState.Empty,
-            navigateBack = {},
+            navigateUp = {},
             textChanged = {},
             onDeleteClick = {}
         )

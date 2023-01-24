@@ -23,14 +23,14 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.ryccoatika.imagetotext.domain.model.TextRecognized
 import com.ryccoatika.imagetotext.ui.R
 import com.ryccoatika.imagetotext.ui.common.theme.spacing
+import com.ryccoatika.imagetotext.ui.common.utils.copyToClipboard
 
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class)
@@ -43,7 +43,7 @@ fun TextHighlightBlockSelected(
     selectedElementsChanged: (List<TextRecognized.Element>) -> Unit
 ) {
     if (selectedElements.isNotEmpty()) {
-        val clipboardManager = LocalClipboardManager.current
+        val context = LocalContext.current
         val localTextSelectionColors = LocalTextSelectionColors.current
         var showCopyButton by remember { mutableStateOf(true) }
 
@@ -79,13 +79,11 @@ fun TextHighlightBlockSelected(
                         modifier = Modifier
                             .padding(MaterialTheme.spacing.extraSmall)
                             .clickable {
-                                clipboardManager.setText(
-                                    AnnotatedString(
-                                        selectedElements.joinToString(
-                                            separator = " "
-                                        ) { it.text })
-                                )
+                                selectedElements.joinToString(
+                                    separator = " "
+                                ) { it.text }.copyToClipboard(context)
                                 showCopyButton = false
+
                             }
                     )
                 }
@@ -119,7 +117,7 @@ fun TextHighlightBlockSelected(
                                     val dragX =
                                         firstElementRect.left.times(imageSizeRatio) + motionEvent.x - 20.dp.toPx()
                                     val dragY =
-                                        firstElementRect.bottom.times(imageSizeRatio) + motionEvent.y - 20.dp.toPx()
+                                        firstElementRect.top.times(imageSizeRatio) + motionEvent.y - 20.dp.toPx()
 
                                     val firstElementIndex =
                                         elements
