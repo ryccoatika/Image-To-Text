@@ -23,6 +23,7 @@ import com.ryccoatika.imagetotext.ui.R
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 import com.ryccoatika.imagetotext.ui.common.theme.spacing
 import com.ryccoatika.imagetotext.ui.common.ui.AppSearchTextInput
+import com.ryccoatika.imagetotext.ui.common.ui.AppTopBar
 import com.ryccoatika.imagetotext.ui.common.ui.FabImagePicker
 import com.ryccoatika.imagetotext.ui.common.ui.ScannedTextCard
 import com.ryccoatika.imagetotext.ui.common.utils.rememberStateWithLifecycle
@@ -68,10 +69,8 @@ private fun Home(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(stringResource(R.string.app_name))
-                }
+            AppTopBar(
+                title = stringResource(R.string.app_name)
             )
         },
         floatingActionButtonPosition = FabPosition.Center,
@@ -86,6 +85,8 @@ private fun Home(
                 generateImageUri = generateImageUri
             )
         },
+        modifier = Modifier
+            .navigationBarsPadding()
     ) { paddingValues ->
         Column(
             modifier = Modifier

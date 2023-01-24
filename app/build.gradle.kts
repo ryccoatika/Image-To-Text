@@ -35,6 +35,7 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -42,7 +43,6 @@ android {
         }
         getByName("debug") {
             applicationIdSuffix = ".debug"
-            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -98,6 +98,7 @@ dependencies {
 
     implementation(libs.accompanist.navigation.animation)
     implementation(libs.accompanist.navigation.material)
+    implementation(libs.accompanist.systemuicontroller)
 
     implementation(libs.activity.compose)
 

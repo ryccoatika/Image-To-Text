@@ -35,6 +35,7 @@ import com.ryccoatika.imagetotext.ui.R
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 import com.ryccoatika.imagetotext.ui.common.theme.spacing
 import com.ryccoatika.imagetotext.ui.common.ui.AppTextInput
+import com.ryccoatika.imagetotext.ui.common.ui.AppTopBar
 import com.ryccoatika.imagetotext.ui.common.ui.TextHighlightBlock
 import com.ryccoatika.imagetotext.ui.common.ui.TextHighlightBlockSelected
 import com.ryccoatika.imagetotext.ui.common.utils.rememberStateWithLifecycle
@@ -92,7 +93,7 @@ private fun ImageConvertResult(
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            TopAppBar(
+            AppTopBar(
                 navigationIcon = {
                     IconButton(
                         onClick = navigateUp
@@ -100,9 +101,7 @@ private fun ImageConvertResult(
                         Icon(Icons.Default.ArrowBack, contentDescription = null)
                     }
                 },
-                title = {
-                    Text(stringResource(R.string.title_preview))
-                },
+                title = stringResource(R.string.title_preview),
                 actions = {
                     IconButton(
                         onClick = onDeleteClick
@@ -138,7 +137,8 @@ private fun ImageConvertResult(
                 text = state.textScanned?.text ?: "",
                 textChanged = textChanged
             )
-        }
+        },
+        modifier = Modifier.navigationBarsPadding()
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -227,7 +227,7 @@ private fun ImageConvertResultBottomSheet(
                     topEnd = 20.dp
                 )
             )
-            .sizeIn(maxHeight = LocalConfiguration.current.screenHeightDp.dp /2)
+            .sizeIn(maxHeight = LocalConfiguration.current.screenHeightDp.dp / 2)
             .padding(MaterialTheme.spacing.medium)
     ) {
         Box(

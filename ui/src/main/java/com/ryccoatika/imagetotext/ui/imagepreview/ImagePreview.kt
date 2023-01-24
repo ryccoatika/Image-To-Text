@@ -21,6 +21,7 @@ import com.ryccoatika.imagetotext.domain.model.RecognationLanguageModel
 import com.ryccoatika.imagetotext.ui.R
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 import com.ryccoatika.imagetotext.ui.common.theme.spacing
+import com.ryccoatika.imagetotext.ui.common.ui.AppTopBar
 import com.ryccoatika.imagetotext.ui.common.utils.rememberStateWithLifecycle
 
 @Composable
@@ -89,7 +90,7 @@ private fun ImagePreview(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            TopAppBar(
+            AppTopBar(
                 navigationIcon = {
                     IconButton(
                         onClick = onNavigateUp
@@ -97,11 +98,10 @@ private fun ImagePreview(
                         Icon(Icons.Default.ArrowBack, contentDescription = null)
                     }
                 },
-                title = {
-                    Text(stringResource(R.string.title_preview_image))
-                }
+                title = stringResource(R.string.title_preview_image)
             )
-        }
+        },
+        modifier = Modifier.navigationBarsPadding()
     ) { paddingValues ->
         Column(
             modifier = Modifier

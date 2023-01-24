@@ -36,7 +36,9 @@ fun Intro(
 
     val pagerState = rememberPagerState()
 
-    Scaffold { paddingValues ->
+    Scaffold(
+        modifier = Modifier.navigationBarsPadding()
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)

@@ -49,7 +49,7 @@ internal fun AppNavigation(
 ) {
     AnimatedNavHost(
         navController = navController,
-        startDestination = Screen.Splash.route,
+        startDestination = Screen.Home.route,
         modifier = modifier
     ) {
         addSplashTopLevel(navController)
