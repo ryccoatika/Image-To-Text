@@ -1,4 +1,4 @@
-package com.ryccoatika.imagetotext.core.utils
+package com.ryccoatika.imagetotext.ui.utils
 
 import android.app.Activity
 import com.google.android.play.core.review.ReviewManagerFactory

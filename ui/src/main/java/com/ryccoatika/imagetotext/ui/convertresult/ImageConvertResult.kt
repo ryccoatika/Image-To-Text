@@ -1,5 +1,6 @@
 package com.ryccoatika.imagetotext.ui.convertresult
 
+import android.app.Activity
 import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,6 +40,7 @@ import com.ryccoatika.imagetotext.ui.common.ui.AppTopBar
 import com.ryccoatika.imagetotext.ui.common.ui.TextHighlightBlock
 import com.ryccoatika.imagetotext.ui.common.ui.TextHighlightBlockSelected
 import com.ryccoatika.imagetotext.ui.common.utils.rememberStateWithLifecycle
+import com.ryccoatika.imagetotext.ui.utils.ReviewHelper
 import kotlin.math.roundToInt
 
 @Composable
@@ -85,6 +87,10 @@ private fun ImageConvertResult(
 ) {
     val context = LocalContext.current
     val scaffoldState = rememberBottomSheetScaffoldState()
+
+    LaunchedEffect(Unit) {
+        ReviewHelper.launchInAppReview(context as Activity)
+    }
 
     var imageSizeRatio by remember { mutableStateOf(1f) }
     var placeHolderOffset by remember { mutableStateOf(Offset.Zero) }

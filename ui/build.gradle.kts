@@ -52,4 +52,6 @@ dependencies {
     implementation(libs.coil)
 
     implementation(libs.google.mlkit.textrecognition)
+
+    implementation(libs.google.play.review)
 }

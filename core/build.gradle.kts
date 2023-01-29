@@ -35,7 +35,6 @@ dependencies {
 
     implementation(libs.datastore.preferences)
 
-    implementation(libs.google.play.core)
     implementation(libs.google.mlkit.textrecognition)
     implementation(libs.google.mlkit.textrecognition.chinese)
     implementation(libs.google.mlkit.textrecognition.devanagari)

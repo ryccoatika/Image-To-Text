@@ -11,6 +11,11 @@ hilt {
     enableAggregatingTask = true
 }
 
+val appVersionCode: Int = project.properties["VERSION_CODE"] as? Int? ?: 9
+println("APK version code: $appVersionCode")
+
+val isKeystoreReleaseExists = rootProject.file("release/release.jks").exists()
+
 android {
     namespace = "com.ryccoatika.imagetotext"
     signingConfigs {
@@ -20,6 +25,15 @@ android {
             keyAlias = "androiddebugkey"
             keyPassword = "android"
         }
+
+        create("release") {
+            if (isKeystoreReleaseExists) {
+                storeFile = rootProject.file("release/release.jks")
+                storePassword = project.properties["RELEASE_KEYSTORE_PWD"] as? String
+                keyAlias = "imagetotext"
+                keyPassword = project.properties["RELEASE_KEY_PWD"] as? String
+            }
+        }
     }
     compileSdk = 33
 
@@ -27,8 +41,8 @@ android {
         applicationId = "com.ryccoatika.imagetotext"
         minSdk = 23
         targetSdk = 33
-        versionCode = 2
-        versionName = "1.0.1"
+        versionCode = appVersionCode
+        versionName = "2.0.0"
 
         testInstrumentationRunner = "androidx.intro_1.runner.AndroidJUnitRunner"
     }
@@ -60,7 +74,11 @@ android {
         }
 
         create("standard") {
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (isKeystoreReleaseExists) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
 
             dimension = "mode"
         }
