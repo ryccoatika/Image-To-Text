@@ -20,8 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -30,7 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.rememberAsyncImagePainter
 import com.ryccoatika.imagetotext.domain.model.TextRecognized
 import com.ryccoatika.imagetotext.ui.R
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
@@ -135,7 +134,7 @@ private fun ImageConvertResult(
             topStart = 20.dp,
             topEnd = 20.dp
         ),
-        sheetPeekHeight = 50.dp,
+        sheetPeekHeight = 100.dp,
         sheetElevation = 4.dp,
         sheetGesturesEnabled = true,
         sheetContent = {
@@ -143,8 +142,7 @@ private fun ImageConvertResult(
                 text = state.textScanned?.text ?: "",
                 textChanged = textChanged
             )
-        },
-        modifier = Modifier.navigationBarsPadding()
+        }
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -159,14 +157,13 @@ private fun ImageConvertResult(
                 )
         ) {
             state.textScanned?.let {
-                val imagePainter = rememberAsyncImagePainter(it.imageUri)
                 Image(
-                    painter = imagePainter,
+                    bitmap = it.image.asImageBitmap(),
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
                         .onGloballyPositioned { coordinates ->
-                            if (coordinates.size != IntSize.Zero && imagePainter.intrinsicSize != Size.Unspecified && state.inputImage != null) {
+                            if (coordinates.size != IntSize.Zero && state.inputImage != null) {
                                 // calculate size ratio
                                 val widthRatio =
                                     coordinates.size.width / state.inputImage.width.toFloat()
@@ -233,8 +230,14 @@ private fun ImageConvertResultBottomSheet(
                     topEnd = 20.dp
                 )
             )
-            .sizeIn(maxHeight = LocalConfiguration.current.screenHeightDp.dp / 2)
+            .sizeIn(
+                maxHeight = LocalConfiguration.current.screenHeightDp.dp + WindowInsets.navigationBars
+                    .asPaddingValues()
+                    .calculateBottomPadding()
+            )
             .padding(MaterialTheme.spacing.medium)
+            .imePadding()
+            .navigationBarsPadding()
     ) {
         Box(
             modifier = Modifier

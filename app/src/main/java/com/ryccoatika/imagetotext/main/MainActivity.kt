@@ -116,12 +116,21 @@ class MainActivity : ComponentActivity() {
                 intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
             }
             uri?.let {
+                navController.navigate(Screen.Home.route) {
+                    launchSingleTop = true
+
+                    popUpTo(navController.graph.id) {
+                        inclusive = true
+                    }
+                }
                 navController.navigate(
                     LeafScreen.ImagePreview.createRoute(
                         Screen.Home,
                         it
                     )
-                )
+                ) {
+                    launchSingleTop = true
+                }
             }
         }
     }

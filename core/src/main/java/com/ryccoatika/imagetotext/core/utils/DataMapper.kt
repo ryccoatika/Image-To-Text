@@ -1,6 +1,5 @@
 package com.ryccoatika.imagetotext.core.utils
 
-import android.net.Uri
 import com.google.mlkit.vision.text.Text
 import com.ryccoatika.imagetotext.core.data.local.entity.TextScannedEntity
 import com.ryccoatika.imagetotext.domain.model.TextRecognized
@@ -10,7 +9,7 @@ fun TextScanned.toTextScannedEntity(): TextScannedEntity {
     return TextScannedEntity(
         id = id,
         text = text,
-        imageUri = imageUri.toString(),
+        image = image,
         textRecognized = textRecognized
     )
 }
@@ -19,7 +18,7 @@ fun TextScannedEntity.toTextScannedDomain(): TextScanned =
     TextScanned(
         id = id ?: 0,
         text = text,
-        imageUri = Uri.parse(imageUri),
+        image = image,
         textRecognized = textRecognized
     )
 

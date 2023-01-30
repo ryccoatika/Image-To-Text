@@ -1,6 +1,5 @@
 package com.ryccoatika.imagetotext.ui.convertresult
 
-import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,15 +9,12 @@ import com.ryccoatika.imagetotext.domain.model.TextScanned
 import com.ryccoatika.imagetotext.domain.usecase.GetTextScanned
 import com.ryccoatika.imagetotext.domain.usecase.RemoveTextScanned
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ImageConvertResultViewModel @Inject constructor(
-    @ApplicationContext
-    context: Context,
     getTextScanned: GetTextScanned,
     savedStateHandle: SavedStateHandle,
     private val removeTextScanned: RemoveTextScanned
@@ -28,7 +24,7 @@ class ImageConvertResultViewModel @Inject constructor(
     private val textScanned = MutableStateFlow<TextScanned?>(null)
     private val inputImage: Flow<InputImage?> = textScanned.filterNotNull().map {
         try {
-            InputImage.fromFilePath(context, it.imageUri)
+            InputImage.fromBitmap(it.image, 0)
         } catch (e: Exception) {
             null
         }

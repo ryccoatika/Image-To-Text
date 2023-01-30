@@ -11,7 +11,7 @@ hilt {
     enableAggregatingTask = true
 }
 
-val appVersionCode: Int = project.properties["VERSION_CODE"] as? Int? ?: 9
+val appVersionCode: Int = project.properties["VERSION_CODE"] as? Int? ?: 10
 println("APK version code: $appVersionCode")
 
 val isKeystoreReleaseExists = rootProject.file("release/release.jks").exists()

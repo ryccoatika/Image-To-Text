@@ -2,11 +2,13 @@ package com.ryccoatika.imagetotext.ui.imagepreview
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.mlkit.vision.common.InputImage
+import com.ryccoatika.imagetotext.domain.exceptions.ImageBroken
 import com.ryccoatika.imagetotext.domain.exceptions.TextScanFailure
 import com.ryccoatika.imagetotext.domain.exceptions.TextScanNotFound
 import com.ryccoatika.imagetotext.domain.model.RecognationLanguageModel
@@ -22,6 +24,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @HiltViewModel
 @SuppressLint("StaticFieldLeak")
@@ -79,9 +82,15 @@ class ImagePreviewViewModel @Inject constructor(
                         line.elements.joinToString(" ") { it.text }
                     }
                 }
+                val parcelFileDescriptor = context.contentResolver.openFileDescriptor(imageUri, "r")
+                    ?: throw ImageBroken()
+
+                val image = BitmapFactory.decodeFileDescriptor(parcelFileDescriptor.fileDescriptor)
+                parcelFileDescriptor.close()
+
                 val textScanned = saveTextScanned.executeSync(
                     SaveTextScanned.Params(
-                        imageUri = imageUri,
+                        image = image,
                         textRecognized = textRecognized,
                         text = text
                     )
@@ -101,6 +110,14 @@ class ImagePreviewViewModel @Inject constructor(
                 uiMessageManager.emitMessage(
                     UiMessage(
                         message = context.getString(R.string.error_scan_not_found),
+                        throwable = e
+                    )
+                )
+            } catch (e: ImageBroken) {
+                loadingCounter.removeLoader()
+                uiMessageManager.emitMessage(
+                    UiMessage(
+                        message = context.getString(R.string.error_image_can_not_be_read),
                         throwable = e
                     )
                 )

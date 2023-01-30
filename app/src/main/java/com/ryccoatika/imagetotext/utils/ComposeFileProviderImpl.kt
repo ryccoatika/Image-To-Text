@@ -12,7 +12,7 @@ import javax.inject.Singleton
 @Singleton
 class ComposeFileProviderImpl @Inject constructor() : ComposeFileProvider, FileProvider(R.xml.filepaths) {
     override fun getImageUri(context: Context): Uri {
-        val directory = File(context.filesDir, "images")
+        val directory = File(context.cacheDir, "images")
         directory.mkdirs()
         val file = File.createTempFile(
             "image_to_text_",

@@ -4,6 +4,7 @@
 
     <string name="error_scan_failure">Oops, something wen\'t wrong, please try again later</string>
     <string name="error_scan_not_found">Oops, we can\'t find any text on the image</string>
+    <string name="error_image_can_not_be_read">Oops, we can\'t read your image</string>
 
     <string name="title_preview">Preview</string>
     <string name="title_preview_image">Preview Image</string>

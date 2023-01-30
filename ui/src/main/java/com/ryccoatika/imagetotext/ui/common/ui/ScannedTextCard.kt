@@ -1,6 +1,6 @@
 package com.ryccoatika.imagetotext.ui.common.ui
 
-import android.net.Uri
+import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,11 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
 import com.ryccoatika.imagetotext.domain.model.TextRecognized
 import com.ryccoatika.imagetotext.domain.model.TextScanned
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
@@ -30,8 +30,6 @@ fun ScannedTextCard(
     onDismissed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val imagePainter = rememberAsyncImagePainter(textScanned.imageUri)
-
     val dismissState = rememberDismissState(confirmStateChange = {
         onDismissed()
         true
@@ -77,7 +75,7 @@ fun ScannedTextCard(
                 .sizeIn(minHeight = 75.dp)
         ) {
             Image(
-                imagePainter,
+                bitmap = textScanned.image.asImageBitmap(),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
@@ -105,7 +103,7 @@ private fun ScannedTextCardPreview() {
         ScannedTextCard(
             textScanned = TextScanned(
                 id = 0,
-                imageUri = Uri.EMPTY,
+                image = Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565),
                 text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
                 textRecognized = TextRecognized(
                     text = "",

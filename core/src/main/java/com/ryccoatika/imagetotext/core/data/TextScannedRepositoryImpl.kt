@@ -1,14 +1,14 @@
 package com.ryccoatika.imagetotext.core.data
 
-import android.net.Uri
+import android.graphics.Bitmap
 import com.ryccoatika.imagetotext.core.data.local.AppPreferences
 import com.ryccoatika.imagetotext.core.data.local.LocalDataSource
 import com.ryccoatika.imagetotext.core.data.local.entity.TextScannedEntity
-import com.ryccoatika.imagetotext.domain.model.TextScanned
-import com.ryccoatika.imagetotext.domain.repository.TextScannedRepository
 import com.ryccoatika.imagetotext.core.utils.toTextScannedDomain
 import com.ryccoatika.imagetotext.core.utils.toTextScannedEntity
 import com.ryccoatika.imagetotext.domain.model.TextRecognized
+import com.ryccoatika.imagetotext.domain.model.TextScanned
+import com.ryccoatika.imagetotext.domain.repository.TextScannedRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -29,13 +29,13 @@ class TextScannedRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveTextScanned(
-        imageUri: Uri,
+        image: Bitmap,
         textRecognized: TextRecognized,
         text: String
     ): TextScanned =
         localDataSource.saveTextScanned(
             TextScannedEntity(
-                imageUri = imageUri.toString(),
+                image = image,
                 textRecognized = textRecognized,
                 text = text
             )

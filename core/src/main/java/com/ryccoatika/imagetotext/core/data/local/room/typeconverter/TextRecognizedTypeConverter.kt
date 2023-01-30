@@ -1,4 +1,4 @@
-package com.ryccoatika.imagetotext.core.data.local.room
+package com.ryccoatika.imagetotext.core.data.local.room.typeconverter
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson
