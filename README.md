@@ -21,7 +21,7 @@ Things you should pay attention to:
 
 # Screenshots
 
-<img src="https://raw.githubusercontent.com/ryccoatika/Image-To-Text/master/design/screenshot_1.jpg" width="225"> <img src="https://raw.githubusercontent.com/ryccoatika/Image-To-Text/master/design/screenshot_2.jpg" width="225"> <img src="https://raw.githubusercontent.com/ryccoatika/Image-To-Text/master/design/screenshot_3.jpg" width="225"> <img src="https://raw.githubusercontent.com/ryccoatika/Image-To-Text/master/design/screenshot_4.jpg" width="225"> <img src="https://raw.githubusercontent.com/ryccoatika/Image-To-Text/master/design/screenshot_5.jpg" width="225">
+<img src="https://raw.githubusercontent.com/ryccoatika/Image-To-Text/master/design/screenshot_1.png" width="225"> <img src="https://raw.githubusercontent.com/ryccoatika/Image-To-Text/master/design/screenshot_2.png" width="225"> <img src="https://raw.githubusercontent.com/ryccoatika/Image-To-Text/master/design/screenshot_3.png" width="225"> <img src="https://raw.githubusercontent.com/ryccoatika/Image-To-Text/master/design/screenshot_4.png" width="225"> <img src="https://raw.githubusercontent.com/ryccoatika/Image-To-Text/master/design/screenshot_5.png" width="225">
 
 # Download
 
