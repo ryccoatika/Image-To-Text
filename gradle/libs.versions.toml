@@ -1,0 +1,65 @@
+[versions]
+accompanist = "0.28.0"
+compose = "1.3.2"
+composecompiler = "1.3.2"
+composeMaterial = "1.3.1"
+coroutines = "1.6.4"
+datastore = "1.0.0"
+hilt = "2.44.2"
+room = "2.4.3"
+textrecognition = "16.0.0-beta6"
+
+[libraries]
+accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
+accompanist-permission = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
+accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
+accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
+accompanist-navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanist" }
+
+activity-compose = { module = "androidx.activity:activity-compose", version = "1.6.1" }
+
+coil = { module = "io.coil-kt:coil-compose", version = "2.2.2" }
+
+compose-material = { module = "androidx.compose.material:material", version.ref = "composeMaterial" }
+compose-material-icons = { module = "androidx.compose.material:material-icons-extended", version.ref = "composeMaterial" }
+
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+
+coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+
+google-firebase-core = { module = "com.google.firebase:firebase-core", version = "21.1.1" }
+google-firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx", version = "21.2.0" }
+google-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx", version = "18.3.3" }
+google-mlkit-textrecognition = { module = "com.google.mlkit:text-recognition", version.ref = "textrecognition" }
+google-mlkit-textrecognition-chinese = { module = "com.google.mlkit:text-recognition-chinese", version.ref = "textrecognition" }
+google-mlkit-textrecognition-devanagari = { module = "com.google.mlkit:text-recognition-devanagari", version.ref = "textrecognition" }
+google-mlkit-textrecognition-japanese = { module = "com.google.mlkit:text-recognition-japanese", version.ref = "textrecognition" }
+google-mlkit-textrecognition-korean = { module = "com.google.mlkit:text-recognition-korean", version.ref = "textrecognition" }
+google-play-core = { module = "com.google.android.play:core-ktx", version = "1.8.1" }
+google-play-review = { module = "com.google.android.play:review-ktx", version = "2.0.1" }
+
+gson = { module = "com.google.code.gson:gson", version = "2.10.1" }
+
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+hilt-dagger = { module = "com.google.dagger:dagger", version.ref = "hilt" }
+hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version = "1.0.0" }
+
+leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version = "2.10" }
+
+lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version = "2.5.1" }
+
+pluck = { module = "com.himanshoe:pluck", version = "1.0.0" }
+
+room = { module = "androidx.room:room-ktx", version.ref = "room" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+
+splashscreen = { module = "androidx.core:core-splashscreen", version = "1.0.0"}
+
+[plugins]
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+gms-googleServices = "com.google.gms.google-services:4.3.14"

@@ -1,13 +1,21 @@
 package com.ryccoatika.imagetotext.di
 
-import com.ryccoatika.imagetotext.home.HomeView
-import com.ryccoatika.imagetotext.home.HomeViewModel
-import com.ryccoatika.imagetotext.textscanneddetail.TextScannedDetailView
-import com.ryccoatika.imagetotext.textscanneddetail.TextScannedDetailViewModel
-import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.dsl.module
+import com.ryccoatika.imagetotext.domain.utils.AppCoroutineDispatchers
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.Dispatchers
+import javax.inject.Singleton
 
-val viewModelModule = module {
-    viewModel { (homeView: HomeView) -> HomeViewModel(get(), homeView) }
-    viewModel { (textScannedDetailView: TextScannedDetailView) -> TextScannedDetailViewModel(get(), textScannedDetailView) }
+@InstallIn(SingletonComponent::class)
+@Module
+object AppModule {
+    @Provides
+    @Singleton
+    fun provideAppCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
+        io = Dispatchers.IO,
+        computation = Dispatchers.Default,
+        main = Dispatchers.Main
+    )
 }

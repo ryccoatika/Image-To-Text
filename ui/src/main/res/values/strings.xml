@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Image to Text</string>
+
+    <string name="error_scan_failure">Oops, something wen\'t wrong, please try again later</string>
+    <string name="error_scan_not_found">Oops, we can\'t find any text on the image</string>
+    <string name="error_image_can_not_be_read">Oops, we can\'t read your image</string>
+
+    <string name="title_preview">Preview</string>
+    <string name="title_preview_image">Preview Image</string>
+    <string name="title_your_documents">Your Documents</string>
+
+    <string name="button_continue">Continue</string>
+    <string name="button_copy">Copy</string>
+    <string name="button_finish">Finish</string>
+    <string name="button_delete">Delete</string>
+    <string name="button_skip">Skip</string>
+
+    <string name="hint_search">Search</string>
+
+    <string name="intro_caption_1">Click the floating button on the bottom right to scan new image</string>
+    <string name="intro_caption_2">Long press on the item to copy the text</string>
+    <string name="intro_caption_3">Slide left on the item to delete</string>
+
+    <string name="lang_latin">Latin</string>
+    <string name="lang_chinese">中文</string>
+    <string name="lang_devanagari">हिन्दी</string>
+    <string name="lang_japanese">日本語</string>
+    <string name="lang_korean">한국어</string>
+
+    <string name="text_choose_language">Choose Language</string>
+    <string name="text_lets_scan">Let\'s scan texts from images</string>
+</resources>
