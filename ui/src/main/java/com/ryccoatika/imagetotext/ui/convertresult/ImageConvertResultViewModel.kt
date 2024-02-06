@@ -8,7 +8,6 @@ import com.ryccoatika.imagetotext.domain.model.TextRecognized
 import com.ryccoatika.imagetotext.domain.model.TextScanned
 import com.ryccoatika.imagetotext.domain.usecase.GetTextScanned
 import com.ryccoatika.imagetotext.domain.usecase.RemoveTextScanned
-import com.ryccoatika.imagetotext.domain.utils.combine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
