@@ -9,20 +9,19 @@ import com.ryccoatika.imagetotext.core.utils.toTextScannedEntity
 import com.ryccoatika.imagetotext.domain.model.TextRecognized
 import com.ryccoatika.imagetotext.domain.model.TextScanned
 import com.ryccoatika.imagetotext.domain.repository.TextScannedRepository
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class TextScannedRepositoryImpl @Inject constructor(
     private val localDataSource: LocalDataSource,
-    private val appPreferences: AppPreferences
+    private val appPreferences: AppPreferences,
 ) : TextScannedRepository {
     override suspend fun getIsUserFirstTime(): Boolean =
         appPreferences.isFirstTime.first()
-
 
     override suspend fun setUserFirstTime(isFirstTime: Boolean) {
         appPreferences.setFirstTime(isFirstTime)
@@ -31,14 +30,14 @@ class TextScannedRepositoryImpl @Inject constructor(
     override suspend fun saveTextScanned(
         image: Bitmap,
         textRecognized: TextRecognized,
-        text: String
+        text: String,
     ): TextScanned =
         localDataSource.saveTextScanned(
             TextScannedEntity(
                 image = image,
                 textRecognized = textRecognized,
-                text = text
-            )
+                text = text,
+            ),
         ).toTextScannedDomain()
 
     override suspend fun removeTextScanned(textScanned: TextScanned) =

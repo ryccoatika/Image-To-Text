@@ -5,5 +5,5 @@ enum class RecognationLanguageModel {
     CHINESE,
     DEVANAGARI,
     JAPANESE,
-    KOREAN
+    KOREAN,
 }

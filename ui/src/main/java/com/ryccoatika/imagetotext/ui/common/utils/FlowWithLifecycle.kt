@@ -13,14 +13,14 @@ import kotlinx.coroutines.flow.StateFlow
 fun <T> rememberStateWithLifecycle(
     stateFlow: StateFlow<T>,
     lifecycle: Lifecycle = LocalLifecycleOwner.current.lifecycle,
-    minActiveState: Lifecycle.State = Lifecycle.State.STARTED
+    minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
 ): State<T> {
     val initialValue = remember(stateFlow) { stateFlow.value }
     return produceState(
         key1 = stateFlow,
         key2 = lifecycle,
         key3 = minActiveState,
-        initialValue = initialValue
+        initialValue = initialValue,
     ) {
         lifecycle.repeatOnLifecycle(minActiveState) {
             stateFlow.collect {

@@ -1,7 +1,12 @@
 package com.ryccoatika.imagetotext.ui.common.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -22,12 +27,12 @@ fun DotIndicator(
     backgroundColor: Color = MaterialTheme.colors.primaryVariant,
     activeColor: Color = MaterialTheme.colors.primaryVariant.copy(alpha = 0.5f),
     width: Dp = 10.dp,
-    gap: Dp = 5.dp
+    gap: Dp = 5.dp,
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
+        modifier = modifier,
     ) {
         for (i in 0 until count) {
             Box(
@@ -37,10 +42,12 @@ fun DotIndicator(
                     .height(width)
                     .clip(CircleShape)
                     .then(
-                        if (i == activeIndex) Modifier.background(backgroundColor) else Modifier.background(
-                            activeColor
-                        )
-                    )
+                        if (i == activeIndex) {
+                            Modifier.background(backgroundColor)
+                        } else Modifier.background(
+                            activeColor,
+                        ),
+                    ),
             )
         }
     }

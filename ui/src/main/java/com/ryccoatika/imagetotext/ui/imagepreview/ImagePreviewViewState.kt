@@ -11,7 +11,7 @@ data class ImagePreviewViewState(
     val languageModel: RecognationLanguageModel? = null,
     val isValid: Boolean = false,
     val message: UiMessage? = null,
-    val event: Event? = null
+    val event: Event? = null,
 ) {
     companion object {
         val Empty = ImagePreviewViewState()

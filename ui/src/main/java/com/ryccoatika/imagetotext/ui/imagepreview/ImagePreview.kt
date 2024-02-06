@@ -3,12 +3,37 @@ package com.ryccoatika.imagetotext.ui.imagepreview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ExposedDropdownMenuBox
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.runtime.*
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -29,11 +54,10 @@ fun ImagePreview(
     openImageResultScreen: (Long) -> Unit,
     navigateUp: () -> Unit,
 ) {
-
     ImagePreview(
         viewModel = hiltViewModel(),
         openImageResultScreen = openImageResultScreen,
-        onNavigateUp = navigateUp
+        onNavigateUp = navigateUp,
     )
 }
 
@@ -61,7 +85,7 @@ private fun ImagePreview(
         onMessageShown = viewModel::clearMessage,
         onLanguageModelChanged = viewModel::setLanguageModel,
         onScanClick = viewModel::scanImage,
-        onNavigateUp = onNavigateUp
+        onNavigateUp = onNavigateUp,
     )
 }
 
@@ -81,7 +105,7 @@ private fun ImagePreview(
     state.message?.let { message ->
         LaunchedEffect(message) {
             scaffoldState.snackbarHostState.showSnackbar(
-                message = message.message
+                message = message.message,
             )
             onMessageShown(message.id)
         }
@@ -93,20 +117,20 @@ private fun ImagePreview(
             AppTopBar(
                 navigationIcon = {
                     IconButton(
-                        onClick = onNavigateUp
+                        onClick = onNavigateUp,
                     ) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = null)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
                 },
-                title = stringResource(R.string.title_preview_image)
+                title = stringResource(R.string.title_preview_image),
             )
         },
-        modifier = Modifier.navigationBarsPadding()
+        modifier = Modifier.navigationBarsPadding(),
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(MaterialTheme.spacing.medium)
+                .padding(MaterialTheme.spacing.medium),
         ) {
             Spacer(Modifier.height(MaterialTheme.spacing.extraLarge))
             Box(
@@ -114,7 +138,7 @@ private fun ImagePreview(
                     .fillMaxWidth()
                     .aspectRatio(1f)
                     .clip(MaterialTheme.shapes.large)
-                    .background(MaterialTheme.colors.secondary.copy(0.25f))
+                    .background(MaterialTheme.colors.secondary.copy(0.25f)),
             ) {
                 Image(
                     imagePainter,
@@ -124,7 +148,7 @@ private fun ImagePreview(
                         .padding(MaterialTheme.spacing.medium)
                         .fillMaxSize()
                         .clip(MaterialTheme.shapes.large)
-                        .border(1.dp, MaterialTheme.colors.secondary, MaterialTheme.shapes.large)
+                        .border(1.dp, MaterialTheme.colors.secondary, MaterialTheme.shapes.large),
 
                 )
             }
@@ -142,25 +166,25 @@ private fun ImagePreview(
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
                 ) {
                     Text(
                         state.languageModel?.getText()
-                            ?: stringResource(R.string.text_choose_language)
+                            ?: stringResource(R.string.text_choose_language),
                     )
                     Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
                 }
                 ExposedDropdownMenu(
                     expanded = expanded,
-                    onDismissRequest = { expanded = false }
+                    onDismissRequest = { expanded = false },
                 ) {
-                    RecognationLanguageModel.values().forEach { recogLangModel ->
+                    RecognationLanguageModel.entries.forEach { recogLangModel ->
                         DropdownMenuItem(
                             onClick = {
                                 onLanguageModelChanged(recogLangModel)
                                 expanded = false
                             },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
                         ) {
                             Text(recogLangModel.getText())
                         }
@@ -177,7 +201,7 @@ private fun ImagePreview(
             }
             if (state.processing) {
                 LinearProgressIndicator(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         }
@@ -193,7 +217,7 @@ private fun RecognationLanguageModel.getText(): String {
             RecognationLanguageModel.JAPANESE -> R.string.lang_japanese
             RecognationLanguageModel.KOREAN -> R.string.lang_korean
             RecognationLanguageModel.DEVANAGARI -> R.string.lang_devanagari
-        }
+        },
     )
 }
 
@@ -206,7 +230,7 @@ private fun ImagePreviewPreview() {
             onMessageShown = {},
             onLanguageModelChanged = {},
             onScanClick = {},
-            onNavigateUp = {}
+            onNavigateUp = {},
         )
     }
 }

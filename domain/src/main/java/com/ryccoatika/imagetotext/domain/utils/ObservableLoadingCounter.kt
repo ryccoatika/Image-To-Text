@@ -4,11 +4,11 @@ import com.ryccoatika.imagetotext.domain.model.InvokeError
 import com.ryccoatika.imagetotext.domain.model.InvokeStarted
 import com.ryccoatika.imagetotext.domain.model.InvokeStatus
 import com.ryccoatika.imagetotext.domain.model.InvokeSuccess
+import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import java.util.concurrent.atomic.AtomicInteger
 
 class ObservableLoadingCounter {
     private val count = AtomicInteger()
@@ -29,7 +29,7 @@ class ObservableLoadingCounter {
 suspend fun Flow<InvokeStatus>.collectStatus(
     counter: ObservableLoadingCounter,
     uiMessageManager: UiMessageManager? = null,
-    onSuccess: (() -> Unit)? = null
+    onSuccess: (() -> Unit)? = null,
 ) = collect { status ->
     when (status) {
         is InvokeError -> {

@@ -1,17 +1,21 @@
 plugins {
-    id("com.android.application")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
-    id("com.google.dagger.hilt.android")
-    kotlin("android")
-    kotlin("kapt")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
+
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.gms.googleServices)
+    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.firebase.performance)
+    alias(libs.plugins.tripletPlay)
+    alias(libs.plugins.ossLicenses)
 }
 
 hilt {
     enableAggregatingTask = true
 }
 
-val appVersionCode: Int = project.properties["VERSION_CODE"] as? Int? ?: 10
+val appVersionCode: Int = project.properties["VERSION_CODE"] as? Int? ?: 1
 println("APK version code: $appVersionCode")
 
 val isKeystoreReleaseExists = rootProject.file("release/release.jks").exists()
@@ -35,12 +39,9 @@ android {
             }
         }
     }
-    compileSdk = 33
-
     defaultConfig {
         applicationId = "com.ryccoatika.imagetotext"
-        minSdk = 23
-        targetSdk = 33
+
         versionCode = appVersionCode
         versionName = "2.0.0"
 
@@ -52,14 +53,14 @@ android {
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
         getByName("debug") {
             applicationIdSuffix = ".debug"
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -84,9 +85,11 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility(JavaVersion.VERSION_11)
-        targetCompatibility(JavaVersion.VERSION_11)
+    lint {
+        checkReleaseBuilds = false
+        ignoreTestSources = true
+        abortOnError = true
+        checkDependencies = true
     }
 
     buildFeatures {
@@ -110,28 +113,25 @@ androidComponents {
 }
 
 dependencies {
-    implementation(project(":core"))
-    implementation(project(":domain"))
-    implementation(project(":ui"))
-
-    implementation(libs.accompanist.navigation.animation)
-    implementation(libs.accompanist.navigation.material)
-    implementation(libs.accompanist.systemuicontroller)
+    implementation(projects.core)
+    implementation(projects.domain)
+    implementation(projects.ui)
 
     implementation(libs.activity.compose)
+    implementation(libs.compose.material)
+    implementation(libs.compose.navigation)
 
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.tooling.preview)
 
-    implementation(libs.compose.material)
-
     implementation(libs.splashscreen)
 
     implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
 
     implementation(libs.google.firebase.core)
     implementation(libs.google.firebase.analytics)
+    implementation(libs.google.firebase.crashlytics)
 
     debugImplementation(libs.leakcanary)
 }

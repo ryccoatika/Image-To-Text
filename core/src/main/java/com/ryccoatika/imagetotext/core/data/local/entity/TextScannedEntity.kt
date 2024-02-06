@@ -6,10 +6,10 @@ import androidx.room.PrimaryKey
 import com.ryccoatika.imagetotext.domain.model.TextRecognized
 
 @Entity
-data class TextScannedEntity (
+data class TextScannedEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Long? = null,
     var image: Bitmap,
     var text: String,
-    val textRecognized: TextRecognized
+    val textRecognized: TextRecognized,
 )

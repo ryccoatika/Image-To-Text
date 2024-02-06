@@ -7,19 +7,28 @@ import androidx.lifecycle.viewModelScope
 import com.ryccoatika.imagetotext.domain.model.TextScanned
 import com.ryccoatika.imagetotext.domain.usecase.ObserveTextScanned
 import com.ryccoatika.imagetotext.domain.usecase.RemoveTextScanned
-import com.ryccoatika.imagetotext.domain.utils.*
+import com.ryccoatika.imagetotext.domain.utils.ComposeFileProvider
+import com.ryccoatika.imagetotext.domain.utils.ObservableLoadingCounter
+import com.ryccoatika.imagetotext.domain.utils.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     observeTextScanned: ObserveTextScanned,
     private val removeTextScanned: RemoveTextScanned,
-    private val composeFileProvider: ComposeFileProvider
+    private val composeFileProvider: ComposeFileProvider,
 ) : ViewModel() {
 
     private val loadingState = ObservableLoadingCounter()
@@ -30,11 +39,11 @@ class HomeViewModel @Inject constructor(
         observeTextScanned.isProcessing,
         loadingState.observable,
         observeTextScanned.flow,
-        ::HomeViewState
+        ::HomeViewState,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = HomeViewState.Empty
+        initialValue = HomeViewState.Empty,
     )
 
     init {
@@ -58,7 +67,7 @@ class HomeViewModel @Inject constructor(
     fun remove(textScanned: TextScanned) {
         viewModelScope.launch {
             removeTextScanned(RemoveTextScanned.Params(textScanned)).collectStatus(
-                loadingState
+                loadingState,
             )
         }
     }

@@ -2,7 +2,11 @@ package com.ryccoatika.imagetotext.ui.common.ui
 
 import android.graphics.Rect
 import android.view.MotionEvent
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -14,7 +18,11 @@ import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -32,15 +40,14 @@ import com.ryccoatika.imagetotext.ui.R
 import com.ryccoatika.imagetotext.ui.common.theme.spacing
 import com.ryccoatika.imagetotext.ui.common.utils.copyToClipboard
 
-
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TextHighlightBlockSelected(
     selectedElements: List<TextRecognized.Element>,
     elements: List<TextRecognized.Element>,
     placeHolderOffset: Offset,
     imageSizeRatio: Float,
-    selectedElementsChanged: (List<TextRecognized.Element>) -> Unit
+    selectedElementsChanged: (List<TextRecognized.Element>) -> Unit,
 ) {
     if (selectedElements.isNotEmpty()) {
         val context = LocalContext.current
@@ -54,13 +61,13 @@ fun TextHighlightBlockSelected(
             AnimatedVisibility(
                 visible = showCopyButton,
                 enter = scaleIn() + expandVertically(expandFrom = Alignment.CenterVertically),
-                exit = scaleOut() + shrinkVertically(shrinkTowards = Alignment.CenterVertically)
+                exit = scaleOut() + shrinkVertically(shrinkTowards = Alignment.CenterVertically),
             ) {
                 Box(
                     modifier = Modifier
                         .offset(
                             x = placeHolderOffset.x.toDp(),
-                            y = placeHolderOffset.y.toDp()
+                            y = placeHolderOffset.y.toDp(),
                         )
                         .offset(
                             x = firstElementRect.left
@@ -68,10 +75,10 @@ fun TextHighlightBlockSelected(
                                 .toDp() + 10.dp,
                             y = firstElementRect.top
                                 .times(imageSizeRatio)
-                                .toDp() - 40.dp
+                                .toDp() - 40.dp,
                         )
                         .clip(MaterialTheme.shapes.large)
-                        .background(Color.Black.copy(0.6f))
+                        .background(Color.Black.copy(0.6f)),
                 ) {
                     Text(
                         stringResource(R.string.button_copy),
@@ -80,11 +87,10 @@ fun TextHighlightBlockSelected(
                             .padding(MaterialTheme.spacing.extraSmall)
                             .clickable {
                                 selectedElements.joinToString(
-                                    separator = " "
+                                    separator = " ",
                                 ) { it.text }.copyToClipboard(context)
                                 showCopyButton = false
-
-                            }
+                            },
                     )
                 }
             }
@@ -93,7 +99,7 @@ fun TextHighlightBlockSelected(
                 modifier = Modifier
                     .offset(
                         x = placeHolderOffset.x.toDp(),
-                        y = placeHolderOffset.y.toDp()
+                        y = placeHolderOffset.y.toDp(),
                     )
                     .offset(
                         x = firstElementRect.left
@@ -101,7 +107,7 @@ fun TextHighlightBlockSelected(
                             .toDp() - 20.dp,
                         y = firstElementRect.top
                             .times(imageSizeRatio)
-                            .toDp() - 20.dp
+                            .toDp() - 20.dp,
                     )
                     .size(20.dp)
                     .clip(CircleShape.copy(bottomEnd = ZeroCornerSize))
@@ -127,8 +133,8 @@ fun TextHighlightBlockSelected(
                                                         dragX.toInt(),
                                                         dragY.toInt(),
                                                         dragX.toInt(),
-                                                        dragY.toInt()
-                                                    )
+                                                        dragY.toInt(),
+                                                    ),
                                                 ) == true
                                             }
                                             .run {
@@ -136,16 +142,15 @@ fun TextHighlightBlockSelected(
                                                     elements.indexOfFirst { element ->
                                                         val elementX =
                                                             element.boundingBox!!.right.times(
-                                                                imageSizeRatio
+                                                                imageSizeRatio,
                                                             )
                                                         val elementY =
                                                             element.boundingBox!!.bottom.times(
-                                                                imageSizeRatio
+                                                                imageSizeRatio,
                                                             )
 
                                                         dragX < elementX && dragY < elementY
                                                     }
-
                                                 } else {
                                                     this
                                                 }
@@ -157,24 +162,23 @@ fun TextHighlightBlockSelected(
                                         selectedElementsChanged(
                                             elements.subList(
                                                 firstElementIndex,
-                                                lastElementIndex + 1
-                                            )
+                                                lastElementIndex + 1,
+                                            ),
                                         )
                                     }
                                 }
-
                             }
                             else -> return@pointerInteropFilter false
                         }
                         true
-                    }
+                    },
             )
             selectedElements.forEach { element ->
                 Box(
                     modifier = Modifier
                         .offset(
                             x = placeHolderOffset.x.toDp(),
-                            y = placeHolderOffset.y.toDp()
+                            y = placeHolderOffset.y.toDp(),
                         )
                         .offset(
                             x = element.boundingBox!!.left
@@ -182,26 +186,30 @@ fun TextHighlightBlockSelected(
                                 .toDp(),
                             y = element.boundingBox!!.top
                                 .times(imageSizeRatio)
-                                .toDp()
+                                .toDp(),
                         )
                         .size(
-                            width = ((element.boundingBox!!.right - element.boundingBox!!.left).times(
-                                imageSizeRatio
-                            )).toDp(),
-                            height = ((element.boundingBox!!.bottom - element.boundingBox!!.top).times(
-                                imageSizeRatio
-                            )).toDp()
+                            width = (
+                                (element.boundingBox!!.right - element.boundingBox!!.left).times(
+                                    imageSizeRatio,
+                                )
+                                ).toDp(),
+                            height = (
+                                (element.boundingBox!!.bottom - element.boundingBox!!.top).times(
+                                    imageSizeRatio,
+                                )
+                                ).toDp(),
                         )
                         .rotate(element.angle)
                         .background(localTextSelectionColors.backgroundColor)
-                        .clickable { showCopyButton = !showCopyButton }
+                        .clickable { showCopyButton = !showCopyButton },
                 )
             }
             Box(
                 modifier = Modifier
                     .offset(
                         x = placeHolderOffset.x.toDp(),
-                        y = placeHolderOffset.y.toDp()
+                        y = placeHolderOffset.y.toDp(),
                     )
                     .offset(
                         x = lastElementRect.right
@@ -209,7 +217,7 @@ fun TextHighlightBlockSelected(
                             .toDp(),
                         y = lastElementRect.bottom
                             .times(imageSizeRatio)
-                            .toDp()
+                            .toDp(),
                     )
                     .size(20.dp)
                     .clip(CircleShape.copy(topStart = ZeroCornerSize))
@@ -236,8 +244,8 @@ fun TextHighlightBlockSelected(
                                                     dragX.toInt(),
                                                     dragY.toInt(),
                                                     dragX.toInt(),
-                                                    dragY.toInt()
-                                                )
+                                                    dragY.toInt(),
+                                                ),
                                             ) == true
                                         }
                                         .run {
@@ -245,11 +253,11 @@ fun TextHighlightBlockSelected(
                                                 elements.indexOfLast { element ->
                                                     val elementX =
                                                         element.boundingBox!!.left.times(
-                                                            imageSizeRatio
+                                                            imageSizeRatio,
                                                         )
                                                     val elementY =
                                                         element.boundingBox!!.top.times(
-                                                            imageSizeRatio
+                                                            imageSizeRatio,
                                                         )
 
                                                     elementX < dragX && elementY < dragY
@@ -263,20 +271,18 @@ fun TextHighlightBlockSelected(
                                         selectedElementsChanged(
                                             elements.subList(
                                                 firstElementIndex,
-                                                lastElementIndex + 1
-                                            )
+                                                lastElementIndex + 1,
+                                            ),
                                         )
                                     }
                                 }
-
                             }
                             else -> return@pointerInteropFilter false
                         }
                         true
-                    }
+                    },
 
             )
         }
-
     }
 }

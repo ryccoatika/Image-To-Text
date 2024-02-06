@@ -7,15 +7,40 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.runtime.*
+import androidx.compose.material.rememberBottomSheetScaffoldState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,19 +69,18 @@ import kotlin.math.roundToInt
 
 @Composable
 fun ImageConvertResult(
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     ImageConvertResult(
         viewModel = hiltViewModel(),
-        navigateBack = navigateBack
+        navigateBack = navigateBack,
     )
 }
-
 
 @Composable
 private fun ImageConvertResult(
     viewModel: ImageConvertResultViewModel,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val viewState by rememberStateWithLifecycle(viewModel.state)
 
@@ -72,7 +96,7 @@ private fun ImageConvertResult(
         state = viewState,
         navigateUp = navigateBack,
         textChanged = viewModel::setText,
-        onDeleteClick = viewModel::remove
+        onDeleteClick = viewModel::remove,
     )
 }
 
@@ -91,7 +115,7 @@ private fun ImageConvertResult(
         ReviewHelper.launchInAppReview(context as Activity)
     }
 
-    var imageSizeRatio by remember { mutableStateOf(1f) }
+    var imageSizeRatio by remember { mutableFloatStateOf(1f) }
     var placeHolderOffset by remember { mutableStateOf(Offset.Zero) }
     val selectedElements = remember { mutableStateListOf<TextRecognized.Element>() }
 
@@ -101,15 +125,15 @@ private fun ImageConvertResult(
             AppTopBar(
                 navigationIcon = {
                     IconButton(
-                        onClick = navigateUp
+                        onClick = navigateUp,
                     ) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = null)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
                 },
                 title = stringResource(R.string.title_preview),
                 actions = {
                     IconButton(
-                        onClick = onDeleteClick
+                        onClick = onDeleteClick,
                     ) {
                         Icon(Icons.Outlined.Delete, contentDescription = null)
                     }
@@ -122,17 +146,17 @@ private fun ImageConvertResult(
                             }.run {
                                 context.startActivity(Intent.createChooser(this, null))
                             }
-                        }
+                        },
                     ) {
                         Icon(Icons.Default.Share, contentDescription = null)
                     }
-                }
+                },
             )
         },
         sheetBackgroundColor = Color.White,
         sheetShape = RoundedCornerShape(
             topStart = 20.dp,
-            topEnd = 20.dp
+            topEnd = 20.dp,
         ),
         sheetPeekHeight = 100.dp,
         sheetElevation = 4.dp,
@@ -140,9 +164,9 @@ private fun ImageConvertResult(
         sheetContent = {
             ImageConvertResultBottomSheet(
                 text = state.textScanned?.text ?: "",
-                textChanged = textChanged
+                textChanged = textChanged,
             )
-        }
+        },
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -153,8 +177,8 @@ private fun ImageConvertResult(
                     interactionSource = remember { MutableInteractionSource() },
                     onClick = {
                         selectedElements.clear()
-                    }
-                )
+                    },
+                ),
         ) {
             state.textScanned?.let {
                 Image(
@@ -187,14 +211,14 @@ private fun ImageConvertResult(
                                 }
                                 placeHolderOffset = Offset(xOffset, yOffset)
                             }
-                        }
+                        },
                 )
             }
             state.elements.forEach { element ->
                 TextHighlightBlock(
                     element = element,
                     placeHolderOffset = placeHolderOffset,
-                    imageSizeRatio = imageSizeRatio
+                    imageSizeRatio = imageSizeRatio,
                 ) {
                     selectedElements.clear()
                     selectedElements.add(element)
@@ -208,7 +232,7 @@ private fun ImageConvertResult(
                 selectedElementsChanged = { value ->
                     selectedElements.clear()
                     selectedElements.addAll(value)
-                }
+                },
             )
         }
     }
@@ -217,7 +241,7 @@ private fun ImageConvertResult(
 @Composable
 private fun ImageConvertResultBottomSheet(
     text: String,
-    textChanged: (String) -> Unit
+    textChanged: (String) -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -227,24 +251,24 @@ private fun ImageConvertResultBottomSheet(
                 MaterialTheme.colors.secondary,
                 RoundedCornerShape(
                     topStart = 20.dp,
-                    topEnd = 20.dp
-                )
+                    topEnd = 20.dp,
+                ),
             )
             .sizeIn(
                 maxHeight = LocalConfiguration.current.screenHeightDp.dp + WindowInsets.navigationBars
                     .asPaddingValues()
-                    .calculateBottomPadding()
+                    .calculateBottomPadding(),
             )
             .padding(MaterialTheme.spacing.medium)
             .imePadding()
-            .navigationBarsPadding()
+            .navigationBarsPadding(),
     ) {
         Box(
             modifier = Modifier
                 .width(40.dp)
                 .height(7.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colors.secondary)
+                .background(MaterialTheme.colors.secondary),
         )
         AppTextInput(
             value = text,
@@ -256,7 +280,7 @@ private fun ImageConvertResultBottomSheet(
             cursorColor = MaterialTheme.colors.primary,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = MaterialTheme.spacing.medium)
+                .padding(vertical = MaterialTheme.spacing.medium),
         )
     }
 }
@@ -269,7 +293,7 @@ private fun ImageConvertResultPreview() {
             state = ImageConvertResultViewState.Empty,
             navigateUp = {},
             textChanged = {},
-            onDeleteClick = {}
+            onDeleteClick = {},
         )
     }
 }

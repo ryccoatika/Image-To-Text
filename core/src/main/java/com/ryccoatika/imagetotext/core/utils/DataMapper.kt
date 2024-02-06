@@ -10,7 +10,7 @@ fun TextScanned.toTextScannedEntity(): TextScannedEntity {
         id = id,
         text = text,
         image = image,
-        textRecognized = textRecognized
+        textRecognized = textRecognized,
     )
 }
 
@@ -19,7 +19,7 @@ fun TextScannedEntity.toTextScannedDomain(): TextScanned =
         id = id ?: 0,
         text = text,
         image = image,
-        textRecognized = textRecognized
+        textRecognized = textRecognized,
     )
 
 fun Text.toTextRecognizedDomain(): TextRecognized = TextRecognized(
@@ -34,12 +34,12 @@ fun Text.toTextRecognizedDomain(): TextRecognized = TextRecognized(
                         TextRecognized.Element(
                             text = element.text,
                             angle = element.angle,
-                            boundingBox = element.boundingBox
+                            boundingBox = element.boundingBox,
                         )
                     },
                 )
             },
-            boundingBox = textBlock.boundingBox
+            boundingBox = textBlock.boundingBox,
         )
-    }
+    },
 )

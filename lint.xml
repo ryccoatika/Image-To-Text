@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- https://issuetracker.google.com/issues/181142248 -->
+    <issue id="UnsafeExperimentalUsageWarning" severity="ignore" />
+    <issue id="UnsafeExperimentalUsageError" severity="ignore" />
+
+    <!-- https://issuetracker.google.com/issues/182388985 -->
+    <issue id="InvalidFragmentVersionForActivityResult" severity="ignore" />
+
+    <issue id="all">
+        <ignore path="libs"/>
+    </issue>
+</lint>

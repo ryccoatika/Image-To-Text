@@ -21,10 +21,14 @@ import com.ryccoatika.imagetotext.domain.utils.combine
 import com.ryccoatika.imagetotext.ui.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
-
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 @SuppressLint("StaticFieldLeak")
@@ -41,7 +45,7 @@ class ImagePreviewViewModel @Inject constructor(
     private val isValid: StateFlow<Boolean> = recognitionLanguageModel.map { it != null }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
-        initialValue = false
+        initialValue = false,
     )
 
     private val loadingCounter = ObservableLoadingCounter()
@@ -55,11 +59,11 @@ class ImagePreviewViewModel @Inject constructor(
         isValid,
         uiMessageManager.message,
         event,
-        ::ImagePreviewViewState
+        ::ImagePreviewViewState,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = ImagePreviewViewState.Empty
+        initialValue = ImagePreviewViewState.Empty,
     )
 
     fun setLanguageModel(langModel: RecognationLanguageModel) {
@@ -74,8 +78,8 @@ class ImagePreviewViewModel @Inject constructor(
                 val textRecognized = getTextFromImage.executeSync(
                     GetTextFromImage.Params(
                         inputImage = InputImage.fromFilePath(context, imageUri),
-                        languageModel = recognitionLanguageModel.value!!
-                    )
+                        languageModel = recognitionLanguageModel.value!!,
+                    ),
                 )
                 val text = textRecognized.textBlocks.joinToString("\n\n") { textBlock ->
                     textBlock.lines.joinToString("\n") { line ->
@@ -92,8 +96,8 @@ class ImagePreviewViewModel @Inject constructor(
                     SaveTextScanned.Params(
                         image = image,
                         textRecognized = textRecognized,
-                        text = text
-                    )
+                        text = text,
+                    ),
                 )
                 event.value = ImagePreviewViewState.Event.OpenTextScannedDetail(textScanned)
                 loadingCounter.removeLoader()
@@ -102,24 +106,24 @@ class ImagePreviewViewModel @Inject constructor(
                 uiMessageManager.emitMessage(
                     UiMessage(
                         message = context.getString(R.string.error_scan_failure),
-                        throwable = e
-                    )
+                        throwable = e,
+                    ),
                 )
             } catch (e: TextScanNotFound) {
                 loadingCounter.removeLoader()
                 uiMessageManager.emitMessage(
                     UiMessage(
                         message = context.getString(R.string.error_scan_not_found),
-                        throwable = e
-                    )
+                        throwable = e,
+                    ),
                 )
             } catch (e: ImageBroken) {
                 loadingCounter.removeLoader()
                 uiMessageManager.emitMessage(
                     UiMessage(
                         message = context.getString(R.string.error_image_can_not_be_read),
-                        throwable = e
-                    )
+                        throwable = e,
+                    ),
                 )
             }
         }

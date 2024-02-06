@@ -21,21 +21,21 @@ import kotlin.coroutines.suspendCoroutine
 class TextRecognitionRepositoryImpl @Inject constructor() : TextRecognitionRepository {
     override suspend fun convertImageToText(
         inputImage: InputImage,
-        languageModel: RecognationLanguageModel
+        languageModel: RecognationLanguageModel,
     ): TextRecognized = suspendCoroutine { continuation ->
         val recognizer = when (languageModel) {
             RecognationLanguageModel.LATIN -> TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
             RecognationLanguageModel.CHINESE -> TextRecognition.getClient(
-                ChineseTextRecognizerOptions.Builder().build()
+                ChineseTextRecognizerOptions.Builder().build(),
             )
             RecognationLanguageModel.DEVANAGARI -> TextRecognition.getClient(
-                DevanagariTextRecognizerOptions.Builder().build()
+                DevanagariTextRecognizerOptions.Builder().build(),
             )
             RecognationLanguageModel.JAPANESE -> TextRecognition.getClient(
-                JapaneseTextRecognizerOptions.Builder().build()
+                JapaneseTextRecognizerOptions.Builder().build(),
             )
             RecognationLanguageModel.KOREAN -> TextRecognition.getClient(
-                KoreanTextRecognizerOptions.Builder().build()
+                KoreanTextRecognizerOptions.Builder().build(),
             )
             else -> {
                 continuation.resumeWithException(TextScanFailure())
@@ -45,11 +45,12 @@ class TextRecognitionRepositoryImpl @Inject constructor() : TextRecognitionRepos
 
         recognizer.process(inputImage)
             .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    if (task.result.text.isEmpty() || task.result.textBlocks.isEmpty()) {
+                val result = task.result
+                if (task.isSuccessful && result != null) {
+                    if (result.text.isEmpty() || result.textBlocks.isEmpty()) {
                         continuation.resumeWithException(TextScanNotFound())
                     } else {
-                        continuation.resume(task.result.toTextRecognizedDomain())
+                        continuation.resume(result.toTextRecognizedDomain())
                     }
                 } else {
                     continuation.resumeWithException(TextScanFailure())

@@ -6,11 +6,11 @@ import com.ryccoatika.imagetotext.domain.utils.ResultInteractor
 import javax.inject.Inject
 
 class GetTextScanned @Inject constructor(
-    private val textScannedRepository: TextScannedRepository
+    private val textScannedRepository: TextScannedRepository,
 ) : ResultInteractor<GetTextScanned.Params, TextScanned>() {
     override suspend fun doWork(params: Params): TextScanned = textScannedRepository.getTextScanned(params.id)
 
     data class Params(
-        val id: Long
+        val id: Long,
     )
 }

@@ -17,13 +17,13 @@ class ComposeFileProviderImpl @Inject constructor() : ComposeFileProvider, FileP
         val file = File.createTempFile(
             "image_to_text_",
             ".jpg",
-            directory
+            directory,
         )
         val authority = context.packageName + ".fileprovider"
         return getUriForFile(
             context,
             authority,
-            file
+            file,
         )
     }
 }

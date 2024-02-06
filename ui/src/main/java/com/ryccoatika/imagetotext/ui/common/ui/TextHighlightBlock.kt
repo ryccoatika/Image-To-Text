@@ -22,7 +22,7 @@ fun TextHighlightBlock(
     element: TextRecognized.Element,
     placeHolderOffset: Offset,
     imageSizeRatio: Float,
-    onLongClick: () -> Unit
+    onLongClick: () -> Unit,
 ) {
     element.boundingBox?.let { rect ->
         LocalDensity.current.run {
@@ -30,23 +30,23 @@ fun TextHighlightBlock(
                 modifier = Modifier
                     .offset(
                         x = placeHolderOffset.x.toDp(),
-                        y = placeHolderOffset.y.toDp()
+                        y = placeHolderOffset.y.toDp(),
                     )
                     .offset(
                         x = (rect.left * imageSizeRatio).toDp(),
-                        y = (rect.top * imageSizeRatio).toDp()
+                        y = (rect.top * imageSizeRatio).toDp(),
                     )
                     .size(
                         width = ((rect.right - rect.left) * imageSizeRatio).toDp(),
-                        height = ((rect.bottom - rect.top) * imageSizeRatio).toDp()
+                        height = ((rect.bottom - rect.top) * imageSizeRatio).toDp(),
                     )
                     .rotate(element.angle)
                     .clip(MaterialTheme.shapes.large)
                     .background(Color.Black.copy(0.2f))
                     .combinedClickable(
                         onClick = {},
-                        onLongClick = onLongClick
-                    )
+                        onLongClick = onLongClick,
+                    ),
             )
         }
     }

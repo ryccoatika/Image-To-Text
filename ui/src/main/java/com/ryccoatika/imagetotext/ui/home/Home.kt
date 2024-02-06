@@ -4,10 +4,20 @@ import android.content.Context
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.FabPosition
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -31,12 +41,12 @@ import com.ryccoatika.imagetotext.ui.common.utils.rememberStateWithLifecycle
 @Composable
 fun Home(
     openImageResultScreen: (Long) -> Unit,
-    openImagePreviewScreen: (Uri) -> Unit
+    openImagePreviewScreen: (Uri) -> Unit,
 ) {
     Home(
         viewModel = hiltViewModel(),
         openImageResultScreen = openImageResultScreen,
-        openImagePreviewScreen = openImagePreviewScreen
+        openImagePreviewScreen = openImagePreviewScreen,
     )
 }
 
@@ -44,7 +54,7 @@ fun Home(
 private fun Home(
     viewModel: HomeViewModel,
     openImageResultScreen: (Long) -> Unit,
-    openImagePreviewScreen: (Uri) -> Unit
+    openImagePreviewScreen: (Uri) -> Unit,
 ) {
     val viewState by rememberStateWithLifecycle(viewModel.state)
 
@@ -54,7 +64,7 @@ private fun Home(
         onSearchChanged = viewModel::setQuery,
         onTextScannedRemove = viewModel::remove,
         openImageResultScreen = openImageResultScreen,
-        openLanguageSelectorScreen = openImagePreviewScreen
+        openLanguageSelectorScreen = openImagePreviewScreen,
     )
 }
 
@@ -65,12 +75,12 @@ private fun Home(
     onSearchChanged: (String) -> Unit,
     onTextScannedRemove: (TextScanned) -> Unit,
     openImageResultScreen: (Long) -> Unit,
-    openLanguageSelectorScreen: (Uri) -> Unit
+    openLanguageSelectorScreen: (Uri) -> Unit,
 ) {
     Scaffold(
         topBar = {
             AppTopBar(
-                title = stringResource(R.string.app_name)
+                title = stringResource(R.string.app_name),
             )
         },
         floatingActionButtonPosition = FabPosition.Center,
@@ -82,16 +92,16 @@ private fun Home(
                 pickedFromCamera = { uri ->
                     openLanguageSelectorScreen(uri)
                 },
-                generateImageUri = generateImageUri
+                generateImageUri = generateImageUri,
             )
         },
         modifier = Modifier
-            .navigationBarsPadding()
+            .navigationBarsPadding(),
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(horizontal = MaterialTheme.spacing.medium)
+                .padding(horizontal = MaterialTheme.spacing.medium),
         ) {
             Spacer(Modifier.height(MaterialTheme.spacing.medium))
             Text(
@@ -104,19 +114,19 @@ private fun Home(
                 value = state.query ?: "",
                 onValueChange = onSearchChanged,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
             if (state.textScannedCollection.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(top = MaterialTheme.spacing.medium)
+                        .padding(top = MaterialTheme.spacing.medium),
                 ) {
                     items(
                         items = state.textScannedCollection,
                         key = {
                             it.id
-                        }
+                        },
                     ) { textScanned ->
                         ScannedTextCard(
                             textScanned = textScanned,
@@ -127,7 +137,7 @@ private fun Home(
                                 .padding(bottom = MaterialTheme.spacing.small)
                                 .clickable {
                                     openImageResultScreen(textScanned.id)
-                                }
+                                },
                         )
                     }
                 }
@@ -135,7 +145,7 @@ private fun Home(
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Image(
                         painterResource(R.drawable.decoration_empty),
@@ -143,7 +153,7 @@ private fun Home(
                         contentScale = ContentScale.FillWidth,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = MaterialTheme.spacing.medium)
+                            .padding(horizontal = MaterialTheme.spacing.medium),
                     )
                     Spacer(Modifier.height(32.dp))
                     Text(
@@ -166,7 +176,7 @@ private fun HomePreview() {
             onSearchChanged = {},
             onTextScannedRemove = {},
             openImageResultScreen = {},
-            openLanguageSelectorScreen = {}
+            openLanguageSelectorScreen = {},
         )
     }
 }

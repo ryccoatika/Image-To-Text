@@ -28,7 +28,8 @@ abstract class AppDatabase : RoomDatabase() {
             INSTANCE ?: synchronized(AppDatabase::class) {
                 val newInstance = Room.databaseBuilder(
                     context,
-                    AppDatabase::class.java, DB_NAME
+                    AppDatabase::class.java,
+                    DB_NAME,
                 )
                     .fallbackToDestructiveMigration()
                     .build()

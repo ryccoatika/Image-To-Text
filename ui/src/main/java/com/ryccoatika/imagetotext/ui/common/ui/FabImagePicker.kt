@@ -5,8 +5,12 @@ import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
@@ -14,10 +18,15 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.LinkedCamera
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -30,12 +39,12 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 import com.ryccoatika.imagetotext.ui.common.theme.spacing
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun FabImagePicker(
     pickedFromGallery: (Uri) -> Unit,
     pickedFromCamera: (Uri) -> Unit,
-    generateImageUri: (Context) -> Uri
+    generateImageUri: (Context) -> Uri,
 ) {
     val context = LocalContext.current
     var fabAddActive by remember { mutableStateOf(false) }
@@ -63,7 +72,7 @@ fun FabImagePicker(
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.extraLarge),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         AnimatedVisibility(
             visible = fabAddActive,
@@ -72,7 +81,7 @@ fun FabImagePicker(
             },
             exit = scaleOut() + slideOutHorizontally { fullWidth ->
                 fullWidth
-            }
+            },
         ) {
             FloatingActionButton(
                 backgroundColor = MaterialTheme.colors.secondary,
@@ -107,7 +116,7 @@ fun FabImagePicker(
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = null,
-                modifier = Modifier.rotate(rotation.value)
+                modifier = Modifier.rotate(rotation.value),
             )
         }
         AnimatedVisibility(
@@ -117,7 +126,7 @@ fun FabImagePicker(
             },
             exit = scaleOut() + slideOutHorizontally { fullWidth ->
                 -fullWidth
-            }
+            },
         ) {
             FloatingActionButton(
                 backgroundColor = MaterialTheme.colors.secondary,

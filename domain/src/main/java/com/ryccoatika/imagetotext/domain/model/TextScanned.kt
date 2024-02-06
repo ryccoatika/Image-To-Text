@@ -6,5 +6,5 @@ data class TextScanned(
     val id: Long,
     val image: Bitmap,
     var text: String,
-    val textRecognized: TextRecognized
+    val textRecognized: TextRecognized,
 )

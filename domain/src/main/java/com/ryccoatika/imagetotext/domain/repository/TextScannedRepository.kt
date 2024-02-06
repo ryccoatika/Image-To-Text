@@ -13,7 +13,7 @@ interface TextScannedRepository {
     suspend fun saveTextScanned(
         image: Bitmap,
         textRecognized: TextRecognized,
-        text: String
+        text: String,
     ): TextScanned
 
     suspend fun removeTextScanned(textScanned: TextScanned)

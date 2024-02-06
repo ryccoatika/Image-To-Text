@@ -1,10 +1,21 @@
 package com.ryccoatika.imagetotext.ui.common.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
@@ -31,10 +42,10 @@ fun AppTopBar(
             Brush.horizontalGradient(
                 colors = listOf(
                     MaterialTheme.colors.primary,
-                    MaterialTheme.colors.secondary
+                    MaterialTheme.colors.secondary,
                 ),
             ),
-        )
+        ),
     ) {
         navigationIcon?.invoke()
         if (navigationIcon == null) {
@@ -43,7 +54,7 @@ fun AppTopBar(
         if (title != null) {
             Text(
                 title,
-                style = MaterialTheme.typography.h6
+                style = MaterialTheme.typography.h6,
             )
         }
         Spacer(Modifier.weight(1f))
@@ -58,24 +69,24 @@ private fun AppTopBarPreview() {
         AppTopBar(
             navigationIcon = {
                 IconButton(
-                    onClick = {}
+                    onClick = {},
                 ) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = null)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                 }
             },
             title = "Title",
             actions = {
                 IconButton(
-                    onClick = { }
+                    onClick = { },
                 ) {
                     Icon(Icons.Outlined.Delete, contentDescription = null)
                 }
                 IconButton(
-                    onClick = {}
+                    onClick = {},
                 ) {
                     Icon(Icons.Default.Share, contentDescription = null)
                 }
-            }
+            },
         )
     }
 }

@@ -6,10 +6,11 @@ import com.google.android.play.core.review.ReviewManagerFactory
 object ReviewHelper {
     fun launchInAppReview(activity: Activity, onCompleted: (() -> Unit)? = null) {
         val reviewManager = ReviewManagerFactory.create(activity)
-        reviewManager.requestReviewFlow().addOnCompleteListener { result ->
-            if (result.isSuccessful) {
+        reviewManager.requestReviewFlow().addOnCompleteListener { task ->
+            val result = task.result
+            if (task.isSuccessful && result != null) {
                 reviewManager
-                    .launchReviewFlow(activity, result.result)
+                    .launchReviewFlow(activity, result)
                     .addOnCompleteListener { onCompleted?.invoke() }
             } else {
                 onCompleted?.invoke()

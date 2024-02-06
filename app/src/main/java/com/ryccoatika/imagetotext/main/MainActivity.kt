@@ -6,11 +6,12 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.util.Consumer
@@ -18,8 +19,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import androidx.navigation.compose.rememberNavController
 import com.ryccoatika.imagetotext.AppNavigation
 import com.ryccoatika.imagetotext.LeafScreen
 import com.ryccoatika.imagetotext.Screen
@@ -34,7 +34,6 @@ class MainActivity : ComponentActivity() {
 
     private var intentListener: Consumer<Intent?>? = null
 
-    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -47,7 +46,7 @@ class MainActivity : ComponentActivity() {
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         setContent {
-            val navHostController = rememberAnimatedNavController()
+            val navHostController = rememberNavController()
             MainContent(navHostController)
             DisposableEffect(Unit) {
                 handleIntentAction(intent, navHostController)
@@ -62,16 +61,9 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun MainContent(
-        navHostController: NavHostController
+        navHostController: NavHostController,
     ) {
-        val systemUiController = rememberSystemUiController()
         val state by rememberStateWithLifecycle(viewModel.state)
-
-        SideEffect {
-            systemUiController.setSystemBarsColor(
-                color = Color.Black.copy(alpha = 0.1f)
-            )
-        }
 
         LaunchedEffect(state) {
             state.isFirstTime?.let {
@@ -97,11 +89,11 @@ class MainActivity : ComponentActivity() {
         }
 
         AppTheme(
-            darkTheme = false
+            darkTheme = false,
         ) {
             AppNavigation(
                 navController = navHostController,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             )
         }
     }
@@ -126,8 +118,8 @@ class MainActivity : ComponentActivity() {
                 navController.navigate(
                     LeafScreen.ImagePreview.createRoute(
                         Screen.Home,
-                        it
-                    )
+                        it,
+                    ),
                 ) {
                     launchSingleTop = true
                 }

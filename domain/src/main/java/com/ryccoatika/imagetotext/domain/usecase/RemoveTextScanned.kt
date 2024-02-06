@@ -1,13 +1,14 @@
 package com.ryccoatika.imagetotext.domain.usecase
 
+import com.ryccoatika.imagetotext.domain.repository.TextScannedRepository
 import com.ryccoatika.imagetotext.domain.utils.AppCoroutineDispatchers
 import com.ryccoatika.imagetotext.domain.utils.Interactor
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlinx.coroutines.withContext
 
 class RemoveTextScanned @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
-    private val textScannedRepository: com.ryccoatika.imagetotext.domain.repository.TextScannedRepository
+    private val textScannedRepository: TextScannedRepository,
 ) : Interactor<RemoveTextScanned.Params>() {
 
     override suspend fun doWork(params: Params) = withContext(dispatchers.io) {
@@ -15,6 +16,6 @@ class RemoveTextScanned @Inject constructor(
     }
 
     data class Params(
-        val textScanned: com.ryccoatika.imagetotext.domain.model.TextScanned
+        val textScanned: com.ryccoatika.imagetotext.domain.model.TextScanned,
     )
 }

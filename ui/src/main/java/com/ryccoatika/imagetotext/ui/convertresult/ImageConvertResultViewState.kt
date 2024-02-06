@@ -8,7 +8,7 @@ data class ImageConvertResultViewState(
     val textScanned: TextScanned? = null,
     val inputImage: InputImage? = null,
     val elements: List<TextRecognized.Element> = emptyList(),
-    val event: Event? = null
+    val event: Event? = null,
 ) {
     companion object {
         val Empty = ImageConvertResultViewState()

@@ -16,7 +16,7 @@ import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 fun AppSearchTextInput(
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     AppTextInput(
         value = value,
@@ -25,14 +25,14 @@ fun AppSearchTextInput(
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = null,
-                tint = MaterialTheme.colors.secondary
+                tint = MaterialTheme.colors.secondary,
             )
         },
         placeholder = stringResource(id = R.string.hint_search),
         borderShape = MaterialTheme.shapes.small,
         borderWidth = 1.dp,
         borderColor = MaterialTheme.colors.secondary,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 

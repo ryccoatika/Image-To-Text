@@ -1,7 +1,11 @@
 package com.ryccoatika.imagetotext.ui.common.ui
 
 import androidx.compose.foundation.border
-import androidx.compose.material.*
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,11 +28,11 @@ fun AppTextInput(
     shape: Shape = MaterialTheme.shapes.small,
     borderShape: Shape? = null,
     borderWidth: Dp? = null,
-    borderColor: Color? = null
+    borderColor: Color? = null,
 ) {
     require(
         (borderShape != null && borderWidth != null && borderColor != null) ||
-                (borderShape == null && borderWidth == null && borderColor == null)
+            (borderShape == null && borderWidth == null && borderColor == null),
     ) { "|borderWidth|, |borderShape|, and |borderColor| must be filled all" }
     TextFieldDefaults.textFieldColors()
     TextField(
@@ -40,7 +44,7 @@ fun AppTextInput(
             if (placeholder != null) {
                 Text(
                     text = placeholder,
-                    color = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled)
+                    color = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled),
                 )
             }
         },
@@ -48,17 +52,21 @@ fun AppTextInput(
             focusedIndicatorColor = Color.Transparent,
             backgroundColor = backgroundColor,
             cursorColor = cursorColor,
-            textColor = textColor
+            textColor = textColor,
         ),
         modifier = modifier
             .then(
-                if (borderShape != null && borderWidth != null && borderColor != null) Modifier.border(
-                    width = borderWidth,
-                    color = borderColor,
-                    shape = borderShape
-                ) else Modifier
+                if (borderShape != null && borderWidth != null && borderColor != null) {
+                    Modifier.border(
+                        width = borderWidth,
+                        color = borderColor,
+                        shape = borderShape,
+                    )
+                } else {
+                    Modifier
+                },
             )
-            .clip(shape)
+            .clip(shape),
 
     )
 }
@@ -69,7 +77,7 @@ private fun AppTextInputPreview() {
     AppTheme {
         AppTextInput(
             value = "",
-            onValueChange = {}
+            onValueChange = {},
         )
     }
 }

@@ -1,6 +1,10 @@
 package com.ryccoatika.imagetotext.core.data.local.room
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.ryccoatika.imagetotext.core.data.local.entity.TextScannedEntity
 import kotlinx.coroutines.flow.Flow
 

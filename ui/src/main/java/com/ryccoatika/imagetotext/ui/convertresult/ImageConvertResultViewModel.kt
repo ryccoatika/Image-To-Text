@@ -8,16 +8,24 @@ import com.ryccoatika.imagetotext.domain.model.TextRecognized
 import com.ryccoatika.imagetotext.domain.model.TextScanned
 import com.ryccoatika.imagetotext.domain.usecase.GetTextScanned
 import com.ryccoatika.imagetotext.domain.usecase.RemoveTextScanned
+import com.ryccoatika.imagetotext.domain.utils.combine
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ImageConvertResultViewModel @Inject constructor(
     getTextScanned: GetTextScanned,
     savedStateHandle: SavedStateHandle,
-    private val removeTextScanned: RemoveTextScanned
+    private val removeTextScanned: RemoveTextScanned,
 ) : ViewModel() {
 
     private val id: Long = savedStateHandle["id"]!!
@@ -31,10 +39,10 @@ class ImageConvertResultViewModel @Inject constructor(
     }
     private val textElements: Flow<List<TextRecognized.Element>> = textScanned.filterNotNull().map {
         it.textRecognized.textBlocks.fold(
-            emptyList()
+            emptyList(),
         ) { acc1, textBlock ->
             acc1 + textBlock.lines.fold(
-                emptyList()
+                emptyList(),
             ) { acc2, line ->
                 acc2 + line.elements.fold(emptyList()) { acc, element ->
                     acc + element
@@ -49,11 +57,11 @@ class ImageConvertResultViewModel @Inject constructor(
         inputImage,
         textElements,
         event,
-        ::ImageConvertResultViewState
+        ::ImageConvertResultViewState,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = ImageConvertResultViewState.Empty
+        initialValue = ImageConvertResultViewState.Empty,
     )
 
     init {
@@ -66,8 +74,8 @@ class ImageConvertResultViewModel @Inject constructor(
         if (textScanned.value != null) {
             this.textScanned.value = textScanned.value!!.copy(
                 textRecognized = textScanned.value!!.textRecognized.copy(
-                    text = text
-                )
+                    text = text,
+                ),
             )
         }
     }
