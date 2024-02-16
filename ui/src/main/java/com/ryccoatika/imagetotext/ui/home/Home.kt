@@ -130,7 +130,7 @@ private fun Home(
                     ) { textScanned ->
                         ScannedTextCard(
                             textScanned = textScanned,
-                            onDismissed = {
+                            onDeleteClick = {
                                 onTextScannedRemove(textScanned)
                             },
                             modifier = Modifier
