@@ -9,7 +9,8 @@ fun TextScanned.toTextScannedEntity(): TextScannedEntity {
     return TextScannedEntity(
         id = id,
         text = text,
-        image = image,
+        imageUri = imageUri,
+        imageSize = imageSize,
         textRecognized = textRecognized,
     )
 }
@@ -18,7 +19,8 @@ fun TextScannedEntity.toTextScannedDomain(): TextScanned =
     TextScanned(
         id = id ?: 0,
         text = text,
-        image = image,
+        imageUri = imageUri,
+        imageSize = imageSize,
         textRecognized = textRecognized,
     )
 

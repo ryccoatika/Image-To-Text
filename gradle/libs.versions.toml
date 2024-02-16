@@ -30,7 +30,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ossLicenses = "com.google.android.gms.oss-licenses-plugin:0.10.6"
 spotless = "com.diffplug.spotless:6.25.0"
 tripletPlay = "com.github.triplet.play:3.8.4"
-gms-googleServices = "com.google.gms.google-services:4.4.0"
+gms-googleServices = "com.google.gms.google-services:4.4.1"
 
 [libraries]
 accompanist-permission = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
@@ -42,7 +42,7 @@ coil = { module = "io.coil-kt:coil-compose", version = "2.2.2" }
 compose-material = { module = "androidx.compose.material:material", version.ref = "composeMaterial" }
 compose-material-icons = { module = "androidx.compose.material:material-icons-extended", version.ref = "composeMaterial" }
 
-compose-navigation = { module = "androidx.navigation:navigation-compose", version = "2.7.6"}
+compose-navigation = { module = "androidx.navigation:navigation-compose", version = "2.7.7"}
 
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
@@ -52,8 +52,8 @@ coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", ve
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 
 google-firebase-core = { module = "com.google.firebase:firebase-core", version = "21.1.1" }
-google-firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx", version = "21.5.0" }
-google-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx", version = "18.6.1" }
+google-firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx", version = "21.5.1" }
+google-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx", version = "18.6.2" }
 google-mlkit-textrecognition = { module = "com.google.mlkit:text-recognition", version.ref = "textrecognition" }
 google-mlkit-textrecognition-chinese = { module = "com.google.mlkit:text-recognition-chinese", version.ref = "textrecognition" }
 google-mlkit-textrecognition-devanagari = { module = "com.google.mlkit:text-recognition-devanagari", version.ref = "textrecognition" }

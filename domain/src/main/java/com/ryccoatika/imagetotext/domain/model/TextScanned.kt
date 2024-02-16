@@ -1,10 +1,12 @@
 package com.ryccoatika.imagetotext.domain.model
 
-import android.graphics.Bitmap
+import android.net.Uri
+import android.util.Size
 
 data class TextScanned(
     val id: Long,
-    val image: Bitmap,
+    val imageUri: Uri,
+    val imageSize: Size,
     var text: String,
     val textRecognized: TextRecognized,
 )

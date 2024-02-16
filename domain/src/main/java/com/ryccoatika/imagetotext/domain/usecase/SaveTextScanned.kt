@@ -1,6 +1,7 @@
 package com.ryccoatika.imagetotext.domain.usecase
 
-import android.graphics.Bitmap
+import android.net.Uri
+import android.util.Size
 import com.ryccoatika.imagetotext.domain.model.TextRecognized
 import com.ryccoatika.imagetotext.domain.model.TextScanned
 import com.ryccoatika.imagetotext.domain.repository.TextScannedRepository
@@ -12,13 +13,15 @@ class SaveTextScanned @Inject constructor(
 ) : ResultInteractor<SaveTextScanned.Params, TextScanned>() {
 
     override suspend fun doWork(params: Params): TextScanned = textScannedRepository.saveTextScanned(
-        image = params.image,
+        imageUri = params.imageUri,
+        imageSize = params.imageSize,
         textRecognized = params.textRecognized,
         text = params.text,
     )
 
     data class Params(
-        val image: Bitmap,
+        val imageUri: Uri,
+        val imageSize: Size,
         val textRecognized: TextRecognized,
         val text: String,
     )

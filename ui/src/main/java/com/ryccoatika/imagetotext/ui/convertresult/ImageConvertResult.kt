@@ -46,7 +46,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -55,6 +54,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberAsyncImagePainter
 import com.ryccoatika.imagetotext.domain.model.TextRecognized
 import com.ryccoatika.imagetotext.ui.R
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
@@ -180,33 +180,33 @@ private fun ImageConvertResult(
                     },
                 ),
         ) {
-            state.textScanned?.let {
+            state.textScanned?.let { textScanned ->
                 Image(
-                    bitmap = it.image.asImageBitmap(),
+                    painter = rememberAsyncImagePainter(textScanned.imageUri),
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
                         .onGloballyPositioned { coordinates ->
-                            if (coordinates.size != IntSize.Zero && state.inputImage != null) {
+                            if (coordinates.size != IntSize.Zero) {
                                 // calculate size ratio
                                 val widthRatio =
-                                    coordinates.size.width / state.inputImage.width.toFloat()
+                                    coordinates.size.width / textScanned.imageSize.width.toFloat()
                                 val heightRatio =
-                                    coordinates.size.height / state.inputImage.height.toFloat()
+                                    coordinates.size.height / textScanned.imageSize.height.toFloat()
                                 imageSizeRatio = minOf(widthRatio, heightRatio)
 
                                 // calculate offset
                                 var yOffset = 0f
                                 var xOffset = 0f
-                                if ((imageSizeRatio * state.inputImage.width).roundToInt() == coordinates.size.width) {
+                                if ((imageSizeRatio * textScanned.imageSize.width).roundToInt() == coordinates.size.width) {
                                     val scaledImageHeight =
-                                        imageSizeRatio * state.inputImage.height
+                                        imageSizeRatio * textScanned.imageSize.height
                                     yOffset =
                                         coordinates.size.height / 2 - scaledImageHeight / 2
                                 }
-                                if ((imageSizeRatio * state.inputImage.height).roundToInt() == coordinates.size.height) {
+                                if ((imageSizeRatio * textScanned.imageSize.height).roundToInt() == coordinates.size.height) {
                                     val scaledImageWidth =
-                                        imageSizeRatio * state.inputImage.width
+                                        imageSizeRatio * textScanned.imageSize.width
                                     xOffset = coordinates.size.width / 2 - scaledImageWidth / 2
                                 }
                                 placeHolderOffset = Offset(xOffset, yOffset)
@@ -219,10 +219,11 @@ private fun ImageConvertResult(
                     element = element,
                     placeHolderOffset = placeHolderOffset,
                     imageSizeRatio = imageSizeRatio,
-                ) {
-                    selectedElements.clear()
-                    selectedElements.add(element)
-                }
+                    onLongClick = {
+                        selectedElements.clear()
+                        selectedElements.add(element)
+                    }
+                )
             }
             TextHighlightBlockSelected(
                 selectedElements = selectedElements,

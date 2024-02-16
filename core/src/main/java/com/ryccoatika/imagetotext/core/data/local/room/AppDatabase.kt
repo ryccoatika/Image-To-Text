@@ -6,21 +6,26 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.ryccoatika.imagetotext.core.data.local.entity.TextScannedEntity
-import com.ryccoatika.imagetotext.core.data.local.room.typeconverter.BitmapTypeConverter
+import com.ryccoatika.imagetotext.core.data.local.room.typeconverter.SizeTypeConverter
 import com.ryccoatika.imagetotext.core.data.local.room.typeconverter.TextRecognizedTypeConverter
+import com.ryccoatika.imagetotext.core.data.local.room.typeconverter.UriTypeConverter
 
 @Database(
     entities = [TextScannedEntity::class],
     version = AppDatabase.DB_VERSION,
     exportSchema = false,
 )
-@TypeConverters(TextRecognizedTypeConverter::class, BitmapTypeConverter::class)
+@TypeConverters(
+    TextRecognizedTypeConverter::class,
+    UriTypeConverter::class,
+    SizeTypeConverter::class,
+)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun textScannedDao(): TextScannedDao
 
     companion object {
-        const val DB_VERSION = 3
+        const val DB_VERSION = 4
         private const val DB_NAME = "imagetotext.db"
         private var INSTANCE: AppDatabase? = null
 

@@ -1,6 +1,7 @@
 package com.ryccoatika.imagetotext.domain.repository
 
-import android.graphics.Bitmap
+import android.net.Uri
+import android.util.Size
 import com.ryccoatika.imagetotext.domain.model.TextRecognized
 import com.ryccoatika.imagetotext.domain.model.TextScanned
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +12,8 @@ interface TextScannedRepository {
     suspend fun setUserFirstTime(isFirstTime: Boolean)
 
     suspend fun saveTextScanned(
-        image: Bitmap,
+        imageUri: Uri,
+        imageSize: Size,
         textRecognized: TextRecognized,
         text: String,
     ): TextScanned

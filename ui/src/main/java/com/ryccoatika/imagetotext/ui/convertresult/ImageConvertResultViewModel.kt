@@ -3,7 +3,6 @@ package com.ryccoatika.imagetotext.ui.convertresult
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.mlkit.vision.common.InputImage
 import com.ryccoatika.imagetotext.domain.model.TextRecognized
 import com.ryccoatika.imagetotext.domain.model.TextScanned
 import com.ryccoatika.imagetotext.domain.usecase.GetTextScanned
@@ -29,13 +28,6 @@ class ImageConvertResultViewModel @Inject constructor(
 
     private val id: Long = savedStateHandle["id"]!!
     private val textScanned = MutableStateFlow<TextScanned?>(null)
-    private val inputImage: Flow<InputImage?> = textScanned.filterNotNull().map {
-        try {
-            InputImage.fromBitmap(it.image, 0)
-        } catch (e: Exception) {
-            null
-        }
-    }
     private val textElements: Flow<List<TextRecognized.Element>> = textScanned.filterNotNull().map {
         it.textRecognized.textBlocks.fold(
             emptyList(),
@@ -53,7 +45,6 @@ class ImageConvertResultViewModel @Inject constructor(
 
     val state: StateFlow<ImageConvertResultViewState> = combine(
         textScanned,
-        inputImage,
         textElements,
         event,
         ::ImageConvertResultViewState,

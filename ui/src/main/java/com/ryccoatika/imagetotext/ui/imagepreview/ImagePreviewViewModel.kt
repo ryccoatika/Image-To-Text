@@ -2,8 +2,8 @@ package com.ryccoatika.imagetotext.ui.imagepreview
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Size
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -75,9 +75,10 @@ class ImagePreviewViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 loadingCounter.addLoader()
+                val inputImage = InputImage.fromFilePath(context, imageUri)
                 val textRecognized = getTextFromImage.executeSync(
                     GetTextFromImage.Params(
-                        inputImage = InputImage.fromFilePath(context, imageUri),
+                        inputImage = inputImage,
                         languageModel = recognitionLanguageModel.value!!,
                     ),
                 )
@@ -86,15 +87,11 @@ class ImagePreviewViewModel @Inject constructor(
                         line.elements.joinToString(" ") { it.text }
                     }
                 }
-                val parcelFileDescriptor = context.contentResolver.openFileDescriptor(imageUri, "r")
-                    ?: throw ImageBroken()
-
-                val image = BitmapFactory.decodeFileDescriptor(parcelFileDescriptor.fileDescriptor)
-                parcelFileDescriptor.close()
 
                 val textScanned = saveTextScanned.executeSync(
                     SaveTextScanned.Params(
-                        image = image,
+                        imageUri = imageUri,
+                        imageSize = Size(inputImage.width, inputImage.height),
                         textRecognized = textRecognized,
                         text = text,
                     ),

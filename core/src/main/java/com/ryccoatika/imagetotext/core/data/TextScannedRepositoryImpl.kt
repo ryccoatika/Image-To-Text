@@ -1,6 +1,7 @@
 package com.ryccoatika.imagetotext.core.data
 
-import android.graphics.Bitmap
+import android.net.Uri
+import android.util.Size
 import com.ryccoatika.imagetotext.core.data.local.AppPreferences
 import com.ryccoatika.imagetotext.core.data.local.LocalDataSource
 import com.ryccoatika.imagetotext.core.data.local.entity.TextScannedEntity
@@ -28,13 +29,15 @@ class TextScannedRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveTextScanned(
-        image: Bitmap,
+        imageUri: Uri,
+        imageSize: Size,
         textRecognized: TextRecognized,
         text: String,
     ): TextScanned =
         localDataSource.saveTextScanned(
             TextScannedEntity(
-                image = image,
+                imageUri = imageUri,
+                imageSize = imageSize,
                 textRecognized = textRecognized,
                 text = text,
             ),
