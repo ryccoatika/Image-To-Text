@@ -1,9 +1,9 @@
 [versions]
 accompanist = "0.28.0"
 agp = "8.2.2"
-compose = "1.6.0"
+compose = "1.6.1"
 composecompiler = "1.5.8"
-composeMaterial = "1.6.0"
+composeMaterial = "1.6.1"
 coroutines = "1.7.3"
 datastore = "1.0.0"
 hilt = "2.48"
