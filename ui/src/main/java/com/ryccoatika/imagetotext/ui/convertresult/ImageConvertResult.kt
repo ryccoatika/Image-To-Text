@@ -222,7 +222,7 @@ private fun ImageConvertResult(
                     onLongClick = {
                         selectedElements.clear()
                         selectedElements.add(element)
-                    }
+                    },
                 )
             }
             TextHighlightBlockSelected(
