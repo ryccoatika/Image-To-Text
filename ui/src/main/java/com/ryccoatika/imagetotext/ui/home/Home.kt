@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,6 +38,7 @@ import com.ryccoatika.imagetotext.ui.common.ui.AppTopBar
 import com.ryccoatika.imagetotext.ui.common.ui.FabImagePicker
 import com.ryccoatika.imagetotext.ui.common.ui.ScannedTextCard
 import com.ryccoatika.imagetotext.ui.common.utils.rememberStateWithLifecycle
+import com.ryccoatika.imagetotext.ui.utils.share
 
 @Composable
 fun Home(
@@ -77,6 +79,8 @@ private fun Home(
     openImageResultScreen: (Long) -> Unit,
     openLanguageSelectorScreen: (Uri) -> Unit,
 ) {
+    val context = LocalContext.current
+
     Scaffold(
         topBar = {
             AppTopBar(
@@ -132,6 +136,9 @@ private fun Home(
                             textScanned = textScanned,
                             onDeleteClick = {
                                 onTextScannedRemove(textScanned)
+                            },
+                            onShareClick = {
+                                context.share(textScanned.text)
                             },
                             modifier = Modifier
                                 .padding(bottom = MaterialTheme.spacing.small)

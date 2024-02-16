@@ -1,7 +1,6 @@
 package com.ryccoatika.imagetotext.ui.convertresult
 
 import android.app.Activity
-import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -65,6 +64,7 @@ import com.ryccoatika.imagetotext.ui.common.ui.TextHighlightBlock
 import com.ryccoatika.imagetotext.ui.common.ui.TextHighlightBlockSelected
 import com.ryccoatika.imagetotext.ui.common.utils.rememberStateWithLifecycle
 import com.ryccoatika.imagetotext.ui.utils.ReviewHelper
+import com.ryccoatika.imagetotext.ui.utils.share
 import kotlin.math.roundToInt
 
 @Composable
@@ -137,18 +137,14 @@ private fun ImageConvertResult(
                     ) {
                         Icon(Icons.Outlined.Delete, contentDescription = null)
                     }
-                    IconButton(
-                        onClick = {
-                            Intent().apply {
-                                action = Intent.ACTION_SEND
-                                putExtra(Intent.EXTRA_TEXT, state.textScanned?.text ?: "")
-                                type = "text/plain"
-                            }.run {
-                                context.startActivity(Intent.createChooser(this, null))
-                            }
-                        },
-                    ) {
-                        Icon(Icons.Default.Share, contentDescription = null)
+                    state.textScanned?.text?.let { text ->
+                        IconButton(
+                            onClick = {
+                                context.share(text)
+                            },
+                        ) {
+                            Icon(Icons.Default.Share, contentDescription = null)
+                        }
                     }
                 },
             )

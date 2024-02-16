@@ -11,7 +11,6 @@ import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,6 +27,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,7 +43,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.ryccoatika.imagetotext.domain.model.TextRecognized
@@ -57,17 +56,19 @@ import kotlin.math.roundToInt
 fun ScannedTextCard(
     textScanned: TextScanned,
     onDeleteClick: () -> Unit,
+    onShareClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var cardSize by remember { mutableStateOf(IntSize.Zero) }
+    var cardHeight by remember { mutableStateOf(0.dp) }
     val density = LocalDensity.current
-    val deleteButtonSizePx = with(density) { 72.dp.toPx() }
+    val actionButtonSize = 72.dp
+    val actionButtonSizePx = with(density) { actionButtonSize.toPx() }
     val state = remember {
         AnchoredDraggableState(
             initialValue = false,
             anchors = DraggableAnchors {
                 false at 0f
-                true at deleteButtonSizePx
+                true at actionButtonSizePx * 2
             },
             positionalThreshold = { distance: Float -> distance * 0.5f },
             velocityThreshold = { with(density) { 100.dp.toPx() } },
@@ -78,24 +79,52 @@ fun ScannedTextCard(
     Box(
         modifier = modifier,
     ) {
-        Row(
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
+        Box(
             modifier = Modifier
                 .clip(MaterialTheme.shapes.medium)
                 .fillMaxWidth()
-                .height(with(density) { cardSize.height.toDp() })
-                .background(Color.Red),
+                .height(cardHeight),
+            contentAlignment = Alignment.CenterEnd,
         ) {
-            IconButton(onClick = onDeleteClick) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier
-                        .padding(end = MaterialTheme.spacing.medium)
-                        .size(40.dp),
-                )
+            Box(
+                modifier = Modifier
+                    .height(cardHeight)
+                    .width(actionButtonSize)
+                    .background(Color.Red),
+                contentAlignment = Alignment.Center,
+            ) {
+                IconButton(onClick = onDeleteClick) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(40.dp),
+                    )
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .height(cardHeight)
+                    .width(actionButtonSize + 10.dp)
+                    .offset {
+                        IntOffset(
+                            x = -(actionButtonSizePx.toInt() - 10),
+                            y = 0,
+                        )
+                    }
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(Color.Blue),
+                contentAlignment = Alignment.Center,
+            ) {
+                IconButton(onClick = onShareClick) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(40.dp),
+                    )
+                }
             }
         }
         Row(
@@ -123,7 +152,7 @@ fun ScannedTextCard(
                     reverseDirection = true,
                 )
                 .onSizeChanged { size ->
-                    cardSize = size
+                    cardHeight = with(density) { size.height.toDp() }
                 },
         ) {
             Image(
@@ -163,6 +192,7 @@ private fun ScannedTextCardPreview() {
                     textBlocks = emptyList(),
                 ),
             ),
+            onShareClick = {},
             onDeleteClick = {},
         )
     }
