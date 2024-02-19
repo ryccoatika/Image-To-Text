@@ -1,4 +1,4 @@
-package com.ryccoatika.imagetotext.ui.common.ui
+package com.ryccoatika.imagetotext.ui.home.views
 
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -11,9 +11,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ryccoatika.imagetotext.ui.R
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
+import com.ryccoatika.imagetotext.ui.common.ui.AppTextInput
 
 @Composable
-fun AppSearchTextInput(
+internal fun AppSearchTextInput(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,

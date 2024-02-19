@@ -40,10 +40,10 @@ import com.ryccoatika.imagetotext.domain.model.TextRecognized
 import com.ryccoatika.imagetotext.ui.R
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 import com.ryccoatika.imagetotext.ui.common.ui.AppTopBar
-import com.ryccoatika.imagetotext.ui.common.ui.TextHighlightBlock
-import com.ryccoatika.imagetotext.ui.common.ui.TextHighlightBlockSelected
 import com.ryccoatika.imagetotext.ui.common.utils.rememberStateWithLifecycle
 import com.ryccoatika.imagetotext.ui.convertresult.views.BottomSheetContent
+import com.ryccoatika.imagetotext.ui.convertresult.views.TextHighlightBlock
+import com.ryccoatika.imagetotext.ui.convertresult.views.TextHighlightBlockSelected
 import com.ryccoatika.imagetotext.ui.utils.ReviewHelper
 import com.ryccoatika.imagetotext.ui.utils.share
 import kotlin.math.roundToInt

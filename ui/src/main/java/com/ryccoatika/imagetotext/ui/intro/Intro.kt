@@ -32,7 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.ryccoatika.imagetotext.ui.R
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 import com.ryccoatika.imagetotext.ui.common.theme.spacing
-import com.ryccoatika.imagetotext.ui.common.ui.DotIndicator
+import com.ryccoatika.imagetotext.ui.intro.views.DotIndicator
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)

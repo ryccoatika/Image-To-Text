@@ -1,4 +1,4 @@
-package com.ryccoatika.imagetotext.ui.common.ui
+package com.ryccoatika.imagetotext.ui.home.views
 
 import android.net.Uri
 import android.util.Size
@@ -11,6 +11,7 @@ import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
+import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,15 +52,17 @@ import com.ryccoatika.imagetotext.domain.model.TextScanned
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 import com.ryccoatika.imagetotext.ui.common.theme.spacing
 import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ScannedTextCard(
+internal fun ScannedTextCard(
     textScanned: TextScanned,
     onDeleteClick: () -> Unit,
     onShareClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     var cardHeight by remember { mutableStateOf(0.dp) }
     val density = LocalDensity.current
     val actionButtonSize = 72.dp
@@ -93,7 +97,14 @@ fun ScannedTextCard(
                     .background(Color.Red),
                 contentAlignment = Alignment.Center,
             ) {
-                IconButton(onClick = onDeleteClick) {
+                IconButton(
+                    onClick = {
+                        onDeleteClick()
+                        coroutineScope.launch {
+                            state.animateTo(false)
+                        }
+                    },
+                ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = null,
@@ -117,7 +128,14 @@ fun ScannedTextCard(
                     .background(Color.Blue),
                 contentAlignment = Alignment.Center,
             ) {
-                IconButton(onClick = onShareClick) {
+                IconButton(
+                    onClick = {
+                        onShareClick()
+                        coroutineScope.launch {
+                            state.animateTo(false)
+                        }
+                    },
+                ) {
                     Icon(
                         imageVector = Icons.Default.Share,
                         contentDescription = null,

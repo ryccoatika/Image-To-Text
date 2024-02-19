@@ -1,4 +1,4 @@
-package com.ryccoatika.imagetotext.ui.common.ui
+package com.ryccoatika.imagetotext.ui.intro.views
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 
 @Composable
-fun DotIndicator(
+internal fun DotIndicator(
     count: Int,
     activeIndex: Int,
     modifier: Modifier = Modifier,

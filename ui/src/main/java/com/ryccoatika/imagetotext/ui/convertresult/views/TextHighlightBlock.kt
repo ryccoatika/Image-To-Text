@@ -1,4 +1,4 @@
-package com.ryccoatika.imagetotext.ui.common.ui
+package com.ryccoatika.imagetotext.ui.convertresult.views
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -18,7 +18,7 @@ import com.ryccoatika.imagetotext.domain.model.TextRecognized
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TextHighlightBlock(
+internal fun TextHighlightBlock(
     element: TextRecognized.Element,
     placeHolderOffset: Offset,
     imageSizeRatio: Float,

@@ -33,11 +33,11 @@ import com.ryccoatika.imagetotext.domain.model.TextScanned
 import com.ryccoatika.imagetotext.ui.R
 import com.ryccoatika.imagetotext.ui.common.theme.AppTheme
 import com.ryccoatika.imagetotext.ui.common.theme.spacing
-import com.ryccoatika.imagetotext.ui.common.ui.AppSearchTextInput
 import com.ryccoatika.imagetotext.ui.common.ui.AppTopBar
-import com.ryccoatika.imagetotext.ui.common.ui.FabImagePicker
-import com.ryccoatika.imagetotext.ui.common.ui.ScannedTextCard
 import com.ryccoatika.imagetotext.ui.common.utils.rememberStateWithLifecycle
+import com.ryccoatika.imagetotext.ui.home.views.AppSearchTextInput
+import com.ryccoatika.imagetotext.ui.home.views.FabImagePicker
+import com.ryccoatika.imagetotext.ui.home.views.ScannedTextCard
 import com.ryccoatika.imagetotext.ui.utils.share
 
 @Composable

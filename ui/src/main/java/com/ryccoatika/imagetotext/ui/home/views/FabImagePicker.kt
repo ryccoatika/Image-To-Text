@@ -1,4 +1,4 @@
-package com.ryccoatika.imagetotext.ui.common.ui
+package com.ryccoatika.imagetotext.ui.home.views
 
 import android.Manifest
 import android.content.Context
@@ -41,7 +41,7 @@ import com.ryccoatika.imagetotext.ui.common.theme.spacing
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun FabImagePicker(
+internal fun FabImagePicker(
     pickedFromGallery: (Uri) -> Unit,
     pickedFromCamera: (Uri) -> Unit,
     generateImageUri: (Context) -> Uri,
