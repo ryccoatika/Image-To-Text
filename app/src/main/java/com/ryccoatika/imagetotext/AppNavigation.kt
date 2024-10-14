@@ -14,7 +14,6 @@ import androidx.navigation.navigation
 import com.ryccoatika.imagetotext.ui.convertresult.ImageConvertResult
 import com.ryccoatika.imagetotext.ui.home.Home
 import com.ryccoatika.imagetotext.ui.imagepreview.ImagePreview
-import com.ryccoatika.imagetotext.ui.intro.Intro
 
 internal sealed class Screen(val route: String) {
     data object Splash : Screen("splash")
@@ -27,7 +26,6 @@ internal sealed class LeafScreen(
     fun createRoute(root: Screen) = "${root.route}/$route"
 
     data object SplashScreen : LeafScreen("splash")
-    data object IntroScreen : LeafScreen("intro")
     data object HomeScreen : LeafScreen("home")
 
     data object ImageConvertResultScreen : LeafScreen("imageconvertresult/{id}") {
@@ -55,20 +53,17 @@ internal fun AppNavigation(
         startDestination = Screen.Home.route,
         modifier = modifier,
     ) {
-        addSplashTopLevel(navController)
+        addSplashTopLevel()
         addHomeTopLevel(navController)
     }
 }
 
-private fun NavGraphBuilder.addSplashTopLevel(
-    navController: NavController,
-) {
+private fun NavGraphBuilder.addSplashTopLevel() {
     navigation(
         route = Screen.Splash.route,
         startDestination = LeafScreen.SplashScreen.createRoute(Screen.Splash),
     ) {
         addSplashScreen(Screen.Splash)
-        addIntroScreen(Screen.Splash, navController)
     }
 }
 
@@ -91,27 +86,6 @@ private fun NavGraphBuilder.addSplashScreen(
     composable(
         route = LeafScreen.SplashScreen.createRoute(root),
     ) {}
-}
-
-private fun NavGraphBuilder.addIntroScreen(
-    root: Screen,
-    navController: NavController,
-) {
-    composable(
-        route = LeafScreen.IntroScreen.createRoute(root),
-    ) {
-        Intro(
-            openHomeScreen = {
-                navController.navigate(Screen.Home.route) {
-                    launchSingleTop = true
-
-                    popUpTo(navController.graph.id) {
-                        inclusive = true
-                    }
-                }
-            },
-        )
-    }
 }
 
 private fun NavGraphBuilder.addHomeScreen(

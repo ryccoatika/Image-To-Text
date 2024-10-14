@@ -21,21 +21,21 @@ dependencies {
 
     implementation(libs.accompanist.permission)
 
+    implementation(platform(libs.compose.bom))
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.tooling.preview)
-
     implementation(libs.compose.material)
     implementation(libs.compose.material.icons)
 
-    implementation(libs.lifecycle.viewmodel)
+    implementation(libs.androidx.lifecycleViewmodel)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
-    implementation(libs.hilt.navigation.compose)
+    implementation(libs.hilt.navigationCompose)
 
     implementation(libs.coil)
 
-    implementation(libs.google.mlkit.textrecognition)
+    implementation(libs.mlkit.textrecognition)
 
     implementation(libs.google.play.review)
 }

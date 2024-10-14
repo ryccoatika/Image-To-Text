@@ -178,11 +178,11 @@ internal fun ScannedTextCard(
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .size(72.dp)
+                    .size(87.dp)
                     .padding(MaterialTheme.spacing.small)
                     .clip(MaterialTheme.shapes.small),
             )
-            Spacer(Modifier.width(MaterialTheme.spacing.small))
+            Spacer(Modifier.width(MaterialTheme.spacing.extraSmall))
             Text(
                 text = textScanned.text,
                 overflow = TextOverflow.Ellipsis,

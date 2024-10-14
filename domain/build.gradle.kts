@@ -12,6 +12,6 @@ dependencies {
     implementation(libs.hilt.dagger)
     ksp(libs.hilt.android.compiler)
 
-    implementation(libs.coroutines.core)
-    implementation(libs.google.mlkit.visionCommon)
+    implementation(libs.coroutinesCore)
+    implementation(libs.mlkit.visionCommon)
 }

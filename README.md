@@ -34,5 +34,5 @@ To build the app, you will need to get a `google-services.json` file from Fireba
 
 # Developer
 
-* [Rycco Atika](https://ryccoatika.github.io)
+* [Rycco Atika](https://ryccoatika.com)
 * [Linkedin](https://www.linkedin.com/in/ryccoatika)

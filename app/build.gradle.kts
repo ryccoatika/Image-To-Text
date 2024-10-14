@@ -43,7 +43,7 @@ android {
         applicationId = "com.ryccoatika.imagetotext"
 
         versionCode = appVersionCode
-        versionName = "2.0.0"
+        versionName = "2.0.1"
 
         testInstrumentationRunner = "androidx.intro_1.runner.AndroidJUnitRunner"
     }
@@ -117,21 +117,23 @@ dependencies {
     implementation(projects.domain)
     implementation(projects.ui)
 
-    implementation(libs.activity.compose)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.androidx.composeActivity)
     implementation(libs.compose.material)
-    implementation(libs.compose.navigation)
+    implementation(libs.androidx.composeNavigation)
 
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.tooling.preview)
 
-    implementation(libs.splashscreen)
+    implementation(libs.androidx.splashscreen)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
 
-    implementation(libs.google.firebase.core)
-    implementation(libs.google.firebase.analytics)
-    implementation(libs.google.firebase.crashlytics)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.core)
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 
     debugImplementation(libs.leakcanary)
 }

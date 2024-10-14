@@ -75,8 +75,7 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
-=======
-*.iml
+
 .gradle
 /local.properties
 /.idea/caches
@@ -88,6 +87,8 @@ lint/tmp/
 .DS_Store
 /build
 /captures
-.externalNativeBuild
 .cxx
->>>>>>> bdb9943... init commit
+
+# release resources
+release/release.jks
+release/play-account.json

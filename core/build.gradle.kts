@@ -14,17 +14,15 @@ dependencies {
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
 
-    implementation(libs.coroutines.core)
+    implementation(libs.coroutinesCore)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
 
-    implementation(libs.datastore.preferences)
-
-    implementation(libs.google.mlkit.textrecognition)
-    implementation(libs.google.mlkit.textrecognition.chinese)
-    implementation(libs.google.mlkit.textrecognition.devanagari)
-    implementation(libs.google.mlkit.textrecognition.japanese)
-    implementation(libs.google.mlkit.textrecognition.korean)
+    implementation(libs.mlkit.textrecognition)
+    implementation(libs.mlkit.textrecognition.chinese)
+    implementation(libs.mlkit.textrecognition.devanagari)
+    implementation(libs.mlkit.textrecognition.japanese)
+    implementation(libs.mlkit.textrecognition.korean)
     implementation(libs.gson)
 }

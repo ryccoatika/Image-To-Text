@@ -7,10 +7,6 @@ import com.ryccoatika.imagetotext.domain.model.TextScanned
 import kotlinx.coroutines.flow.Flow
 
 interface TextScannedRepository {
-    suspend fun getIsUserFirstTime(): Boolean
-
-    suspend fun setUserFirstTime(isFirstTime: Boolean)
-
     suspend fun saveTextScanned(
         imageUri: Uri,
         imageSize: Size,
