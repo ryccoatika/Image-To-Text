@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+  create:
+    tags:
+      - 'v*'
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      ORG_GRADLE_PROJECT_RELEASE_KEYSTORE_PWD: ${{ secrets.ORG_GRADLE_PROJECT_RELEASE_KEYSTORE_PWD }}
+      ORG_GRADLE_PROJECT_RELEASE_KEY_PWD: ${{ secrets.ORG_GRADLE_PROJECT_RELEASE_KEY_PWD }}
+
+    steps:
+      - name: Generate build number
+        shell: bash
+        run: echo "ORG_GRADLE_PROJECT_VERSION_CODE=$(( (GITHUB_RUN_NUMBER * 2) + 10000 ))" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v3
+
+      - name: set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-disabled: true
+
+      - name: Decrypt secrets
+        run: ./release/decrypt-secrets.sh
+        env:
+          ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
+
+      - name: Download dependencies
+        run: |
+          ./gradlew build --stacktrace
+
+      - name: Build the AAB
+        run: ./gradlew bundleRelease --stacktrace
+
+      - name: Publish Testing to Play Store
+        if: github.ref == 'refs/heads/develop'
+        run: ./gradlew uploadQaReleasePrivateBundle --artifact-dir app/build/outputs/bundle/qaRelease
+
+      - name: Publish Release to Play Store as a Draft
+        if: startsWith(github.ref, 'refs/tags/')
+        run: ./gradlew publishStandardReleaseBundle --artifact-dir app/build/outputs/bundle/standardRelease --track production --release-status DRAFT
+
+      - name: Clean secrets
+        if: always()
+        run: ./release/clean-secrets.sh
+
+      - name: Upload build outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-build-outputs
+          path: app/build/outputs

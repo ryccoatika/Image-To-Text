@@ -112,6 +112,14 @@ androidComponents {
     }
 }
 
+play {
+    serviceAccountCredentials.set(rootProject.file("release/play-account.json"))
+
+    releaseName.set("${android.defaultConfig.versionName} ($appVersionCode)")
+
+    updatePriority.set(0)
+}
+
 dependencies {
     implementation(projects.core)
     implementation(projects.domain)

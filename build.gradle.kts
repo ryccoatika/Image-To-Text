@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 buildscript {
     dependencies {
-        classpath(libs.kotlin.gradlePlugin)
+        classpath(libs.gradlePlugin.kotlin)
     }
 }
 
